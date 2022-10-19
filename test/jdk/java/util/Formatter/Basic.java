@@ -31,6 +31,10 @@
  * @run shell/timeout=240 Basic.sh
  */
 
+import java.io.*;
+import java.util.Formatter;
+import java.util.Locale;
+
 import static java.lang.System.out;
 
 public class Basic {
@@ -40,11 +44,106 @@ public class Basic {
 
     private static Throwable first;
 
-    static void pass() {
+    protected static void pass() {
         pass++;
     }
 
-    static void fail(String fs, Class ex) {
+    protected static void test(String fs, String exp, Object ... args) {
+        Formatter f = new Formatter(new StringBuilder(), Locale.US);
+        f.format(fs, args);
+        ck(fs, exp, f.toString());
+
+        f = new Formatter(new StringBuilder(), Locale.US);
+        f.format("foo " + fs + " bar", args);
+        ck(fs, "foo " + exp + " bar", f.toString());
+    }
+
+    protected static void test(Locale l, String fs, String exp, Object ... args) {
+        Formatter f = new Formatter(new StringBuilder(), l);
+        f.format(fs, args);
+        ck(fs, exp, f.toString());
+
+        f = new Formatter(new StringBuilder(), l);
+        f.format("foo " + fs + " bar", args);
+        ck(fs, "foo " + exp + " bar", f.toString());
+    }
+
+    protected static void test(String fs, Object ... args) {
+        Formatter f = new Formatter(new StringBuilder(), Locale.US);
+        f.format(fs, args);
+        ck(fs, "fail", f.toString());
+    }
+
+    protected static void test(String fs) {
+        Formatter f = new Formatter(new StringBuilder(), Locale.US);
+        f.format(fs, "fail");
+        ck(fs, "fail", f.toString());
+    }
+
+    protected static void testSysOut(String fs, String exp, Object ... args) {
+        FileOutputStream fos = null;
+        FileInputStream fis = null;
+        try {
+            PrintStream saveOut = System.out;
+            fos = new FileOutputStream("testSysOut");
+            System.setOut(new PrintStream(fos));
+            System.out.format(Locale.US, fs, args);
+            fos.close();
+
+            fis = new FileInputStream("testSysOut");
+            byte [] ba = new byte[exp.length()];
+            int len = fis.read(ba);
+            String got = new String(ba);
+            if (len != ba.length)
+                fail(fs, exp, got);
+            ck(fs, exp, got);
+
+            System.setOut(saveOut);
+        } catch (FileNotFoundException ex) {
+            fail(fs, ex.getClass());
+        } catch (IOException ex) {
+            fail(fs, ex.getClass());
+        } finally {
+            try {
+                if (fos != null)
+                    fos.close();
+                if (fis != null)
+                    fis.close();
+            } catch (IOException ex) {
+                fail(fs, ex.getClass());
+            }
+        }
+    }
+
+    protected static void tryCatch(String fs, Class<?> ex) {
+        boolean caught = false;
+        try {
+            test(fs);
+        } catch (Throwable x) {
+            if (ex.isAssignableFrom(x.getClass()))
+                caught = true;
+        }
+        if (!caught)
+            fail(fs, ex);
+        else
+            pass();
+    }
+
+    protected static void tryCatch(String fs, Class<?> ex, Object ... args) {
+        boolean caught = false;
+        try {
+            test(fs, args);
+        } catch (Throwable x) {
+            if (ex.isAssignableFrom(x.getClass()))
+                caught = true;
+        }
+        if (!caught)
+            fail(fs, ex);
+        else
+            pass();
+    }
+
+    private static void fail(String fs, Class ex) {
         String s = "'" + fs + "': " + ex.getName() + " not thrown";
         if (first == null)
             setFirst(s);
@@ -52,7 +151,7 @@ public class Basic {
         fail++;
     }
 
-    static void fail(String fs, String exp, String got) {
+    private static void fail(String fs, String exp, String got) {
         String s = "'" + fs + "': Expected '" + exp + "', got '" + got + "'";
         if (first == null)
             setFirst(s);
@@ -68,7 +167,7 @@ public class Basic {
         }
     }
 
-    static void ck(String fs, String exp, String got) {
+    private static void ck(String fs, String exp, String got) {
         if (!exp.equals(got))
             fail(fs, exp, got);
         else
