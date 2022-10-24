@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,22 +21,9 @@
  * questions.
  */
 
-/* @test
- * @summary Unit test for formatter
- * @bug 4906370 4962433 4973103 4989961 5005818 5031150 4970931 4989491 5002937
- *      5005104 5007745 5061412 5055180 5066788 5088703 6317248 6318369 6320122
- *      6344623 6369500 6534606 6282094 6286592 6476425 5063507 6469160 6476168
- *      8059175 8204229
- *
- * @run shell/timeout=240 Basic.sh
- */
-
 import java.io.*;
 import java.util.Formatter;
 import java.util.Locale;
-
-import static java.lang.System.out;
-
 public class Basic {
 
     private static int fail = 0;
@@ -168,10 +155,11 @@ public class Basic {
     }
 
     private static void ck(String fs, String exp, String got) {
-        if (!exp.equals(got))
+        if (!exp.equals(got)){
             fail(fs, exp, got);
-        else
+        } else {
             pass();
+        }
     }
 
     public static void main(String[] args) {
@@ -193,13 +181,15 @@ public class Basic {
         BasicDouble.test();
         BasicDoubleObject.test();
         BasicBigDecimal.test();
-
         BasicDateTime.test();
 
-        if (fail != 0)
-            throw new RuntimeException((fail + pass) + " tests: "
-                                       + fail + " failure(s), first", first);
-        else
-            out.println("all " + (fail + pass) + " tests passed");
+        if (fail != 0) {
+            var tests_message = "%d tests: %d failure(s)%n".formatted(fail + pass, fail);
+            var trace_message = "Traceback of the first error located";
+            var message = "%s %s".formatted(tests_message, trace_message);
+            throw new RuntimeException(message, first);
+        } else {
+            System.out.printf("All %d tests passed", pass);
+        }
     }
 }
