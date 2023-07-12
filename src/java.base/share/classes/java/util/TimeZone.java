@@ -786,9 +786,7 @@ public abstract class TimeZone implements Serializable, Cloneable {
      * @since 22
      */
     public static String getModernIdentifier(String ID) {
-        if (ID == null) {
-            throw new NullPointerException("ID must be a String");
-        }
+        Objects.requireNonNull(ID, "ID must not be null");
         return ZoneInfo.getAliasTable().getOrDefault(ID, ID);
     }
 
