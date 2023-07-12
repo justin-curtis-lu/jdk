@@ -771,6 +771,28 @@ public abstract class TimeZone implements Serializable, Cloneable {
     }
 
     /**
+     * {@return the modern ID that {@code ID} maps to, if one exists, otherwise
+     * {@code ID} is returned}
+     *
+     * The JDK and the TZDB maintain historical identifiers for compatibility
+     * reasons that ultimately map to modern identifiers. This method can be used
+     * to ensure a modern identifier is used. For example, {@code
+     * Locale.getModernMapping("Japan")} returns {@code "Asia/Tokyo"}. In
+     * contrast, {@code Locale.getModernMapping("Asia/Tokyo")} returns {@code "Asia/Tokyo"}.
+     *
+     * @param ID the ID for a TimeZone.
+     * @throws NullPointerException This method throws a
+     * {@code NullPointerException} if {@code ID} is {@code null}
+     * @since 22
+     */
+    public static String getModernIdentifier(String ID) {
+        if (ID == null) {
+            throw new NullPointerException("ID must be a String");
+        }
+        return ZoneInfo.getAliasTable().getOrDefault(ID, ID);
+    }
+
+    /**
      * Creates a copy of this {@code TimeZone}.
      *
      * @return a clone of this {@code TimeZone}
