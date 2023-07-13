@@ -640,7 +640,7 @@ public final class Locale implements Cloneable, Serializable {
      * @see #getISOCountries(Locale.IsoCountryCode)
      * @since 9
      */
-    public static enum IsoCountryCode {
+    public enum IsoCountryCode {
         /**
          * PART1_ALPHA2 is used to represent the ISO3166-1 alpha-2 two letter
          * country codes.
@@ -1528,7 +1528,7 @@ public final class Locale implements Cloneable, Serializable {
      * @see #toLanguageTag
      */
     @Override
-    public final String toString() {
+    public String toString() {
         boolean l = !baseLocale.getLanguage().isEmpty();
         boolean s = !baseLocale.getScript().isEmpty();
         boolean r = !baseLocale.getRegion().isEmpty();
@@ -1969,7 +1969,7 @@ public final class Locale implements Cloneable, Serializable {
      *
      * @return The name of the display language.
      */
-    public final String getDisplayLanguage() {
+    public String getDisplayLanguage() {
         return getDisplayLanguage(getDefault(Category.DISPLAY));
     }
 
@@ -2042,7 +2042,7 @@ public final class Locale implements Cloneable, Serializable {
      *
      * @return The name of the country appropriate to the locale.
      */
-    public final String getDisplayCountry() {
+    public String getDisplayCountry() {
         return getDisplayCountry(getDefault(Category.DISPLAY));
     }
 
@@ -2092,7 +2092,7 @@ public final class Locale implements Cloneable, Serializable {
      *
      * @return The name of the display variant code appropriate to the locale.
      */
-    public final String getDisplayVariant() {
+    public String getDisplayVariant() {
         return getDisplayVariant(getDefault(Category.DISPLAY));
     }
 
@@ -2142,7 +2142,7 @@ public final class Locale implements Cloneable, Serializable {
      *
      * @return The name of the locale appropriate to display.
      */
-    public final String getDisplayName() {
+    public String getDisplayName() {
         return getDisplayName(getDefault(Category.DISPLAY));
     }
 
@@ -3095,7 +3095,7 @@ public final class Locale implements Cloneable, Serializable {
      *
      * @since 1.8
      */
-    public static enum FilteringMode {
+    public enum FilteringMode {
         /**
          * Specifies automatic filtering mode based on the given Language
          * Priority List consisting of language ranges. If all of the ranges
