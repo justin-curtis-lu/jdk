@@ -41,12 +41,12 @@ package java.text;
 import java.io.InvalidObjectException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 
 /**
@@ -500,7 +500,7 @@ public class MessageFormat extends Format {
                         case '}':
                             if (braceStack == 0) {
                                 part = SEG_RAW;
-                                makeFormat(i, formatNumber, segments);
+                                makeFormat(formatNumber, segments);
                                 formatNumber++;
                                 // throw away other segments
                                 segments[SEG_INDEX] = null;
@@ -536,11 +536,9 @@ public class MessageFormat extends Format {
 
 
     /**
-     * Returns a pattern representing the current state of the message format.
+     * {@return a pattern representing the current state of the message format}
      * The string is constructed from internal information and therefore
      * does not necessarily equal the previously applied pattern.
-     *
-     * @return a pattern representing the current state of the message format
      */
     public String toPattern() {
         // later, make this more extensible
@@ -551,9 +549,8 @@ public class MessageFormat extends Format {
             lastOffset = offsets[i];
             result.append('{').append(argumentNumbers[i]);
             Format fmt = formats[i];
-            if (fmt == null) {
-                // do nothing, string format
-            } else if (fmt instanceof NumberFormat) {
+            // if fmt is null, fall through as string format
+            if (fmt instanceof NumberFormat) {
                 if (fmt.equals(NumberFormat.getInstance(locale))) {
                     result.append(",number");
                 } else if (fmt.equals(NumberFormat.getCurrencyInstance(locale))) {
@@ -567,8 +564,6 @@ public class MessageFormat extends Format {
                         result.append(",number,").append(((DecimalFormat)fmt).toPattern());
                     } else if (fmt instanceof ChoiceFormat) {
                         result.append(",choice,").append(((ChoiceFormat)fmt).toPattern());
-                    } else {
-                        // UNKNOWN
                     }
                 }
             } else if (fmt instanceof DateFormat) {
@@ -590,14 +585,10 @@ public class MessageFormat extends Format {
                 if (index >= DATE_TIME_MODIFIERS.length) {
                     if (fmt instanceof SimpleDateFormat) {
                         result.append(",date,").append(((SimpleDateFormat)fmt).toPattern());
-                    } else {
-                        // UNKNOWN
                     }
                 } else if (index != MODIFIER_DEFAULT) {
                     result.append(',').append(DATE_TIME_MODIFIER_KEYWORDS[index]);
                 }
-            } else {
-                //result.append(", unknown");
             }
             result.append('}');
         }
@@ -664,9 +655,7 @@ public class MessageFormat extends Format {
         if (runsToCopy > maxOffset + 1) {
             runsToCopy = maxOffset + 1;
         }
-        for (int i = 0; i < runsToCopy; i++) {
-            formats[i] = newFormats[i];
-        }
+        System.arraycopy(newFormats, 0, formats, 0, runsToCopy);
     }
 
     /**
@@ -933,20 +922,15 @@ public class MessageFormat extends Format {
      * @since 1.4
      */
     public AttributedCharacterIterator formatToCharacterIterator(Object arguments) {
+        Objects.requireNonNull(arguments, "arguments must not be null");
         StringBuffer result = new StringBuffer();
         ArrayList<AttributedCharacterIterator> iterators = new ArrayList<>();
-
-        if (arguments == null) {
-            throw new NullPointerException(
-                   "formatToCharacterIterator must be passed non-null object");
-        }
         subformat((Object[]) arguments, result, null, iterators);
         if (iterators.size() == 0) {
             return createAttributedCharacterIterator("");
         }
         return createAttributedCharacterIterator(
-                     iterators.toArray(
-                     new AttributedCharacterIterator[iterators.size()]));
+                     iterators.toArray(new AttributedCharacterIterator[0]));
     }
 
     /**
@@ -984,8 +968,7 @@ public class MessageFormat extends Format {
      */
     public Object[] parse(String source, ParsePosition pos) {
         if (source == null) {
-            Object[] empty = {};
-            return empty;
+            return new Object[]{}; // Return empty array
         }
 
         int maximumArgumentNumber = -1;
@@ -1021,7 +1004,7 @@ public class MessageFormat extends Format {
                 int next;
                 if (patternOffset >= tempLength) {
                     next = source.length();
-                }else{
+                } else {
                     next = source.indexOf(pattern.substring(patternOffset, tempLength),
                                           sourceOffset);
                 }
@@ -1113,6 +1096,7 @@ public class MessageFormat extends Format {
      *
      * @return a clone of this instance.
      */
+    @Override
     public Object clone() {
         MessageFormat other = (MessageFormat) super.clone();
 
@@ -1132,16 +1116,16 @@ public class MessageFormat extends Format {
     /**
      * Equality comparison between two message format objects
      */
+    @Override
     public boolean equals(Object obj) {
-        if (this == obj)                      // quick check
+        if (this == obj) // Quick check
             return true;
         if (obj == null || getClass() != obj.getClass())
             return false;
         MessageFormat other = (MessageFormat) obj;
         return (maxOffset == other.maxOffset
                 && pattern.equals(other.pattern)
-                && ((locale != null && locale.equals(other.locale))
-                 || (locale == null && other.locale == null))
+                && Objects.equals(locale, other.locale)
                 && Arrays.equals(offsets,other.offsets)
                 && Arrays.equals(argumentNumbers,other.argumentNumbers)
                 && Arrays.equals(formats,other.formats));
@@ -1150,6 +1134,7 @@ public class MessageFormat extends Format {
     /**
      * Generates a hash code for the message format object.
      */
+    @Override
     public int hashCode() {
         return pattern.hashCode(); // enough for reasonable distribution
     }
@@ -1283,89 +1268,83 @@ public class MessageFormat extends Format {
                 continue;
             }
             // int argRecursion = ((recursionProtection >> (argumentNumber*2)) & 0x3);
-            if (false) { // if (argRecursion == 3){
-                // prevent loop!!!
-                result.append('\uFFFD');
-            } else {
-                Object obj = arguments[argumentNumber];
-                String arg = null;
-                Format subFormatter = null;
-                if (obj == null) {
-                    arg = "null";
-                } else if (formats[i] != null) {
-                    subFormatter = formats[i];
-                    if (subFormatter instanceof ChoiceFormat) {
-                        arg = formats[i].format(obj);
-                        if (arg.indexOf('{') >= 0) {
-                            subFormatter = new MessageFormat(arg, locale);
-                            obj = arguments;
-                            arg = null;
-                        }
-                    }
-                } else if (obj instanceof Number) {
-                    // format number if can
-                    subFormatter = NumberFormat.getInstance(locale);
-                } else if (obj instanceof Date) {
-                    // format a Date if can
-                    subFormatter = DateFormat.getDateTimeInstance(
-                             DateFormat.SHORT, DateFormat.SHORT, locale);//fix
-                } else if (obj instanceof String) {
-                    arg = (String) obj;
-
-                } else {
-                    arg = obj.toString();
-                    if (arg == null) arg = "null";
-                }
-
-                // At this point we are in two states, either subFormatter
-                // is non-null indicating we should format obj using it,
-                // or arg is non-null and we should use it as the value.
-
-                if (characterIterators != null) {
-                    // If characterIterators is non-null, it indicates we need
-                    // to get the CharacterIterator from the child formatter.
-                    if (last != result.length()) {
-                        characterIterators.add(
-                            createAttributedCharacterIterator(result.substring
-                                                              (last)));
-                        last = result.length();
-                    }
-                    if (subFormatter != null) {
-                        AttributedCharacterIterator subIterator =
-                                   subFormatter.formatToCharacterIterator(obj);
-
-                        append(result, subIterator);
-                        if (last != result.length()) {
-                            characterIterators.add(
-                                         createAttributedCharacterIterator(
-                                         subIterator, Field.ARGUMENT,
-                                         Integer.valueOf(argumentNumber)));
-                            last = result.length();
-                        }
+            Object obj = arguments[argumentNumber];
+            String arg = null;
+            Format subFormatter = null;
+            if (obj == null) {
+                arg = "null";
+            } else if (formats[i] != null) {
+                subFormatter = formats[i];
+                if (subFormatter instanceof ChoiceFormat) {
+                    arg = formats[i].format(obj);
+                    if (arg.indexOf('{') >= 0) {
+                        subFormatter = new MessageFormat(arg, locale);
+                        obj = arguments;
                         arg = null;
                     }
-                    if (arg != null && !arg.isEmpty()) {
-                        result.append(arg);
+                }
+            } else if (obj instanceof Number) {
+                // format number if can
+                subFormatter = NumberFormat.getInstance(locale);
+            } else if (obj instanceof Date) {
+                // format a Date if can
+                subFormatter = DateFormat.getDateTimeInstance(
+                         DateFormat.SHORT, DateFormat.SHORT, locale);//fix
+            } else if (obj instanceof String) {
+                arg = (String) obj;
+            } else {
+                arg = obj.toString();
+                if (arg == null) arg = "null";
+            }
+
+            // At this point we are in two states, either subFormatter
+            // is non-null indicating we should format obj using it,
+            // or arg is non-null and we should use it as the value.
+
+            if (characterIterators != null) {
+                // If characterIterators is non-null, it indicates we need
+                // to get the CharacterIterator from the child formatter.
+                if (last != result.length()) {
+                    characterIterators.add(
+                        createAttributedCharacterIterator(result.substring
+                                                          (last)));
+                    last = result.length();
+                }
+                if (subFormatter != null) {
+                    AttributedCharacterIterator subIterator =
+                               subFormatter.formatToCharacterIterator(obj);
+
+                    append(result, subIterator);
+                    if (last != result.length()) {
                         characterIterators.add(
-                                 createAttributedCharacterIterator(
-                                 arg, Field.ARGUMENT,
-                                 Integer.valueOf(argumentNumber)));
+                                     createAttributedCharacterIterator(
+                                     subIterator, Field.ARGUMENT,
+                                             argumentNumber));
                         last = result.length();
                     }
+                    arg = null;
                 }
-                else {
-                    if (subFormatter != null) {
-                        arg = subFormatter.format(obj);
-                    }
-                    last = result.length();
+                if (arg != null && !arg.isEmpty()) {
                     result.append(arg);
-                    if (i == 0 && fp != null && Field.ARGUMENT.equals(
-                                  fp.getFieldAttribute())) {
-                        fp.setBeginIndex(last);
-                        fp.setEndIndex(result.length());
-                    }
+                    characterIterators.add(
+                             createAttributedCharacterIterator(
+                             arg, Field.ARGUMENT,
+                                     argumentNumber));
                     last = result.length();
                 }
+            }
+            else {
+                if (subFormatter != null) {
+                    arg = subFormatter.format(obj);
+                }
+                last = result.length();
+                result.append(arg);
+                if (i == 0 && fp != null && Field.ARGUMENT.equals(
+                              fp.getFieldAttribute())) {
+                    fp.setBeginIndex(last);
+                    fp.setEndIndex(result.length());
+                }
+                last = result.length();
             }
         }
         result.append(pattern, lastOffset, pattern.length());
@@ -1448,8 +1427,7 @@ public class MessageFormat extends Format {
         DateFormat.FULL,
     };
 
-    private void makeFormat(int position, int offsetNumber,
-                            StringBuilder[] textSegments)
+    private void makeFormat(int offsetNumber, StringBuilder[] textSegments)
     {
         String[] segments = new String[textSegments.length];
         for (int i = 0; i < textSegments.length; i++) {
@@ -1566,7 +1544,7 @@ public class MessageFormat extends Format {
         formats[offsetNumber] = newFormat;
     }
 
-    private static final int findKeyword(String s, String[] list) {
+    private static int findKeyword(String s, String[] list) {
         for (int i = 0; i < list.length; ++i) {
             if (s.equals(list[i]))
                 return i;
@@ -1583,8 +1561,8 @@ public class MessageFormat extends Format {
         return -1;
     }
 
-    private static final void copyAndFixQuotes(String source, int start, int end,
-                                               StringBuilder target) {
+    private static void copyAndFixQuotes(String source, int start, int end,
+                                         StringBuilder target) {
         boolean quoted = false;
 
         for (int i = start; i < end; ++i) {
