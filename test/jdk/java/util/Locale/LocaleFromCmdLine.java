@@ -43,7 +43,7 @@
 
 import java.util.Locale;
 
-public class Bug4152725 {
+public class LocaleCmdLine {
 
     public static void main(String[] args) {
 

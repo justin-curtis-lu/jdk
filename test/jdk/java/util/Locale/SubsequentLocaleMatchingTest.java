@@ -22,11 +22,12 @@
  */
 /*
  * @test
- * @bug 8166884
+ * @bug 8166994
  * @summary Checks the subsequent call to parse the same language ranges
  *          which must generate the same list of language ranges
  *          i.e. the priority list containing equivalents, as in the
  *          first call
+ * @run main LocaleMatcherTest
  */
 
 import java.util.Arrays;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class Bug8166994 {
+public class LocaleMatcherTest {
 
     public static void main(String[] args) {
         List<String> list = Arrays.asList("ccq-aa", "ybd-aa", "rki-aa");

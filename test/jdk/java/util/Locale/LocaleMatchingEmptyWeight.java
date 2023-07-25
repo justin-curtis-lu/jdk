@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2016, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,6 +25,7 @@
  * @bug 8035133
  * @summary Checks that the tags matching the range with quality weight q=0
  *          e.g. en;q=0 must be elimited and must not be the part of output
+ * @run main
  */
 
 import java.util.ArrayList;
