@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2016, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -26,7 +26,7 @@
  * @bug 8135061
  * @summary Checks that the Locale.lookup executes properly without throwing
  *          any exception for some specific language ranges
- * @run main Bug8135061
+ * @run main ValidLookupThrowsException
  */
 
 import java.util.Collection;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Locale.LanguageRange;
 
-public class Bug8135061 {
+public class ValidLookupThrowsException {
 
     public static void main(String[] args) {
 

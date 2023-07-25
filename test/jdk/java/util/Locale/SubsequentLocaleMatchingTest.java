@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2016, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -27,7 +27,7 @@
  *          which must generate the same list of language ranges
  *          i.e. the priority list containing equivalents, as in the
  *          first call
- * @run main LocaleMatcherTest
+ * @run main SubsequentLocaleMatchingTest
  */
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class LocaleMatcherTest {
+public class SubsequentLocaleMatchingTest {
 
     public static void main(String[] args) {
         List<String> list = Arrays.asList("ccq-aa", "ybd-aa", "rki-aa");

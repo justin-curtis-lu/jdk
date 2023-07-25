@@ -25,7 +25,7 @@
  * @bug 8035133
  * @summary Checks that the tags matching the range with quality weight q=0
  *          e.g. en;q=0 must be elimited and must not be the part of output
- * @run main
+ * @run main LocaleMatchingEmptyWeight
  */
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class Bug8035133 {
+public class LocaleMatchingEmptyWeight {
 
     private static boolean err = false;
 

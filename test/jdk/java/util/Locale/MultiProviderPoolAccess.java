@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -27,8 +27,8 @@
  * @summary Verify ConcurrentModificationException is not thrown with multiple
  *     thread accesses.
  * @modules java.base/sun.util.locale.provider
- * @compile -XDignore.symbol.file=true Bug6989440.java
- * @run main Bug6989440
+ * @compile -XDignore.symbol.file=true MultiProviderPoolAccess.java
+ * @run main MultiProviderPoolAccess
  */
 import java.text.spi.DateFormatProvider;
 import java.util.spi.LocaleNameProvider;
@@ -37,7 +37,7 @@ import java.util.spi.TimeZoneNameProvider;
 
 import sun.util.locale.provider.LocaleServiceProviderPool;
 
-public class Bug6989440 {
+public class MultiProviderPoolAccess {
     static volatile boolean failed;  // false
     static final int THREADS = 50;
 

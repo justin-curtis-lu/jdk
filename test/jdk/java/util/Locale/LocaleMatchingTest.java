@@ -25,7 +25,7 @@
  * @test
  * @bug 7069824 8042360 8032842 8175539 8210443 8242010 8276302
  * @summary Verify implementation for Locale matching.
- * @run testng/othervm BCP47Test
+ * @run testng/othervm LocaleMatchingTest
  */
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ import static org.testng.Assert.*;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class BCP47Test {
+public class LocaleMatchingTest {
 
     @DataProvider(name = "LRConstructorData")
     Object[][] LRConstructorData() {

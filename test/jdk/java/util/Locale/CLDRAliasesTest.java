@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 2020, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -26,7 +26,7 @@
  * @bug 8179071 8202537 8231273 8251317
  * @summary Test that language aliases of CLDR supplemental metadata are handled correctly.
  * @modules jdk.localedata
- * @run main/othervm -Djava.locale.providers=CLDR Bug8179071
+ * @run main/othervm -Djava.locale.providers=CLDR CLDRAliasesTest
  */
 
 /**
@@ -41,7 +41,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-public class Bug8179071 {
+public class CLDRAliasesTest {
 
     // Deprecated and Legacy tags.
     // As of CLDR 38, language aliases for some of the legacy tags have been removed.
@@ -84,7 +84,7 @@ public class Bug8179071 {
     }
 
     public static void main(String[] args) {
-        shortJanuaryNames.forEach(Bug8179071::test);
+        shortJanuaryNames.forEach(CLDRAliasesTest::test);
         checkInvalidTags();
     }
 }

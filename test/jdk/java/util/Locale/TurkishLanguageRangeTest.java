@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2016, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -31,8 +31,8 @@
  *          e.g. "HI-Deva".toLowerCase() in the Turkish locale returns
  *          "hı-deva", where 'ı' is the LATIN SMALL LETTER DOTLESS I character
  *          which is not allowed in the language ranges/tags.
- * @compile -encoding utf-8 Bug8159420.java
- * @run main Bug8159420
+ * @compile -encoding utf-8 TurkishLanguageRangeTest.java
+ * @run main TurkishLanguageRangeTest
  */
 
 import java.util.List;
@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import static java.util.Locale.FilteringMode.EXTENDED_FILTERING;
 import static java.util.Locale.FilteringMode.AUTOSELECT_FILTERING;
 
-public class Bug8159420 {
+public class TurkishLanguageRangeTest {
 
     static boolean err = false;
 
