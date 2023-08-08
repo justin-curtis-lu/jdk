@@ -384,9 +384,9 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  * <p> <b>Precision (Binary to Decimal Conversion)</b>
  *
  * <p> To round under a decimal-floating point format, a binary to {@code String}
- * conversion is done using {@link Double#toString(double)}. As a result,
- * regardless of the pattern set by the {@code DecimalFormat}, for all fractional
- * input values, the resultant decimal formatted {@code String} will only have precision
+ * conversion is done. As a result, regardless of the pattern set by the
+ * {@code DecimalFormat}, for all fractional input values, the resultant decimal
+ * formatted {@code String} will only have precision
  * up to that of {@link Double#toString(double)}. {@code DecimalFormat} does not
  * round using the exact decimal expansion and thus does not have the precision
  * provided by {@link BigDecimal#BigDecimal(double)}.
