@@ -156,7 +156,7 @@ final class DigitList implements Cloneable {
      * If (count == 0) this returns 0.0,
      * unlike Double.parseDouble("") which throws NumberFormatException.
      */
-    public final double getDouble() {
+    public double getDouble() {
         if (count == 0) {
             return 0.0;
         }
@@ -174,7 +174,7 @@ final class DigitList implements Cloneable {
      * If (count == 0) this returns 0,
      * unlike Long.parseLong("") which throws NumberFormatException.
      */
-    public final long getLong() {
+    public long getLong() {
         // for now, simple implementation; later, do proper IEEE native stuff
 
         if (count == 0) {
@@ -201,7 +201,7 @@ final class DigitList implements Cloneable {
      * If (count == 0) this does not throw a NumberFormatException,
      * unlike BigDecimal("").
      */
-    public final BigDecimal getBigDecimal() {
+    public BigDecimal getBigDecimal() {
         if (count == 0) {
             if (decimalAt == 0) {
                 return BigDecimal.ZERO;
@@ -277,7 +277,7 @@ final class DigitList implements Cloneable {
      * @param maximumFractionDigits The most fractional digits which should
      * be converted.
      */
-    final void set(boolean isNegative, double source, int maximumFractionDigits) {
+    void set(boolean isNegative, double source, int maximumFractionDigits) {
         set(isNegative, source, maximumFractionDigits, true);
     }
 
@@ -292,7 +292,7 @@ final class DigitList implements Cloneable {
      * @param fixedPoint If true, then maximumDigits is the maximum
      * fractional digits to be converted.  If false, total digits.
      */
-    final void set(boolean isNegative, double source, int maximumDigits, boolean fixedPoint) {
+    void set(boolean isNegative, double source, int maximumDigits, boolean fixedPoint) {
 
         FloatingDecimal.BinaryToASCIIConverter fdConverter  = FloatingDecimal.getBinaryToASCIIConverter(source);
         boolean hasBeenRoundedUp = fdConverter.digitsRoundedUp();
@@ -401,9 +401,9 @@ final class DigitList implements Cloneable {
      *
      * Upon return, count will be less than or equal to maximumDigits.
      */
-    private final void round(int maximumDigits,
-                             boolean alreadyRounded,
-                             boolean valueExactAsDecimal) {
+    private void round(int maximumDigits,
+                       boolean alreadyRounded,
+                       boolean valueExactAsDecimal) {
         // Eliminate digits beyond maximum digits to be displayed.
         // Round up if appropriate.
         if (maximumDigits >= 0 && maximumDigits < count) {
@@ -608,7 +608,7 @@ final class DigitList implements Cloneable {
     /**
      * Utility routine to set the value of the digit list from a long
      */
-    final void set(boolean isNegative, long source) {
+    void set(boolean isNegative, long source) {
         set(isNegative, source, 0);
     }
 
@@ -621,7 +621,7 @@ final class DigitList implements Cloneable {
      * If maximumDigits is lower than the number of significant digits
      * in source, the representation will be rounded.  Ignored if <= 0.
      */
-    final void set(boolean isNegative, long source, int maximumDigits) {
+    void set(boolean isNegative, long source, int maximumDigits) {
         this.isNegative = isNegative;
 
         // This method does not expect a negative number. However,
@@ -667,7 +667,7 @@ final class DigitList implements Cloneable {
      * @param fixedPoint If true, then maximumDigits is the maximum
      * fractional digits to be converted.  If false, total digits.
      */
-    final void set(boolean isNegative, BigDecimal source, int maximumDigits, boolean fixedPoint) {
+    void set(boolean isNegative, BigDecimal source, int maximumDigits, boolean fixedPoint) {
         String s = source.toString();
         extendDigits(s.length());
 
@@ -684,7 +684,7 @@ final class DigitList implements Cloneable {
      * If maximumDigits is lower than the number of significant digits
      * in source, the representation will be rounded.  Ignored if <= 0.
      */
-    final void set(boolean isNegative, BigInteger source, int maximumDigits) {
+    void set(boolean isNegative, BigInteger source, int maximumDigits) {
         this.isNegative = isNegative;
         String s = source.toString();
         int len = s.length();
@@ -765,7 +765,7 @@ final class DigitList implements Cloneable {
         return true;
     }
 
-    private static final int parseInt(char[] str, int offset, int strLen) {
+    private static int parseInt(char[] str, int offset, int strLen) {
         char c;
         boolean positive = true;
         if ((c = str[offset]) == '-') {
@@ -820,7 +820,7 @@ final class DigitList implements Cloneable {
         }
     }
 
-    private final char[] getDataChars(int length) {
+    private char[] getDataChars(int length) {
         if (data == null || data.length < length) {
             data = new char[length];
         }
