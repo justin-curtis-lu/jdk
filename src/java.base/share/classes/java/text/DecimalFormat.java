@@ -348,7 +348,7 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  *
  * <p> <b>Rounding Doubles</b>
  *
- * <p> {@code DecimalFormat}, when formatting doubles is a decimal floating-point format
+ * <p> {@code DecimalFormat}, when formatting doubles, is a decimal floating-point format
  * which rounds a {@code double} to a {@code String} value that represents the
  * sign and magnitude of the argument.
  *
