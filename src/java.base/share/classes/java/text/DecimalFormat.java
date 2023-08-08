@@ -344,6 +344,8 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  *     DecimalFormat df = new DecimalFormat("0.00");
  *     df.setRoundingMode(RoundingMode.UP);
  *     df.format(0.000001); // returns "0.01"
+ *     df.setRoundingMode(RoundingMode.HALF_UP);
+ *     df.format(0.000001); // returns "0.00"
  * }
  *
  * <p> <b>Rounding Doubles</b>
