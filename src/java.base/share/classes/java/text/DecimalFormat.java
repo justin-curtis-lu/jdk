@@ -329,9 +329,75 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  *
  * <h3>Rounding</h3>
  *
- * {@code DecimalFormat} provides rounding modes defined in
- * {@link java.math.RoundingMode} for formatting.  By default, it uses
- * {@link java.math.RoundingMode#HALF_EVEN RoundingMode.HALF_EVEN}.
+ * <p> <b>Rounding Modes</b>
+ *
+ * <p> {@code DecimalFormat} provides rounding modes defined in
+ * {@link java.math.RoundingMode} for formatting. By default, it uses
+ * {@link java.math.RoundingMode#HALF_EVEN RoundingMode.HALF_EVEN}. It should be
+ * noted that the following rounding modes: {@link java.math.RoundingMode#UP
+ * RoundingMode.UP}, {@link java.math.RoundingMode#CEILING RoundingMode.CEILING},
+ * and {@link java.math.RoundingMode#FLOOR RoundingMode.FLOOR} have stipulations
+ * that prevent the loss of magnitude when rounding under certain circumstances.
+ *
+ * <p>For example,
+ * {@snippet lang=java :
+ *     DecimalFormat df = new DecimalFormat("0.00");
+ *     df.setRoundingMode(RoundingMode.UP);
+ *     df.format(0.000001); // returns "0.01"
+ * }
+ *
+ * <p> <b>Rounding Doubles</b>
+ *
+ * <p> {@code DecimalFormat}, when formatting doubles is a decimal floating-point format
+ * which rounds a {@code double} to a {@code String} value that represents the
+ * sign and magnitude of the argument.
+ *
+ * <p> When rounding with a {@code double} represented by the numerical value X,
+ * rounding is done using the best floating-point approximation for X. When the
+ * exact value is a representable number, the exact number is used for rounding.
+ * Otherwise, either of the two decimal floating-point values which bracket the
+ * exact result may be returned and used as the basis for rounding.
+ *
+ * <p> Consider the following example,
+ * {@snippet lang=java :
+ *     DecimalFormat df = new DecimalFormat("0.00000");
+ *     df.setRoundingMode(RoundingMode.HALF_UP);
+ *     df.format(0.002485); // returns "0.00248"
+ * }
+ *
+ * <p>Intuitively, one might expect the returned value to be {@code "0.00249"}.
+ * The last digit of {@code "0.002485"} is a 5, and according to {@link
+ * java.math.RoundingMode#HALF_UP RoundingMode.HALF_UP} this tie should
+ * round the 5th fractional digit from 8 to 9.
+ *
+ * <p> However, the resultant value is actually {@code "0.00248"}.
+ * This is because the numerical value {@code "0.002485"} is an approximation for
+ * the double given by the decimal floating-point value {@code
+ * 0.0024849999999999997958577413470493411296047270298004150390625}.
+ * When using this value as the basis for rounding, the 6th fractional digit is a
+ * 4. Under {@link java.math.RoundingMode#HALF_UP RoundingMode.HALF_UP}, the
+ * 5th fractional digit should round to its closest neighbor, 8. Hence, the
+ * resultant value being {@code "0.00248"}, not {@code "0.00249"}.
+ *
+ * <p> <b>Precision (Binary to Decimal Conversion)</b>
+ *
+ * <p> To round under a decimal-floating point format, a binary to {@code String}
+ * conversion is done using {@link Double#toString(double)}. As a result,
+ * regardless of the pattern set by the {@code DecimalFormat}, for all fractional
+ * input values, the resultant decimal formatted {@code String} will only have precision
+ * up to that of {@link Double#toString(double)}. {@code DecimalFormat} does not
+ * round using the exact decimal expansion and thus does not have the precision
+ * provided by {@link BigDecimal#BigDecimal(double)}.
+ *
+ * <p> For example,
+ * {@snippet lang=java :
+ *     // 30 fractional digits
+ *     DecimalFormat df = new DecimalFormat("0.000000000000000000000000000000");
+ *     // Format a double approximated by a numerical value with 24 fractional digits
+ *     df.format(0.248524852485248524852485); // returns "0.248524852485248530000000000000"
+ *     // For reference
+ *     new BigDecimal(0.248524852485248524852485); // returns 0.248524852485248526345884556576493196189403533935546875
+ * }
  *
  * <h3>Digits</h3>
  *
