@@ -517,16 +517,11 @@ final class DigitList implements Cloneable {
             case DOWN:
                 break;
             case CEILING:
-                for (int i=maximumDigits; i<count; ++i) {
-                    if (digits[i] != '0') {
-                        return !isNegative;
-                    }
-                }
-                break;
             case FLOOR:
                 for (int i=maximumDigits; i<count; ++i) {
                     if (digits[i] != '0') {
-                        return isNegative;
+                        return (isNegative && roundingMode == RoundingMode.FLOOR)
+                                || (!isNegative && roundingMode == RoundingMode.CEILING);
                     }
                 }
                 break;
