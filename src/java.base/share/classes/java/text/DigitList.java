@@ -504,60 +504,32 @@ final class DigitList implements Cloneable {
                 break;
             case HALF_UP:
             case HALF_DOWN:
-                if (digits[maximumDigits] > '5') {
-                    // Value is above tie ==> must round up
-                    return true;
-                } else if (digits[maximumDigits] == '5') {
-                    // Digit at rounding position is a '5'. Tie cases.
-                    if (maximumDigits != (count - 1)) {
-                        // There are remaining digits. Above tie => must round up
-                        return true;
-                    } else {
-                        // Digit at rounding position is the last one !
-                        if (valueExactAsDecimal) {
-                            // Exact binary representation. On the tie.
-                            // Apply rounding given by roundingMode.
-                            return roundingMode == RoundingMode.HALF_UP;
-                        } else {
-                            // Not an exact binary representation.
-                            // Digit sequence either rounded up or truncated.
-                            // Round up only if it was truncated.
-                            return !alreadyRounded;
-                        }
-                    }
-                }
-                // Digit at rounding position is < '5' ==> no round up.
-                // Just let do the default, which is no round up (thus break).
-                break;
             case HALF_EVEN:
-                // Implement IEEE half-even rounding
+                // Above tie, round up for all cases
                 if (digits[maximumDigits] > '5') {
                     return true;
+                // At tie, consider UP, DOWN, and EVEN logic
                 } else if (digits[maximumDigits] == '5' ) {
+                    // Rounding position is the last index, there are 3 Cases.
                     if (maximumDigits == (count - 1)) {
-                        // the rounding position is exactly the last index :
-                        if (alreadyRounded)
-                            // If FloatingDecimal rounded up (value was below tie),
-                            // then we should not round up again.
+                        // Do not round twice
+                        if (alreadyRounded) {
                             return false;
-
-                        if (!valueExactAsDecimal)
-                            // Otherwise if the digits don't represent exact value,
-                            // value was above tie and FloatingDecimal truncated
-                            // digits to tie. We must round up.
+                        // When exact, consider specific contract logic
+                        } else if (valueExactAsDecimal) {
+                            return (roundingMode == RoundingMode.HALF_UP) ||
+                                    (roundingMode == RoundingMode.HALF_EVEN
+                                            && (maximumDigits > 0) && (digits[maximumDigits - 1] % 2 != 0));
+                        // Not already rounded, and not exact, round up
+                        } else {
                             return true;
-                        else {
-                            // This is an exact tie value, and FloatingDecimal
-                            // provided all of the exact digits. We thus apply
-                            // HALF_EVEN rounding rule.
-                            return ((maximumDigits > 0) &&
-                                    (digits[maximumDigits-1] % 2 != 0));
                         }
+                    // Rounding position is not the last index
                     } else {
-                        // Rounds up if it gives a non null digit after '5'
                         return nonZeroAfterIndex(maximumDigits+1);
                     }
                 }
+                // Below tie, do not round up for all cases
                 break;
             case UNNECESSARY:
                 if (nonZeroAfterIndex(maximumDigits)) {
