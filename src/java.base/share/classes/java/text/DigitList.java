@@ -508,21 +508,17 @@ final class DigitList implements Cloneable {
 
             switch(roundingMode) {
             case UP:
-                for (int i=maximumDigits; i<count; ++i) {
-                    if (digits[i] != '0') {
-                        return true;
-                    }
+                if (nonZeroAfterIndex(maximumDigits)) {
+                    return true;
                 }
                 break;
             case DOWN:
                 break;
             case CEILING:
             case FLOOR:
-                for (int i=maximumDigits; i<count; ++i) {
-                    if (digits[i] != '0') {
-                        return (isNegative && roundingMode == RoundingMode.FLOOR)
-                                || (!isNegative && roundingMode == RoundingMode.CEILING);
-                    }
+                if (nonZeroAfterIndex(maximumDigits)) {
+                    return (isNegative && roundingMode == RoundingMode.FLOOR)
+                            || (!isNegative && roundingMode == RoundingMode.CEILING);
                 }
                 break;
             case HALF_UP:
@@ -578,19 +574,14 @@ final class DigitList implements Cloneable {
                         }
                     } else {
                         // Rounds up if it gives a non null digit after '5'
-                        for (int i=maximumDigits+1; i<count; ++i) {
-                            if (digits[i] != '0')
-                                return true;
-                        }
+                        return nonZeroAfterIndex(maximumDigits+1);
                     }
                 }
                 break;
             case UNNECESSARY:
-                for (int i=maximumDigits; i<count; ++i) {
-                    if (digits[i] != '0') {
+                if (nonZeroAfterIndex(maximumDigits)) {
                         throw new ArithmeticException(
                             "Rounding needed with the rounding mode being set to RoundingMode.UNNECESSARY");
-                    }
                 }
                 break;
             default:
@@ -820,5 +811,16 @@ final class DigitList implements Cloneable {
             data = new char[length];
         }
         return data;
+    }
+
+    /* Utility method to check if there are non-zero digits remaining
+    from digitIndex to the end of the digit list */
+    private Boolean nonZeroAfterIndex(int digitIndex) {
+        for (int i = digitIndex; i < count; ++i) {
+            if (digits[i] != '0') {
+                return true;
+            }
+        }
+        return false;
     }
 }
