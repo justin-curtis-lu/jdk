@@ -408,25 +408,7 @@ final class DigitList implements Cloneable {
         // Round up if appropriate.
         if (maximumDigits >= 0 && maximumDigits < count) {
             if (shouldRoundUp(maximumDigits, alreadyRounded, valueExactAsDecimal)) {
-                // Rounding up involved incrementing digits from LSD to MSD.
-                // In most cases this is simple, but in a worst case situation
-                // (9999..99) we have to adjust the decimalAt value.
-                for (;;) {
-                    --maximumDigits;
-                    if (maximumDigits < 0) {
-                        // We have all 9's, so we increment to a single digit
-                        // of one and adjust the exponent.
-                        digits[0] = '1';
-                        ++decimalAt;
-                        maximumDigits = 0; // Adjust the count
-                        break;
-                    }
-
-                    ++digits[maximumDigits];
-                    if (digits[maximumDigits] <= '9') break;
-                    // digits[maximumDigits] = '0'; // Unnecessary since we'll truncate this
-                }
-                ++maximumDigits; // Increment for use as count
+                maximumDigits = roundUp(maximumDigits);
             }
             count = maximumDigits;
 
@@ -589,6 +571,33 @@ final class DigitList implements Cloneable {
             }
         }
         return false;
+    }
+
+    /**
+     * Round the digit list up numerically.
+     * This involves incrementing digits from the LSD to the MSD.
+     * @param maximumDigits The maximum number of digits to be shown.
+     * @return The new maximum digits after rounding.
+     */
+    private int roundUp(int maximumDigits) {
+        do {
+            --maximumDigits;
+            /*
+             * We have exhausted the max digits while attempting to round up
+             * from the LSD to the MSD. This implies a value of all 9's. As such,
+             * adjust representation to a single digit of one and increment the exponent.
+             */
+            if (maximumDigits < 0) {
+                digits[0] = '1';
+                ++decimalAt;
+                maximumDigits = 0; // Adjust the count
+                break;
+            }
+            ++digits[maximumDigits];
+        }
+        while (digits[maximumDigits] > '9');
+
+        return ++maximumDigits; // Increment for use as count
     }
 
     /**
