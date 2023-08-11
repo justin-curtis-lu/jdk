@@ -183,13 +183,11 @@ final class DigitList implements Cloneable {
      * Return true if the represented number is zero.
      */
     boolean isZero() {
-        for (int i=0; i < count; ++i) {
-            if (digits[i] != '0') {
-                return false;
-            }
-        }
-        return true;
+        return !nonZeroAfterIndex(0);
     }
+
+
+    // --- The overloaded set methods are the main functionality of DigitList  ---
 
     /**
      * Set the digit list to a representation of the given double value.
@@ -327,9 +325,15 @@ final class DigitList implements Cloneable {
               roundedUp, valueExactAsDecimal);
      }
 
+    /**
+     * Parses the numeric portion of an exponent and returns its integer value.
+     * Upon entering, offset should be equal to the index of 'e'/'E'.
+     */
     private static int parseInt(char[] str, int offset, int strLen) {
         char c;
         boolean positive = true;
+
+        // Increment if there is a sign value
         if ((c = str[offset]) == '-') {
             positive = false;
             offset++;
@@ -351,6 +355,19 @@ final class DigitList implements Cloneable {
 
     /**
      * Round the representation to the given number of digits.
+     * This method is intended to be used for Long and BigInteger representations.
+     * @param maximumDigits The maximum number of digits to be shown.
+     *
+     * Upon return, count will be less than or equal to maximumDigits.
+     */
+    private void round(int maximumDigits) {
+        // Integers need not worry about double rounding
+        round(maximumDigits, false, true);
+    }
+
+    /**
+     * Round the representation to the given number of digits.
+     * This method is intended to be used for Double and BigDecimal representations.
      * @param maximumDigits The maximum number of digits to be shown.
      * @param alreadyRounded whether rounding up has already happened.
      * @param valueExactAsDecimal whether collected digits provide
@@ -365,6 +382,7 @@ final class DigitList implements Cloneable {
         // Round up if appropriate.
         if (maximumDigits >= 0 && maximumDigits < count) {
             if (shouldRoundUp(maximumDigits, alreadyRounded, valueExactAsDecimal)) {
+                // Rounding can adjust the max digits
                 maximumDigits = roundUp(maximumDigits);
             }
             count = maximumDigits;
@@ -592,7 +610,7 @@ final class DigitList implements Cloneable {
             System.arraycopy(digits, left, digits, 0, count);
         }
         if (maximumDigits > 0) {
-            round(maximumDigits, false, true);
+            round(maximumDigits);
         }
     }
 
@@ -645,7 +663,7 @@ final class DigitList implements Cloneable {
         count = right + 1;
 
         if (maximumDigits > 0) {
-            round(maximumDigits, false, true);
+            round(maximumDigits);
         }
     }
 
