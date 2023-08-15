@@ -2513,9 +2513,9 @@ public class SimpleDateFormat extends DateFormat {
      * as necessary.
      */
     private void checkNegativeNumberExpression() {
-        if ((numberFormat instanceof DecimalFormat decFmt) &&
+        if ((numberFormat instanceof DecimalFormat dFmt) &&
             !numberFormat.equals(originalNumberFormat)) {
-            String numberPattern = decFmt.toPattern();
+            String numberPattern = dFmt.toPattern();
             if (!numberPattern.equals(originalNumberPattern)) {
                 hasFollowingMinusSign = false;
 
