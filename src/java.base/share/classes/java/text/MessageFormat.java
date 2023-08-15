@@ -572,10 +572,10 @@ public class MessageFormat extends Format {
                 } else if (fmt.equals(NumberFormat.getIntegerInstance(locale))) {
                     result.append(",number,integer");
                 } else {
-                    if (fmt instanceof DecimalFormat) {
-                        result.append(",number,").append(((DecimalFormat)fmt).toPattern());
-                    } else if (fmt instanceof ChoiceFormat) {
-                        result.append(",choice,").append(((ChoiceFormat)fmt).toPattern());
+                    if (fmt instanceof DecimalFormat dFmt) {
+                        result.append(",number,").append(dFmt.toPattern());
+                    } else if (fmt instanceof ChoiceFormat cFmt) {
+                        result.append(",choice,").append(cFmt.toPattern());
                     } else {
                         // UNKNOWN
                     }
@@ -597,8 +597,8 @@ public class MessageFormat extends Format {
                     }
                 }
                 if (index >= DATE_TIME_MODIFIERS.length) {
-                    if (fmt instanceof SimpleDateFormat) {
-                        result.append(",date,").append(((SimpleDateFormat)fmt).toPattern());
+                    if (fmt instanceof SimpleDateFormat sdFmt) {
+                        result.append(",date,").append(sdFmt.toPattern());
                     } else {
                         // UNKNOWN
                     }
@@ -1321,8 +1321,8 @@ public class MessageFormat extends Format {
                     // format a Date if can
                     subFormatter = DateFormat.getDateTimeInstance(
                              DateFormat.SHORT, DateFormat.SHORT, locale);//fix
-                } else if (obj instanceof String) {
-                    arg = (String) obj;
+                } else if (obj instanceof String str) {
+                    arg = str;
 
                 } else {
                     arg = obj.toString();

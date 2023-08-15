@@ -48,6 +48,7 @@ import java.text.spi.NumberFormatProvider;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import sun.util.locale.provider.LocaleProviderAdapter;
@@ -533,15 +534,14 @@ public class DecimalFormat extends NumberFormat {
                    number instanceof Short || number instanceof Byte ||
                    number instanceof AtomicInteger ||
                    number instanceof AtomicLong ||
-                   (number instanceof BigInteger &&
-                    ((BigInteger)number).bitLength () < 64)) {
+                   (number instanceof BigInteger bigI && bigI.bitLength () < 64)) {
             return format(((Number)number).longValue(), toAppendTo, pos);
-        } else if (number instanceof BigDecimal) {
-            return format((BigDecimal)number, toAppendTo, pos);
-        } else if (number instanceof BigInteger) {
-            return format((BigInteger)number, toAppendTo, pos);
-        } else if (number instanceof Number) {
-            return format(((Number)number).doubleValue(), toAppendTo, pos);
+        } else if (number instanceof BigDecimal bigD) {
+            return format(bigD, toAppendTo, pos);
+        } else if (number instanceof BigInteger bigI) {
+            return format(bigI, toAppendTo, pos);
+        } else if (number instanceof Number num) {
+            return format(num.doubleValue(), toAppendTo, pos);
         } else {
             throw new IllegalArgumentException("Cannot format given Object as a Number");
         }
@@ -965,6 +965,9 @@ public class DecimalFormat extends NumberFormat {
      */
     @Override
     public AttributedCharacterIterator formatToCharacterIterator(Object obj) {
+        Objects.requireNonNull(obj,
+                "formatToCharacterIterator must be passed non-null object");
+
         CharacterIteratorFieldDelegate delegate =
                          new CharacterIteratorFieldDelegate();
         StringBuffer sb = new StringBuffer();
@@ -975,13 +978,10 @@ public class DecimalFormat extends NumberFormat {
                    obj instanceof Short || obj instanceof Byte ||
                    obj instanceof AtomicInteger || obj instanceof AtomicLong) {
             format(((Number)obj).longValue(), sb, delegate);
-        } else if (obj instanceof BigDecimal) {
-            format((BigDecimal)obj, sb, delegate);
-        } else if (obj instanceof BigInteger) {
-            format((BigInteger)obj, sb, delegate, false);
-        } else if (obj == null) {
-            throw new NullPointerException(
-                "formatToCharacterIterator must be passed non-null object");
+        } else if (obj instanceof BigDecimal bigD) {
+            format(bigD, sb, delegate);
+        } else if (obj instanceof BigInteger bigI) {
+            format(bigI, sb, delegate, false);
         } else {
             throw new IllegalArgumentException(
                 "Cannot format given Object as a Number");
@@ -1743,14 +1743,14 @@ public class DecimalFormat extends NumberFormat {
      */
     void setDigitList(Number number, boolean isNegative, int maxDigits) {
 
-        if (number instanceof Double) {
-            digitList.set(isNegative, (Double) number, maxDigits, true);
-        } else if (number instanceof BigDecimal) {
-            digitList.set(isNegative, (BigDecimal) number, maxDigits, true);
-        } else if (number instanceof Long) {
-            digitList.set(isNegative, (Long) number, maxDigits);
-        } else if (number instanceof BigInteger) {
-            digitList.set(isNegative, (BigInteger) number, maxDigits);
+        if (number instanceof Double db) {
+            digitList.set(isNegative, db, maxDigits, true);
+        } else if (number instanceof BigDecimal bigD) {
+            digitList.set(isNegative, bigD, maxDigits, true);
+        } else if (number instanceof Long lng) {
+            digitList.set(isNegative, lng, maxDigits);
+        } else if (number instanceof BigInteger bigI) {
+            digitList.set(isNegative, bigI, maxDigits);
         }
     }
 
@@ -3865,11 +3865,7 @@ public class DecimalFormat extends NumberFormat {
      */
     @Override
     public void setRoundingMode(RoundingMode roundingMode) {
-        if (roundingMode == null) {
-            throw new NullPointerException();
-        }
-
-        this.roundingMode = roundingMode;
+        this.roundingMode = Objects.requireNonNull(roundingMode);
         digitList.setRoundingMode(roundingMode);
         fastPathCheckNeeded = true;
     }

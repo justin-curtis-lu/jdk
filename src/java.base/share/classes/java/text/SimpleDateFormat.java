@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SimpleTimeZone;
 import java.util.SortedMap;
 import java.util.TimeZone;
@@ -1024,19 +1025,18 @@ public class SimpleDateFormat extends DateFormat {
      */
     @Override
     public AttributedCharacterIterator formatToCharacterIterator(Object obj) {
+        Objects.requireNonNull(obj,
+                "formatToCharacterIterator must be passed non-null object");
+
         StringBuffer sb = new StringBuffer();
         CharacterIteratorFieldDelegate delegate = new
                          CharacterIteratorFieldDelegate();
 
-        if (obj instanceof Date) {
-            format((Date)obj, sb, delegate);
+        if (obj instanceof Date date) {
+            format(date, sb, delegate);
         }
-        else if (obj instanceof Number) {
-            format(new Date(((Number)obj).longValue()), sb, delegate);
-        }
-        else if (obj == null) {
-            throw new NullPointerException(
-                   "formatToCharacterIterator must be passed non-null object");
+        else if (obj instanceof Number num) {
+            format(new Date(num.longValue()), sb, delegate);
         }
         else {
             throw new IllegalArgumentException(
@@ -2513,9 +2513,9 @@ public class SimpleDateFormat extends DateFormat {
      * as necessary.
      */
     private void checkNegativeNumberExpression() {
-        if ((numberFormat instanceof DecimalFormat) &&
+        if ((numberFormat instanceof DecimalFormat decFmt) &&
             !numberFormat.equals(originalNumberFormat)) {
-            String numberPattern = ((DecimalFormat)numberFormat).toPattern();
+            String numberPattern = decFmt.toPattern();
             if (!numberPattern.equals(originalNumberPattern)) {
                 hasFollowingMinusSign = false;
 
