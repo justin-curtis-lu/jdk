@@ -201,7 +201,7 @@ public class ChoiceFormat extends NumberFormat {
                 }
             } else if (inQuote) {
                 segments[part].append(ch);
-            } else if (part == 0 && ch == '<' || ch == '#' || ch == '\u2264') {
+            } else if (part == 0 && (ch == '<' || ch == '#' || ch == '\u2264')) {
                 // Only consider relational symbol if parsing
                 // the limit segment. Allows for symbols in format segment.
                 if (segments[0].length() == 0) {

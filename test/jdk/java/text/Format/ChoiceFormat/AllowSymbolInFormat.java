@@ -24,35 +24,47 @@
 /*
  * @test
  * @bug 6285888
- * @summary Allow ChoiceFormat to support "#", "<", "<=" within
+ * @summary Allow ChoiceFormat to support "#", "<", "≤" within
  *          the format segment of a ChoiceFormat String pattern
  * @run junit AllowSymbolInFormat
  */
 
 import java.text.ChoiceFormat;
+import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AllowSymbolInFormat {
 
     // Throws IllegalArgumentException prior to 6285888 fix
-    @Test
-    public void allowInConstructor() {
-        assertDoesNotThrow(new ChoiceFormat("1#foo<"));
-        assertDoesNotThrow(new ChoiceFormat("1#foo#"));
-        assertDoesNotThrow(new ChoiceFormat("1#foo<="));
-        assertDoesNotThrow(new ChoiceFormat("1#foo<#<=|2#baz<#<="));
+    @ParameterizedTest
+    @MethodSource("patternsWithSymbols")
+    public void allowInConstructor(String pattern, String expected, int limit) {
+        var cf = new ChoiceFormat(pattern);
+        assertEquals(expected, cf.format(limit));
     }
 
     // Throws IllegalArgumentException prior to 6285888 fix
-    @Test
-    public void allowInMethod() {
+    @ParameterizedTest
+    @MethodSource("patternsWithSymbols")
+    public void allowInMethod(String pattern, String expected, int limit) {
         var cf = new ChoiceFormat("");
-        assertDoesNotThrow(cf.applyPattern("1#foo<"));
-        assertDoesNotThrow(cf.applyPattern("1#foo#"));
-        assertDoesNotThrow(cf.applyPattern("1#foo<="));
-        assertDoesNotThrow(cf.applyPattern("1#foo<#<=|2#baz<#<="));
+        cf.applyPattern(pattern);
+        assertEquals(expected, cf.format(limit));
+    }
+
+    private static Stream<Arguments> patternsWithSymbols() {
+        return Stream.of(
+                Arguments.of("1#foo<", "foo<", 1),
+                Arguments.of("1<foo\u2264", "foo\u2264", 1),
+                Arguments.of("1\u2264foo#", "foo#", 1),
+                Arguments.of("1#foo<#\u2264|2\u2264baz<#\u2264", "baz<#\u2264", 100),
+                Arguments.of("1#foo<#\u2264|2#baz<#\u2264|3<bar##\u2264", "bar##\u2264", 100),
+                Arguments.of("1#foo<#\u2264|2#baz<#\u2264|3\u2264bar##\u2264", "bar##\u2264", 100)
+        );
     }
 }
