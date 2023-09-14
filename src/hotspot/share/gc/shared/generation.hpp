@@ -291,10 +291,6 @@ class Generation: public CHeapObj<mtGC> {
   // Save the high water marks for the used space in a generation.
   virtual void record_spaces_top() {}
 
-  // Some generations may need to be "fixed-up" after some allocation
-  // activity to make them parsable again. The default is to do nothing.
-  virtual void ensure_parsability() {}
-
   // Generations may keep statistics about collection. This method
   // updates those statistics. current_generation is the generation
   // that was most recently collected. This allows the generation to
@@ -311,7 +307,6 @@ class Generation: public CHeapObj<mtGC> {
   virtual void adjust_pointers();
   // Mark sweep support phase4
   virtual void compact();
-  virtual void post_compact() { ShouldNotReachHere(); }
 #endif
 
   // Accessing "marks".
@@ -325,22 +320,6 @@ class Generation: public CHeapObj<mtGC> {
   // This function is "true" iff any no allocations have occurred in the
   // generation since the last call to "save_marks".
   virtual bool no_allocs_since_save_marks() = 0;
-
-  // The "requestor" generation is performing some garbage collection
-  // action for which it would be useful to have scratch space.  If
-  // the target is not the requestor, no gc actions will be required
-  // of the target.  The requestor promises to allocate no more than
-  // "max_alloc_words" in the target generation (via promotion say,
-  // if the requestor is a young generation and the target is older).
-  // If the target generation can provide any scratch space, it adds
-  // it to "list", leaving "list" pointing to the head of the
-  // augmented list.  The default is to offer no space.
-  virtual void contribute_scratch(ScratchBlock*& list, Generation* requestor,
-                                  size_t max_alloc_words) {}
-
-  // Give each generation an opportunity to do clean up for any
-  // contributed scratch.
-  virtual void reset_scratch() {}
 
   // When an older generation has been collected, and perhaps resized,
   // this method will be invoked on all younger generations (from older to
