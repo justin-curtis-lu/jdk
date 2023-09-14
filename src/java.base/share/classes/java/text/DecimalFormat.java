@@ -395,16 +395,18 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  * <p> <b>Precision (Binary to Decimal Conversion)</b>
  *
  * <p> To round under a decimal-floating point format, a binary to {@code String}
- * conversion is done. As a result, regardless of the pattern set by the
- * {@code DecimalFormat}, for all fractional input values, the resultant decimal
- * formatted {@code String} will only have precision
- * up to that of {@link Double#toString(double)}. {@code DecimalFormat} does not
+ * conversion is done. {@code DecimalFormat} does not
  * round using the exact decimal expansion and thus does not have the precision
  * provided by {@link BigDecimal#BigDecimal(double)}.
+ * @implNote
+ * This implementation performs the binary to {@code String} conversion using
+ * {@link Double#toString(double)}. As such, fractional precision of formatted
+ * values will only go up to that of the fractional precision provided by {@code
+ * toString(double)}, even if the pattern set is higher.
  *
  * <p> For example,
  * {@snippet lang=java :
- *     // 30 fractional digits
+ *     // A pattern with a minimum of 30 fractional digits
  *     DecimalFormat df = new DecimalFormat("0.000000000000000000000000000000");
  *     // Format a double approximated by a numerical value with 24 fractional digits
  *     df.format(0.248524852485248524852485); // returns "0.248524852485248530000000000000"
