@@ -366,7 +366,7 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  * sign and magnitude of the argument.
  *
  * <p> When rounding with a {@code double} represented by the numerical value X,
- * rounding is done using the best floating-point approximation for X. When the
+ * rounding is done using the nearest floating-point approximation for X. When the
  * exact value is a representable number, the exact number is used for rounding.
  * Otherwise, either of the two decimal floating-point values which bracket the
  * exact result may be returned and used as the basis for rounding.
@@ -378,19 +378,13 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  *     df.format(0.002485); // returns "0.00248"
  * }
  *
- * <p>Intuitively, one might expect the returned value to be {@code "0.00249"}.
- * The last digit of {@code "0.002485"} is a 5, and according to {@link
- * java.math.RoundingMode#HALF_UP RoundingMode.HALF_UP} this tie should
- * round the 5th fractional digit from 8 to 9.
- *
- * <p> However, the resultant value is actually {@code "0.00248"}.
- * This is because the numerical value {@code "0.002485"} is an approximation for
- * the double given by the decimal floating-point value {@code
- * 0.0024849999999999997958577413470493411296047270298004150390625}.
- * When using this value as the basis for rounding, the 6th fractional digit is a
- * 4. Under {@link java.math.RoundingMode#HALF_UP RoundingMode.HALF_UP}, the
- * 5th fractional digit should round to its closest neighbor, 8. Hence, the
- * resultant value being {@code "0.00248"}, not {@code "0.00249"}.
+ * <p> When rounding with the numerical value {@code 0.002485}, one might expect
+ * a formatted value of {@code "0.00249"}. However, since rounding occurs under
+ * a floating-point format, the nearest double given by the
+ * decimal floating-point value {@code 0.00248499999999999979585774134704934112
+ * 96047270298004150390625} is used. Rounding this value to 5 fractional digits
+ * gives {@code "0.00248"}, since {@code "0.0024849..."} under {@code RoundingMode.HALF_UP}
+ * rounds down.
  *
  * <p> <b>Precision (Binary to Decimal Conversion)</b>
  *
@@ -399,7 +393,7 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  * round using the exact decimal expansion and thus does not have the precision
  * provided by {@link BigDecimal#BigDecimal(double)}.
  * @implNote
- * This implementation performs the binary to {@code String} conversion using
+ * The default implementation performs the binary to {@code String} conversion using
  * {@link Double#toString(double)}. As such, fractional precision of formatted
  * values will only go up to that of the fractional precision provided by {@code
  * toString(double)}, even if the pattern set is higher.
