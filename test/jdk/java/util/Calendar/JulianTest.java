@@ -25,12 +25,17 @@
  * @test
  * @bug 5029449
  * @summary Tests for the Julian calendar system (before the Gregorian cutover)
- * @library /java/text/testlib
+ * @run junit JulianTest
  */
 
 import static java.util.GregorianCalendar.*;
 
-public class JulianTest extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class JulianTest {
 
     public static void main(String[] args) throws Exception {
         new JulianTest().run(args);
@@ -39,6 +44,7 @@ public class JulianTest extends IntlTest {
     /*
      * 5029449: Regression: GregorianCalendar produces wrong Julian calendar dates in BC 1
      */
+    @Test
     public void Test5029449() {
         Koyomi cal = new Koyomi();
         cal.clear();
@@ -46,7 +52,7 @@ public class JulianTest extends IntlTest {
         // Date should be BC 1/12/31
         if (!cal.checkFieldValue(ERA, BC)
             || !cal.checkDate(1, DECEMBER, 31)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
     }
 }

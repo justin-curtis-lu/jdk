@@ -25,8 +25,7 @@
  * @test
  * @summary test International Date Format API
  * @bug 8008577
- * @library /java/text/testlib
- * @run main/othervm -Djava.locale.providers=COMPAT,SPI IntlTestDateFormatAPI
+ * @run junit/othervm -Djava.locale.providers=COMPAT,SPI IntlTestDateFormatAPI
  */
 /*
 (C) Copyright Taligent, Inc. 1996, 1997 - All Rights Reserved
@@ -43,7 +42,12 @@ attribution to Taligent may not be removed.
 import java.text.*;
 import java.util.*;
 
-public class IntlTestDateFormatAPI extends IntlTest
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class IntlTestDateFormatAPI
 {
     public static void main(String[] args) throws Exception {
         Locale reservedLocale = Locale.getDefault();
@@ -56,6 +60,7 @@ public class IntlTestDateFormatAPI extends IntlTest
     }
 
     // Test that the equals method works correctly.
+    @Test
     public void TestEquals()
     {
         // Create two objects at different system times
@@ -65,7 +70,7 @@ public class IntlTestDateFormatAPI extends IntlTest
         DateFormat b = DateFormat.getInstance();
 
         if (!(a.equals(b)))
-            errln("FAIL: DateFormat objects created at different times are unequal.");
+            fail("FAIL: DateFormat objects created at different times are unequal.");
 
         if (b instanceof SimpleDateFormat)
         {
@@ -73,24 +78,25 @@ public class IntlTestDateFormatAPI extends IntlTest
             try {
 //                ((SimpleDateFormat)b).setTwoDigitStartDate(start.getTime() + 50*ONE_YEAR);
 //                if (a.equals(b))
-//                    errln("FAIL: DateFormat objects with different two digit start dates are equal.");
+//                    fail("FAIL: DateFormat objects with different two digit start dates are equal.");
             }
             catch (Exception e) {
-                errln("FAIL: setTwoDigitStartDate failed.");
+                fail("FAIL: setTwoDigitStartDate failed.");
             }
         }
     }
 
     // This test checks various generic API methods in DateFormat to achieve 100% API coverage.
+    @Test
     public void TestAPI()
     {
-        logln("DateFormat API test---"); logln("");
+        System.out.println("DateFormat API test---"); System.out.println("");
         Locale.setDefault(Locale.ENGLISH);
 
 
         // ======= Test constructors
 
-        logln("Testing DateFormat constructors");
+        System.out.println("Testing DateFormat constructors");
 
         DateFormat def = DateFormat.getInstance();
         DateFormat fr = DateFormat.getTimeInstance(DateFormat.FULL, Locale.FRENCH);
@@ -99,15 +105,15 @@ public class IntlTestDateFormatAPI extends IntlTest
 
         // ======= Test equality
 
-        logln("Testing equality operator");
+        System.out.println("Testing equality operator");
 
         if( fr.equals(it) ) {
-            errln("ERROR: equals failed");
+            fail("ERROR: equals failed");
         }
 
         // ======= Test various format() methods
 
-        logln("Testing various format() methods");
+        System.out.println("Testing various format() methods");
 
         Date d = new Date((long)837039928046.0);
 
@@ -118,17 +124,17 @@ public class IntlTestDateFormatAPI extends IntlTest
         FieldPosition pos2 = new FieldPosition(0);
 
         res1 = fr.format(d, res1, pos1);
-        logln("" + d.getTime() + " formatted to " + res1);
+        System.out.println("" + d.getTime() + " formatted to " + res1);
 
         res2 = it.format(d, res2, pos2);
-        logln("" + d.getTime() + " formatted to " + res2);
+        System.out.println("" + d.getTime() + " formatted to " + res2);
 
         res3 = de.format(d);
-        logln("" + d.getTime() + " formatted to " + res3);
+        System.out.println("" + d.getTime() + " formatted to " + res3);
 
         // ======= Test parse()
 
-        logln("Testing parse()");
+        System.out.println("Testing parse()");
 
         String text = new String("02/03/76 2:50 AM, CST");
         Object result1 = new Date();
@@ -139,41 +145,41 @@ public class IntlTestDateFormatAPI extends IntlTest
 
         result1 = def.parseObject(text, pos);
         if (result1 == null) {
-            errln("ERROR: parseObject() failed for " + text);
+            fail("ERROR: parseObject() failed for " + text);
         }
-        logln(text + " parsed into " + ((Date)result1).getTime());
+        System.out.println(text + " parsed into " + ((Date)result1).getTime());
 
         try {
             result2 = def.parse(text);
         }
         catch (ParseException e) {
-            errln("ERROR: parse() failed");
+            fail("ERROR: parse() failed");
         }
-        logln(text + " parsed into " + result2.getTime());
+        System.out.println(text + " parsed into " + result2.getTime());
 
         result3 = def.parse(text, pos01);
         if (result3 == null) {
-            errln("ERROR: parse() failed for " + text);
+            fail("ERROR: parse() failed for " + text);
         }
-        logln(text + " parsed into " + result3.getTime());
+        System.out.println(text + " parsed into " + result3.getTime());
 
 
         // ======= Test getters and setters
 
-        logln("Testing getters and setters");
+        System.out.println("Testing getters and setters");
 
         final Locale[] locales = DateFormat.getAvailableLocales();
         long count = locales.length;
-        logln("Got " + count + " locales" );
+        System.out.println("Got " + count + " locales" );
         for(int i = 0; i < count; i++) {
             String name;
             name = locales[i].getDisplayName();
-            logln(name);
+            System.out.println(name);
         }
 
         fr.setLenient(it.isLenient());
         if(fr.isLenient() != it.isLenient()) {
-            errln("ERROR: setLenient() failed");
+            fail("ERROR: setLenient() failed");
         }
 
         final Calendar cal = def.getCalendar();
@@ -181,7 +187,7 @@ public class IntlTestDateFormatAPI extends IntlTest
         de.setCalendar(newCal);
         it.setCalendar(newCal);
         if( ! de.getCalendar().equals(it.getCalendar())) {
-            errln("ERROR: set Calendar() failed");
+            fail("ERROR: set Calendar() failed");
         }
 
         final NumberFormat nf = def.getNumberFormat();
@@ -189,7 +195,7 @@ public class IntlTestDateFormatAPI extends IntlTest
         de.setNumberFormat(newNf);
         it.setNumberFormat(newNf);
         if( ! de.getNumberFormat().equals(it.getNumberFormat())) {
-            errln("ERROR: set NumberFormat() failed");
+            fail("ERROR: set NumberFormat() failed");
         }
 
         final TimeZone tz = def.getTimeZone();
@@ -197,22 +203,22 @@ public class IntlTestDateFormatAPI extends IntlTest
         de.setTimeZone(newTz);
         it.setTimeZone(newTz);
         if( ! de.getTimeZone().equals(it.getTimeZone())) {
-            errln("ERROR: set TimeZone() failed");
+            fail("ERROR: set TimeZone() failed");
         }
 
         // ======= Test getStaticClassID()
 
-//        logln("Testing instanceof()");
+//        System.out.println("Testing instanceof()");
 
 //        try {
 //            DateFormat test = new SimpleDateFormat();
 
 //            if (! (test instanceof SimpleDateFormat)) {
-//                errln("ERROR: instanceof failed");
+//                fail("ERROR: instanceof failed");
 //            }
 //        }
 //        catch (Exception e) {
-//            errln("ERROR: Couldn't create a DateFormat");
+//            fail("ERROR: Couldn't create a DateFormat");
 //        }
     }
 }

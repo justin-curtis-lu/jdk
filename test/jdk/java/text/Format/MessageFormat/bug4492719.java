@@ -25,14 +25,19 @@
  * @test
  *
  * @bug 4492719
- * @library /java/text/testlib
  * @summary Confirm that Message.parse() interprets time zone which uses "GMT+/-" format correctly and doesn't throw ParseException.
+ * @run junit bug4492719
  */
 
 import java.util.*;
 import java.text.*;
 
-public class bug4492719 extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class bug4492719 {
 
     public static void main(String[] args) throws Exception {
         Locale savedLocale = Locale.getDefault();

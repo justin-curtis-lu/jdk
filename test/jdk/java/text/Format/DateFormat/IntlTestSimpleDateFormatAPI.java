@@ -25,8 +25,7 @@
  * @test
  * @summary test International Simple Date Format API
  * @bug 8008577
- * @library /java/text/testlib
- * @run main/othervm -Djava.locale.providers=COMPAT,SPI IntlTestSimpleDateFormatAPI
+ * @run junit/othervm -Djava.locale.providers=COMPAT,SPI IntlTestSimpleDateFormatAPI
  */
 /*
 (C) Copyright Taligent, Inc. 1996, 1997 - All Rights Reserved
@@ -43,7 +42,12 @@ attribution to Taligent may not be removed.
 import java.text.*;
 import java.util.*;
 
-public class IntlTestSimpleDateFormatAPI extends IntlTest
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class IntlTestSimpleDateFormatAPI
 {
     public static void main(String[] args) throws Exception {
         Locale reservedLocale = Locale.getDefault();
@@ -56,15 +60,16 @@ public class IntlTestSimpleDateFormatAPI extends IntlTest
     }
 
     // This test checks various generic API methods in DecimalFormat to achieve 100% API coverage.
+    @Test
     public void TestAPI()
     {
-        logln("SimpleDateFormat API test---"); logln("");
+        System.out.println("SimpleDateFormat API test---"); System.out.println("");
 
         Locale.setDefault(Locale.ENGLISH);
 
         // ======= Test constructors
 
-        logln("Testing SimpleDateFormat constructors");
+        System.out.println("Testing SimpleDateFormat constructors");
 
         SimpleDateFormat def = new SimpleDateFormat();
 
@@ -79,16 +84,16 @@ public class IntlTestSimpleDateFormatAPI extends IntlTest
 
         // ======= Test clone() and equality
 
-        logln("Testing clone(), assignment and equality operators");
+        System.out.println("Testing clone(), assignment and equality operators");
 
         Format clone = (Format) def.clone();
         if( ! clone.equals(def) ) {
-            errln("ERROR: Format clone or equals failed");
+            fail("ERROR: Format clone or equals failed");
         }
 
         // ======= Test various format() methods
 
-        logln("Testing various format() methods");
+        System.out.println("Testing various format() methods");
 
         Date d = new Date((long)837039928046.0);
 
@@ -98,39 +103,39 @@ public class IntlTestSimpleDateFormatAPI extends IntlTest
         FieldPosition pos2 = new FieldPosition(0);
 
         res1 = def.format(d, res1, pos1);
-        logln( "" + d.getTime() + " formatted to " + res1);
+        System.out.println( "" + d.getTime() + " formatted to " + res1);
 
         res2 = cust1.format(d, res2, pos2);
-        logln("" + d.getTime() + " formatted to " + res2);
+        System.out.println("" + d.getTime() + " formatted to " + res2);
 
         // ======= Test parse()
 
-        logln("Testing parse()");
+        System.out.println("Testing parse()");
 
         String text = new String("02/03/76 2:50 AM, CST");
         Date result1 = new Date();
         Date result2 = new Date();
         ParsePosition pos= new ParsePosition(0);
         result1 = def.parse(text, pos);
-        logln(text + " parsed into " + result1);
+        System.out.println(text + " parsed into " + result1);
 
         try {
             result2 = def.parse(text);
         }
         catch (ParseException e) {
-            errln("ERROR: parse() failed");
+            fail("ERROR: parse() failed");
         }
-        logln(text + " parsed into " + result2);
+        System.out.println(text + " parsed into " + result2);
 
         // ======= Test getters and setters
 
-        logln("Testing getters and setters");
+        System.out.println("Testing getters and setters");
 
         final DateFormatSymbols syms = pat.getDateFormatSymbols();
         def.setDateFormatSymbols(syms);
         pat_fr.setDateFormatSymbols(syms);
         if( ! pat.getDateFormatSymbols().equals(def.getDateFormatSymbols()) ) {
-            errln("ERROR: set DateFormatSymbols() failed");
+            fail("ERROR: set DateFormatSymbols() failed");
         }
 
         Date startDate = null;
@@ -138,51 +143,51 @@ public class IntlTestSimpleDateFormatAPI extends IntlTest
 //            startDate = pat.getTwoDigitStartDate();
         }
         catch (Exception e) {
-            errln("ERROR: getTwoDigitStartDate() failed");
+            fail("ERROR: getTwoDigitStartDate() failed");
         }
 
         try {
 //            pat_fr.setTwoDigitStartDate(startDate);
         }
         catch (Exception e) {
-            errln("ERROR: setTwoDigitStartDate() failed");
+            fail("ERROR: setTwoDigitStartDate() failed");
         }
 
         // ======= Test applyPattern()
 
-        logln("Testing applyPattern()");
+        System.out.println("Testing applyPattern()");
 
         String p1 = new String("yyyy.MM.dd G 'at' hh:mm:ss z");
-        logln("Applying pattern " + p1);
+        System.out.println("Applying pattern " + p1);
         pat.applyPattern(p1);
 
         String s2 = pat.toPattern();
-        logln("Extracted pattern is " + s2);
+        System.out.println("Extracted pattern is " + s2);
         if( ! s2.equals(p1) ) {
-            errln("ERROR: toPattern() result did not match pattern applied");
+            fail("ERROR: toPattern() result did not match pattern applied");
         }
 
-        logln("Applying pattern " + p1);
+        System.out.println("Applying pattern " + p1);
         pat.applyLocalizedPattern(p1);
         String s3 = pat.toLocalizedPattern();
-        logln("Extracted pattern is " + s3);
+        System.out.println("Extracted pattern is " + s3);
         if( ! s3.equals(p1) ) {
-            errln("ERROR: toLocalizedPattern() result did not match pattern applied");
+            fail("ERROR: toLocalizedPattern() result did not match pattern applied");
         }
 
         // ======= Test getStaticClassID()
 
-//        logln("Testing instanceof");
+//        System.out.println("Testing instanceof");
 
 //        try {
 //            DateFormat test = new SimpleDateFormat();
 
 //            if (! (test instanceof SimpleDateFormat)) {
-//                errln("ERROR: instanceof failed");
+//                fail("ERROR: instanceof failed");
 //            }
 //        }
 //        catch (Exception e) {
-//            errln("ERROR: Couldn't create a SimpleDateFormat");
+//            fail("ERROR: Couldn't create a SimpleDateFormat");
 //        }
     }
 }

@@ -24,8 +24,8 @@
 /*
  * @test
  * @bug 6271411
- * @library /java/text/testlib
  * @summary Confirm that three JCK testcases for CollationElementIterator pass.
+ * @run junit Bug6271411
  */
 
 import java.text.*;
@@ -33,7 +33,12 @@ import java.text.*;
 /*
  * Based on JCK-runtime-15/tests/api/java_text/CollationElementIterator/ColltnElmtIterTests.java.
  */
-public class Bug6271411 extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class Bug6271411 {
 
     public static void main(String argv[]) throws Exception {
         Bug6271411 test = new Bug6271411();
@@ -58,6 +63,7 @@ public class Bug6271411 extends IntlTest {
      * (not IndexOutOfBoundsException) if the given offset is invalid.
      * Use CollationElementIterator.setText(String).
      */
+    @Test
     public void Test_CollationElementIterator0007() throws Exception {
         int[] offsets = {
             Integer.MIN_VALUE, Integer.MIN_VALUE + 1, -10000, -2, -1,
@@ -90,7 +96,7 @@ public class Bug6271411 extends IntlTest {
         }
 
         if (err) {
-            errln("CollationElementIterator.setOffset() didn't throw an expected IllegalArguemntException.");
+            fail("CollationElementIterator.setOffset() didn't throw an expected IllegalArguemntException.");
         }
     }
 
@@ -99,6 +105,7 @@ public class Bug6271411 extends IntlTest {
      * IllegalArgumentException if the given offset is invalid.
      * Use CollationElementIterator.setText(CharacterIterator).
      */
+    @Test
     public void Test_CollationElementIterator0010() throws Exception {
         String prefix = "xyz abc";
         String suffix = "1234567890";
@@ -144,7 +151,7 @@ public class Bug6271411 extends IntlTest {
         }
 
         if (err) {
-            errln("CollationElementIterator.setOffset() didn't throw an expected IllegalArguemntException.");
+            fail("CollationElementIterator.setOffset() didn't throw an expected IllegalArguemntException.");
         }
     }
 
@@ -153,6 +160,7 @@ public class Bug6271411 extends IntlTest {
      * an offset as expected.
      * Use CollationElementIterator.setText(CharacterIterator).
      */
+    @Test
     public void Test_CollationElementIterator0011() throws Exception {
         String prefix = "xyz abc";
         String suffix = "1234567890";

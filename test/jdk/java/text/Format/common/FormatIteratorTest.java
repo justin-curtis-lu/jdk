@@ -26,7 +26,7 @@
  * @bug 4018937
  * @library /java/text/testlib
  * @build FormatIteratorTest PParser IntlTest
- * @run main FormatIteratorTest
+ * @run junit FormatIteratorTest
  * @summary Tests the formatToCharacterIterator method of SimpleDateFormat,
  *          MessageFormat and DecimalFormat.
  */
@@ -94,7 +94,12 @@ import java.text.AttributedCharacterIterator.Attribute;
  * </pre>
  * Any lines starting with {@code '#'} are comment lines and ignored.
  */
-public class FormatIteratorTest extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class FormatIteratorTest {
     private Format format;
     private Object value;
     private String text;
@@ -146,23 +151,23 @@ public class FormatIteratorTest extends IntlTest {
     @SuppressWarnings("unchecked")
     private void _test(File file) {
         try {
-            logln("testing: " + file);
+            System.out.println("testing: " + file);
             PParser parser = new PParser();
             Map<String,Object> contents = parser.parse(new BufferedReader(
                 new FileReader(file)));
             List<Object> test = (List)contents.get("tests");
 
             for (int counter = 0; counter < test.size(); counter++) {
-                logln("creating: " + (counter / 2));
+                System.out.println("creating: " + (counter / 2));
 
                 AttributedCharacterIterator iterator =
                     create((Map)test.get(counter));
 
-                logln("verifying: " + (counter / 2));
+                System.out.println("verifying: " + (counter / 2));
                 verify(iterator, (Map)test.get(++counter));
             }
         } catch (IOException ioe) {
-            errln("Error reading: " + ioe);
+            fail("Error reading: " + ioe);
         }
     }
 
@@ -175,20 +180,20 @@ public class FormatIteratorTest extends IntlTest {
                 escapeIfNecessary((String)table.get("text")))) {
             String text = getText(iterator);
 
-            errln("text doesn't match, got: " + getText(iterator));
+            fail("text doesn't match, got: " + getText(iterator));
         }
         if (iterator.getBeginIndex() != 0) {
-            errln("Bogus start: " + iterator.getBeginIndex());
+            fail("Bogus start: " + iterator.getBeginIndex());
         }
         if (iterator.getEndIndex() != length) {
-            errln("Bogus end: " + iterator.getEndIndex());
+            fail("Bogus end: " + iterator.getEndIndex());
         }
         for (int counter = 0; counter < length; counter++) {
             iterator.setIndex(counter);
             if (!verifyAttributes(iterator.getAttributes().keySet(),
                     makeAttributes((List)table.get(Integer.
                                                       toString(counter))))) {
-                errln("Attributes don't match at " + counter + " expecting " +
+                fail("Attributes don't match at " + counter + " expecting " +
                       makeAttributes((List)table.get(Integer.toString
                                                        (counter))) + " got " +
                       iterator.getAttributes().keySet());
@@ -199,7 +204,7 @@ public class FormatIteratorTest extends IntlTest {
             if (!verifyAttributes(iterator.getAttributes().keySet(),
                     makeAttributes((List)table.get(Integer.
                                                       toString(counter))))) {
-                errln("Attributes don't match at " + counter + " expecting " +
+                fail("Attributes don't match at " + counter + " expecting " +
                       makeAttributes((List)table.get(Integer.toString
                                                        (counter))) + " got " +
                       iterator.getAttributes().keySet());
@@ -243,22 +248,22 @@ public class FormatIteratorTest extends IntlTest {
         for (int counter = begin; counter < end; counter++) {
             iterator.setIndex(counter);
             if (iterator.getRunStart() != begin) {
-                errln("Begin doesn't match want " + begin + " got " +
+                fail("Begin doesn't match want " + begin + " got " +
                       iterator.getRunStart() + " at " + counter + " attrs " +
                       attrs);
             }
             if (iterator.getRunStart(attrs) != begin2) {
-                errln("Begin2 doesn't match want " + begin2 + " got " +
+                fail("Begin2 doesn't match want " + begin2 + " got " +
                       iterator.getRunStart(attrs) + " at " + counter +
                       " attrs " + attrs);
             }
             if (iterator.getRunLimit() != end) {
-                errln("End doesn't match want " + end + " got " +
+                fail("End doesn't match want " + end + " got " +
                       iterator.getRunLimit() + " at " + counter + " attrs " +
                       attrs);
             }
             if (iterator.getRunLimit(attrs) != end2) {
-                errln("End2 doesn't match want " + end2 + " got " +
+                fail("End2 doesn't match want " + end2 + " got " +
                       iterator.getRunLimit(attrs) + " at " + counter +
                       " attrs " + attrs);
             }
@@ -312,15 +317,15 @@ public class FormatIteratorTest extends IntlTest {
 
         format.format(value, buffer, fp);
         if (fp.getBeginIndex() != begin) {
-            errln("bogus begin want " + begin + " got " + fp.getBeginIndex() +
+            fail("bogus begin want " + begin + " got " + fp.getBeginIndex() +
                   " for " + fp + " at " + index);
         }
         if (fp.getEndIndex() != end) {
-            errln("bogus end want " + end + " got " + fp.getEndIndex() +
+            fail("bogus end want " + end + " got " + fp.getEndIndex() +
                   " for " + fp + " at " + index);
         }
         if (!buffer.toString().equals(text)) {
-            errln("Text does not match, want !" + buffer.toString() +
+            fail("Text does not match, want !" + buffer.toString() +
                   "! got !" + text + "!");
         }
     }
@@ -331,11 +336,11 @@ public class FormatIteratorTest extends IntlTest {
         value = createInstance((String)table.get("valueClass"),
                                ((List)table.get("valueArgs")).toArray());
 
-        logln("Created format: " + format + " value " + value);
+        System.out.println("Created format: " + format + " value " + value);
         AttributedCharacterIterator aci = format.
                            formatToCharacterIterator(value);
 
-        logln("Obtained Iterator: " + aci);
+        System.out.println("Obtained Iterator: " + aci);
         return aci;
     }
 
@@ -373,7 +378,7 @@ public class FormatIteratorTest extends IntlTest {
                 return value;
             }
         } catch (Throwable th) {
-            errln("Error creating instance " + th);
+            fail("Error creating instance " + th);
             return null;
         }
     }
@@ -413,7 +418,7 @@ public class FormatIteratorTest extends IntlTest {
         } catch (Throwable th) {
             error = th;
         }
-        errln("Could not lookup field " + name + " " + error);
+        fail("Could not lookup field " + name + " " + error);
         return null;
     }
 

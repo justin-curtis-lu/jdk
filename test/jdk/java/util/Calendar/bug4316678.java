@@ -29,14 +29,20 @@ import java.text.*;
  * @test
  * @bug 4316678
  * @summary test that Calendar's Serializasion works correctly.
- * @library /java/text/testlib
+ * @run junit bug4316678
  */
-public class bug4316678 extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class bug4316678 {
 
     public static void main(String[] args) throws Exception {
         new bug4316678().run(args);
     }
 
+    @Test
     public void Test4316678() throws Exception {
         GregorianCalendar gc1;
         GregorianCalendar gc2;
@@ -59,7 +65,7 @@ public class bug4316678 extends IntlTest {
             gc1.set(Calendar.DATE, 16);
             gc2.set(Calendar.DATE, 16);
             if (!gc1.getTime().equals(gc2.getTime())) {
-                errln("Invalid Time :" + gc2.getTime() +
+                fail("Invalid Time :" + gc2.getTime() +
                     ", expected :" + gc1.getTime());
             }
         } finally {

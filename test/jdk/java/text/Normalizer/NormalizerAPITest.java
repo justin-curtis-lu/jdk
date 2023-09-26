@@ -26,9 +26,8 @@
  * @bug 4221795 8174270
  * @summary Confirm Normalizer's fundamental behavior
  * @modules java.base/sun.text java.base/jdk.internal.icu.text
- * @library /java/text/testlib
  * @compile -XDignore.symbol.file NormalizerAPITest.java
- * @run main/timeout=30 NormalizerAPITest
+ * @run junit/timeout=30 NormalizerAPITest
  */
 
 import java.text.Normalizer;
@@ -41,7 +40,12 @@ import java.nio.CharBuffer;
  * You may think that so elaborate testing for such a part is not necessary.
  * But I actually detected a bug by this program during my porting work.
  */
-public class NormalizerAPITest extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class NormalizerAPITest {
 
     //
     // Shortcuts
@@ -78,6 +82,7 @@ public class NormalizerAPITest extends IntlTest {
     /*
      * Check if normalize(null) throws NullPointerException as expected.
      */
+    @Test
     public void Test_NullPointerException_java_normalize() {
         boolean error = false;
 
@@ -100,13 +105,14 @@ public class NormalizerAPITest extends IntlTest {
         }
 
         if (error) {
-             errln("normalize(null) should throw NullPointerException.");
+             fail("normalize(null) should throw NullPointerException.");
         }
     }
 
     /*
      * Check if normalize(null) throws NullPointerException as expected.
      */
+    @Test
     public void Test_NullPointerException_sun_normalize() {
         boolean error = false;
 
@@ -131,13 +137,14 @@ public class NormalizerAPITest extends IntlTest {
         }
 
         if (error) {
-             errln("normalize(null) should throw NullPointerException.");
+             fail("normalize(null) should throw NullPointerException.");
         }
     }
 
     /*
      * Check if isNormalized(null) throws NullPointerException as expected.
      */
+    @Test
     public void Test_NullPointerException_java_isNormalized() {
         boolean error = false;
 
@@ -160,13 +167,14 @@ public class NormalizerAPITest extends IntlTest {
         catch (NullPointerException e) {
         }
         if (error) {
-             errln("isNormalized(null) should throw NullPointerException.");
+             fail("isNormalized(null) should throw NullPointerException.");
         }
     }
 
     /*
      * Check if isNormalized(null) throws NullPointerException as expected.
      */
+    @Test
     public void Test_NullPointerException_sun_isNormalized() {
         boolean error = false;
 
@@ -191,7 +199,7 @@ public class NormalizerAPITest extends IntlTest {
         }
 
         if (error) {
-             errln("isNormalized(null) should throw NullPointerException.");
+             fail("isNormalized(null) should throw NullPointerException.");
         }
     }
 
@@ -199,6 +207,7 @@ public class NormalizerAPITest extends IntlTest {
      * Check if isNormalized("") doesn't throw NullPointerException and returns
      * "" as expected.
      */
+    @Test
     public void Test_No_NullPointerException_java_normalize() {
         boolean error = false;
 
@@ -215,7 +224,7 @@ public class NormalizerAPITest extends IntlTest {
         }
 
         if (error) {
-             errln("normalize() for String(\"\") should return \"\".");
+             fail("normalize() for String(\"\") should return \"\".");
         }
     }
 
@@ -223,6 +232,7 @@ public class NormalizerAPITest extends IntlTest {
      * Check if isNormalized("") doesn't throw NullPointerException and returns
      * "" as expected.
      */
+    @Test
     public void Test_No_NullPointerException_sun_normalize() {
         boolean error = false;
 
@@ -240,7 +250,7 @@ public class NormalizerAPITest extends IntlTest {
             }
         }
         if (error) {
-             errln("normalize() for String(\"\") should return \"\".");
+             fail("normalize() for String(\"\") should return \"\".");
         }
     }
 
@@ -248,6 +258,7 @@ public class NormalizerAPITest extends IntlTest {
      * Check if isNormalized("") doesn't throw NullPointerException and returns
      * "" as expected.
      */
+    @Test
     public void Test_No_NullPointerException_java_isNormalized() {
         boolean error = false;
 
@@ -263,7 +274,7 @@ public class NormalizerAPITest extends IntlTest {
             }
         }
         if (error) {
-             errln("isNormalized() for String(\"\") should not return true.");
+             fail("isNormalized() for String(\"\") should not return true.");
         }
     }
 
@@ -271,6 +282,7 @@ public class NormalizerAPITest extends IntlTest {
      * Check if isNormalized("") doesn't throw NullPointerException and returns
      * "" as expected.
      */
+    @Test
     public void Test_No_NullPointerException_sun_isNormalized() {
         boolean error = false;
 
@@ -288,7 +300,7 @@ public class NormalizerAPITest extends IntlTest {
             }
         }
         if (error) {
-             errln("isNormalized() for String(\"\") should not return true.");
+             fail("isNormalized() for String(\"\") should not return true.");
         }
     }
 
@@ -296,6 +308,7 @@ public class NormalizerAPITest extends IntlTest {
      * Check if normalize() and isNormalized() work as expected for every
      * known class which implement CharSequence Interface.
      */
+    @Test
     public void Test_CharSequence() {
 
         check_CharSequence(String.valueOf(inputData),
@@ -315,23 +328,23 @@ public class NormalizerAPITest extends IntlTest {
     void check_CharSequence(CharSequence in, CharSequence expected) {
         String out = Normalizer.normalize(in, NFD);
         if (!out.equals(expected.toString())) {
-            errln("java.text.Normalizer.normalize(" +
+            fail("java.text.Normalizer.normalize(" +
                   in.getClass().getSimpleName() + ") failed.");
         }
         out = sun.text.Normalizer.normalize(in, NFD,
                              jdk.internal.icu.text.NormalizerBase.UNICODE_LATEST);
         if (!out.equals(expected.toString())) {
-            errln("sun.text.Normalizer.normalize(" +
+            fail("sun.text.Normalizer.normalize(" +
                   in.getClass().getSimpleName() + ") failed.");
         }
 
         if (!Normalizer.isNormalized(expected, NFD)) {
-            errln("java.text.Normalizer.isNormalize(" +
+            fail("java.text.Normalizer.isNormalize(" +
                   in.getClass().getSimpleName() + ") failed.");
         }
         if (!sun.text.Normalizer.isNormalized(expected, NFD,
                            jdk.internal.icu.text.NormalizerBase.UNICODE_LATEST)) {
-            errln("sun.text.Normalizer.isNormalize(" +
+            fail("sun.text.Normalizer.isNormalize(" +
                   in.getClass().getSimpleName() + ") failed.");
         }
     }

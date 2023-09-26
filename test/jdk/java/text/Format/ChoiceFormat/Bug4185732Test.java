@@ -26,7 +26,7 @@
  * @bug 4185732
  * @library /java/text/testlib
  * @build Bug4185732Test IntlTest HexDumpReader
- * @run main Bug4185732Test
+ * @run junit Bug4185732Test
  * @summary test that ChoiceFormat invariants are preserved across serialization
  */
 /*
@@ -70,7 +70,12 @@ import java.text.ChoiceFormat;
 /**
  *  A Locale can never contains language codes of he, yi or id.
  */
-public class Bug4185732Test extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class Bug4185732Test {
     public static void main(String[] args) throws Exception {
         if (args.length == 1 && args[0].equals("prepTest")) {
             prepTest();
@@ -85,17 +90,17 @@ public class Bug4185732Test extends IntlTest {
                 = new ObjectInputStream(HexDumpReader.getStreamFromHexDump("Bug4185732.ser.txt"));
             final ChoiceFormat loc = (ChoiceFormat)in.readObject();
             if (loc.getFormats().length != loc.getLimits().length) {
-                errln("ChoiceFormat did not properly check stream");
+                fail("ChoiceFormat did not properly check stream");
             } else {
                 //for some reason, the data file was VALID.  This test
                 //requires a corrupt data file the format and limit
                 //arrays are of different length.
-                errln("Test data file was not properly created");
+                fail("Test data file was not properly created");
             }
         } catch (InvalidObjectException e) {
             //this is what we want to have happen
         } catch (Exception e) {
-            errln(e.toString());
+            fail(e.toString());
         }
     }
 

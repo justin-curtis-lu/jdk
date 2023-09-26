@@ -25,15 +25,19 @@
  * @test
  * @bug 4018937 8008577
  * @summary Confirm that methods which are newly added to support BigDecimal and BigInteger work as expected.
- * @library /java/text/testlib
- * @run main/othervm -Djava.locale.providers=COMPAT,SPI BigDecimalParse
+ * @run junit/othervm -Djava.locale.providers=COMPAT,SPI BigDecimalParse
  */
 
 import java.math.BigDecimal;
 import java.text.*;
 import java.util.*;
 
-public class BigDecimalParse extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class BigDecimalParse {
 
     public static void main(String[] args) throws Exception {
         Locale loc = Locale.getDefault();
@@ -487,19 +491,19 @@ public class BigDecimalParse extends IntlTest {
                 parsed = mf.parse(from[i], pp);
 
                 if (pp.getErrorIndex() != -1) {
-                    errln("Case" + (i+1) +
+                    fail("Case" + (i+1) +
                           ": getErrorIndex() returns wrong value. expected:-1, got:"+
                           pp.getErrorIndex() + " for " + from[i]);
                 }
                 if (pp.getIndex() != parsePosition1[i]) {
-                    errln("Case" + (i+1) +
+                    fail("Case" + (i+1) +
                           ": getIndex() returns wrong value. expected:" +
                           parsePosition1[i] + ", got:"+ pp.getIndex() +
                           " for " + from[i]);
                 }
             }
             catch(Exception e) {
-                errln("Unexpected exception: " + e.getMessage());
+                fail("Unexpected exception: " + e.getMessage());
             }
 
             checkType(from[i], getType(new BigDecimal(expected1[i])),
@@ -574,20 +578,20 @@ public class BigDecimalParse extends IntlTest {
                 parsed = mf.parse(from[i], pp);
 
                 if (pp.getErrorIndex() != parsePosition2[i][0]) {
-                    errln("Case" + (i+1) +
+                    fail("Case" + (i+1) +
                           ": getErrorIndex() returns wrong value. expected:" +
                           parsePosition2[i][0] + ", got:"+ pp.getErrorIndex() +
                           " for " + from[i]);
                 }
                 if (pp.getIndex() != parsePosition2[i][1]) {
-                    errln("Case" + (i+1) +
+                    fail("Case" + (i+1) +
                           ": getIndex() returns wrong value. expected:" +
                           parsePosition2[i][1] + ", got:"+ pp.getIndex() +
                           " for " + from[i]);
                 }
             }
             catch(Exception e) {
-                errln("Unexpected exception: " + e.getMessage());
+                fail("Unexpected exception: " + e.getMessage());
             }
 
             if (parsePosition2[i][0] == -1) {
@@ -636,20 +640,20 @@ public class BigDecimalParse extends IntlTest {
                 parsed = df.parse(from3[i], pp);
 
                 if (pp.getErrorIndex() != parsePosition3[i][0]) {
-                    errln("Case" + (i+1) +
+                    fail("Case" + (i+1) +
                           ": getErrorIndex() returns wrong value. expected:" +
                           parsePosition3[i][0] + ", got:"+ pp.getErrorIndex() +
                           " for " + from3[i]);
                 }
                 if (pp.getIndex() != parsePosition3[i][1]) {
-                    errln("Case" + (i+1) +
+                    fail("Case" + (i+1) +
                           ": getIndex() returns wrong value. expected:" +
                           parsePosition3[i][1] + ", got:"+ pp.getIndex() +
                           " for " + from3[i]);
                 }
             }
             catch(Exception e) {
-                errln("Unexpected exception: " + e.getMessage());
+                fail("Unexpected exception: " + e.getMessage());
             }
 
             if (parsePosition3[i][0] == -1) {
@@ -667,7 +671,7 @@ public class BigDecimalParse extends IntlTest {
         }
         catch(Exception e) {
             exceptionOccurred = true;
-            errln(e.getMessage());
+            fail(e.getMessage());
         }
         if (!exceptionOccurred) {
             checkParse(from, to, parsed);
@@ -678,7 +682,7 @@ public class BigDecimalParse extends IntlTest {
 
     private void checkParse(String orig, Number expected, Number got) {
         if (!expected.equals(got)) {
-            errln("Parsing... failed." +
+            fail("Parsing... failed." +
                   "\n   original: " + orig +
                   "\n   parsed:   " + got +
                   "\n   expected: " + expected + "\n");
@@ -687,7 +691,7 @@ public class BigDecimalParse extends IntlTest {
 
     private void checkType(String orig, String expected, String got) {
         if (!expected.equals(got)) {
-            errln("Parsing... unexpected Class returned." +
+            fail("Parsing... unexpected Class returned." +
                   "\n   original: " + orig +
                   "\n   got:      " + got +
                   "\n   expected: " + expected + "\n");
@@ -696,7 +700,7 @@ public class BigDecimalParse extends IntlTest {
 
     private void checkParsePosition(String orig, int expected, int got) {
         if (expected != got) {
-            errln("Parsing... wrong ParsePosition returned." +
+            fail("Parsing... wrong ParsePosition returned." +
                   "\n   original: " + orig +
                   "\n   got:      " + got +
                   "\n   expected: " + expected + "\n");

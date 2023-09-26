@@ -26,7 +26,8 @@
     @summary test that locale invariants are preserved across serialization
     @library /java/text/testlib
     @run main LegacyCodesClassInvariant
-*/
+* @run junit LegacyCodesClassInvariant
+ */
 /*
  * This file is available under and governed by the GNU General Public
  * License version 2 only, as published by the Free Software Foundation.
@@ -71,7 +72,12 @@ import java.util.Locale;
 /**
  *  A Locale can never contain the following language codes: he, yi or id.
  */
-public class LegacyCodesClassInvariant extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class LegacyCodesClassInvariant {
     public static void main(String[] args) throws Exception {
         if (args.length == 1 && args[0].equals("prepTest")) {
             prepTest();
@@ -93,16 +99,16 @@ public class LegacyCodesClassInvariant extends IntlTest {
                 final Locale loc = (Locale)in.readObject();
                 final Locale expected = Locale.of(lang, "XX");
                 if (!(expected.equals(loc))) {
-                    errln("Locale didn't maintain invariants for: "+lang);
-                    errln("         got: "+loc);
-                    errln("    excpeted: "+expected);
+                    fail("Locale didn't maintain invariants for: "+lang);
+                    fail("         got: "+loc);
+                    fail("    excpeted: "+expected);
                 } else {
-                    logln("Locale "+lang+" worked");
+                    System.out.println("Locale "+lang+" worked");
                 }
                 in.close();
             }
         } catch (Exception e) {
-            errln(e.toString());
+            fail(e.toString());
         }
     }
 
@@ -111,7 +117,7 @@ public class LegacyCodesClassInvariant extends IntlTest {
             final File f = new File(System.getProperty("test.src", "."), "LegacyCodesClassInvariant_"+lang);
             return new ObjectInputStream(new FileInputStream(f));
         } catch (Exception e) {
-            errln(e.toString());
+            fail(e.toString());
             return null;
         }
     }

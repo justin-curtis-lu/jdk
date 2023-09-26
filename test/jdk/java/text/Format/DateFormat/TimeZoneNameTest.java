@@ -25,14 +25,18 @@
  * @test
  * @bug 4348864 4112924 4425386 4495052 4836940 4851113 8008577
  * @summary test time zone display names in en_US locale
- * @library /java/text/testlib
- * @run main/othervm -Djava.locale.providers=COMPAT,SPI TimeZoneNameTest
+ * @run junit/othervm -Djava.locale.providers=COMPAT,SPI TimeZoneNameTest
  */
 
 import java.util.*;
 import java.text.*;
 
-public class TimeZoneNameTest extends IntlTest
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class TimeZoneNameTest
 {
     static final String[] data = {
         // Added to verify the fix for 4836940
@@ -105,6 +109,7 @@ public class TimeZoneNameTest extends IntlTest
         }
     }
 
+    @Test
     public void Test4112924() {
         SimpleDateFormat lfmt = new SimpleDateFormat("zzzz");
         SimpleDateFormat sfmt = new SimpleDateFormat("z");
@@ -129,23 +134,23 @@ public class TimeZoneNameTest extends IntlTest
             lfmt.setTimeZone(tz);
             sfmt.setTimeZone(tz);
 
-            logln(tz.getID() + ": " + sfmt.format(sol1.getTime()) + ", " + lfmt.format(sol1.getTime()));
-            logln(tz.getID() + ": " + sfmt.format(sol2.getTime()) + ", " + lfmt.format(sol2.getTime()));
+            System.out.println(tz.getID() + ": " + sfmt.format(sol1.getTime()) + ", " + lfmt.format(sol1.getTime()));
+            System.out.println(tz.getID() + ": " + sfmt.format(sol2.getTime()) + ", " + lfmt.format(sol2.getTime()));
             String s = sfmt.format(sol1.getTime());
             if (!data[i].equals(s)) {
-                errln(tz.getID() + ": wrong short name: \"" + s + "\" (expected \"" + data[i] + "\")");
+                fail(tz.getID() + ": wrong short name: \"" + s + "\" (expected \"" + data[i] + "\")");
             }
             s = lfmt.format(sol1.getTime());
             if (!data[++i].equals(s)) {
-                errln(tz.getID() + ": wrong long name: \"" + s + "\" (expected \"" + data[i] + "\")");
+                fail(tz.getID() + ": wrong long name: \"" + s + "\" (expected \"" + data[i] + "\")");
             }
             s = sfmt.format(sol2.getTime());
             if (!data[++i].equals(s)) {
-                errln(tz.getID() + ": wrong short name: \"" + s + "\" (expected \"" + data[i] + "\")");
+                fail(tz.getID() + ": wrong short name: \"" + s + "\" (expected \"" + data[i] + "\")");
             }
             s = lfmt.format(sol2.getTime());
             if (!data[++i].equals(s)) {
-                errln(tz.getID() + ": wrong long name: \"" + s + "\" (expected \"" + data[i] + "\")");
+                fail(tz.getID() + ": wrong long name: \"" + s + "\" (expected \"" + data[i] + "\")");
             }
         }
     }

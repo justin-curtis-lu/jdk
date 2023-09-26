@@ -25,15 +25,19 @@
  * @test
  * @bug 4838107 8008577
  * @summary Confirm that DecimalFormat can format a number with negative exponent number correctly.
- * @library /java/text/testlib
- * @run main/othervm -Djava.locale.providers=COMPAT,SPI Bug4838107
+ * @run junit/othervm -Djava.locale.providers=COMPAT,SPI Bug4838107
  */
 
 import java.math.*;
 import java.util.*;
 import java.text.*;
 
-public class Bug4838107 extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class Bug4838107 {
 
     static DecimalFormat df;
     static DecimalFormatSymbols dfs;

@@ -29,14 +29,19 @@
  * @summary Make sure that timezone short display names are idenical to Olson's data.
  * @library /java/text/testlib
  * @build Bug6329116 TextFileReader
- * @run main/othervm -Djava.locale.providers=COMPAT,SPI Bug6329116
+ * @run junit/othervm -Djava.locale.providers=COMPAT,SPI Bug6329116
  */
 
 import java.io.*;
 import java.text.*;
 import java.util.*;
 
-public class Bug6329116 extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class Bug6329116 {
 
     static Locale[] locales = Locale.getAvailableLocales();
     static String[] timezones = TimeZone.getAvailableIDs();

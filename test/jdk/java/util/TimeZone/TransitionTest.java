@@ -24,8 +24,8 @@
 /*
  * @test
  * @bug 4278609 4761696
- * @library /java/text/testlib
  * @summary Make sure to handle DST transition ending at 0:00 January 1.
+ * @run junit TransitionTest
  */
 
 import java.text.SimpleDateFormat;
@@ -36,12 +36,18 @@ import java.util.Locale;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
-public class TransitionTest extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class TransitionTest {
 
     public static void main(String[] args) throws Exception {
         new TransitionTest().run(args);
     }
 
+    @Test
     public void Test4278609() {
         SimpleTimeZone tz = new SimpleTimeZone(0, "MyTimeZone",
                                /* DST start day: August, 1, 0:00 */
@@ -77,7 +83,7 @@ public class TransitionTest extends IntlTest {
             SimpleDateFormat format = new SimpleDateFormat("dd MMM HH:mm:ss zzz",
                                                            Locale.US);
             format.setTimeZone(tz);
-            errln("Wrong DST transition: " + tz
+            fail("Wrong DST transition: " + tz
                   + "\na date just after DST = " + format.format(date)
                   + "\ngetOffset = " + offset);
         }
@@ -88,6 +94,7 @@ public class TransitionTest extends IntlTest {
      *
      * Derived from JCK test cases some of which specify wrong day of week values.
      */
+    @Test
     public void Test4761696() {
         GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
@@ -121,7 +128,7 @@ public class TransitionTest extends IntlTest {
         long endTime = cal.getTimeInMillis() + rawOffset;
         long expectedOffset = (localtime < endTime) ? rawOffset + saving : rawOffset;
         if (offset != expectedOffset) {
-            errln("test#1: wrong offset: got "+offset+", expected="+expectedOffset);
+            fail("test#1: wrong offset: got "+offset+", expected="+expectedOffset);
         }
 
         // test#2
@@ -150,7 +157,7 @@ public class TransitionTest extends IntlTest {
         endTime = cal.getTimeInMillis() + rawOffset;
         expectedOffset = (localtime < endTime) ? rawOffset + saving : rawOffset;
         if (offset != expectedOffset) {
-            errln("Wrong offset: got "+offset+", expected="+expectedOffset);
+            fail("Wrong offset: got "+offset+", expected="+expectedOffset);
         }
 
         rawOffset = 43200000;
@@ -179,7 +186,7 @@ public class TransitionTest extends IntlTest {
         endTime = cal.getTimeInMillis() + rawOffset;
         expectedOffset = (localtime < endTime) ? rawOffset + saving : rawOffset;
         if (offset != expectedOffset) {
-            errln("test#2: wrong offset: got "+offset+", expected="+expectedOffset);
+            fail("test#2: wrong offset: got "+offset+", expected="+expectedOffset);
         }
 
         // test#3
@@ -209,7 +216,7 @@ public class TransitionTest extends IntlTest {
         endTime = cal.getTimeInMillis() + rawOffset;
         expectedOffset = (localtime < endTime) ? rawOffset + saving : rawOffset;
         if (offset != expectedOffset) {
-            errln("test#3: wrong offset: got "+offset+", expected="+expectedOffset);
+            fail("test#3: wrong offset: got "+offset+", expected="+expectedOffset);
         }
 
         // test#4
@@ -243,7 +250,7 @@ public class TransitionTest extends IntlTest {
         long startTime = cal.getTimeInMillis() + rawOffset;
         expectedOffset = (localtime >= startTime) ? rawOffset + saving : rawOffset;
         if (offset != expectedOffset) {
-            errln("test#4: wrong offset: got "+offset+", expected="+expectedOffset);
+            fail("test#4: wrong offset: got "+offset+", expected="+expectedOffset);
         }
 
         // test#5
@@ -272,7 +279,7 @@ public class TransitionTest extends IntlTest {
         endTime = cal.getTimeInMillis() + rawOffset;
         expectedOffset = (localtime < endTime) ? rawOffset + saving : rawOffset;
         if (offset != expectedOffset) {
-            errln("test#5: wrong offset: got "+offset+", expected="+expectedOffset);
+            fail("test#5: wrong offset: got "+offset+", expected="+expectedOffset);
         }
     }
 

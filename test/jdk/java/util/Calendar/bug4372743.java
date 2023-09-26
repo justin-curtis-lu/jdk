@@ -25,7 +25,7 @@
  * @test
  * @bug 4372743
  * @summary test that checks transitions of ERA and YEAR which are caused by add(MONTH).
- * @library /java/text/testlib
+ * @run junit bug4372743
  */
 
 import java.util.GregorianCalendar;
@@ -33,7 +33,12 @@ import java.util.TimeZone;
 
 import static java.util.GregorianCalendar.*;
 
-public class bug4372743 extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class bug4372743 {
 
     public static void main(String[] args) throws Exception {
         new bug4372743().run(args);
@@ -74,19 +79,20 @@ public class bug4372743 extends IntlTest {
 
     private void check(GregorianCalendar gc, int index) {
         if (gc.get(ERA) != data[index][ERA]) {
-            errln("Invalid era :" + gc.get(ERA)
+            fail("Invalid era :" + gc.get(ERA)
                     + ", expected :" + data[index][ERA]);
         }
         if (gc.get(YEAR) != data[index][YEAR]) {
-            errln("Invalid year :" + gc.get(YEAR)
+            fail("Invalid year :" + gc.get(YEAR)
                     + ", expected :" + data[index][YEAR]);
         }
         if (gc.get(MONTH) != data[index][MONTH]) {
-            errln("Invalid month :" + gc.get(MONTH)
+            fail("Invalid month :" + gc.get(MONTH)
                     + ", expected :" + data[index][MONTH]);
         }
     }
 
+    @Test
     public void Test4372743() {
         GregorianCalendar gc;
         TimeZone saveZone = TimeZone.getDefault();

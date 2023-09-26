@@ -26,7 +26,7 @@
  * @bug 4860664 4916815 4867075
  * @library /java/text/testlib
  * @build Koyomi
- * @run main FieldStateTest
+ * @run junit FieldStateTest
  * @summary Unit tests for internal fields states.
  */
 
@@ -36,7 +36,12 @@ import java.util.TimeZone;
 
 import static java.util.Calendar.*;
 
-public class FieldStateTest extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class FieldStateTest {
 
     public static void main(String[] args) throws Exception {
         Locale reservedLocale = Locale.getDefault();
@@ -53,14 +58,15 @@ public class FieldStateTest extends IntlTest {
         }
     }
 
+    @Test
     public void TestFieldState() {
         Koyomi cal = new Koyomi();
-        logln("Right after instantialtion:");
+        System.out.println("Right after instantialtion:");
         if (!cal.checkAllSet()) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
 
-        logln("Set date to 2003/10/31 after the instantiation:");
+        System.out.println("Set date to 2003/10/31 after the instantiation:");
         cal.set(2003, OCTOBER, 31);
         // let cal calculate the time
         cal.getTime();
@@ -70,18 +76,18 @@ public class FieldStateTest extends IntlTest {
         // the fields have "computed". But we can't distinguish them
         // outside the package.
         if (!cal.checkAllSet()) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
         // Make sure that the correct date was produced.
         if (!cal.checkInternalDate(2003, OCTOBER, 31, FRIDAY)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
 
-        logln("Change to Monday of the week, which is 2003/10/27:");
+        System.out.println("Change to Monday of the week, which is 2003/10/27:");
         cal.set(DAY_OF_WEEK, MONDAY);
         cal.getTime();
         if (!cal.checkDate(2003, OCTOBER, 27)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
 
         // The same operation didn't work after calling clear() before
@@ -89,28 +95,28 @@ public class FieldStateTest extends IntlTest {
         // operations. After the instantiation, all the fields are set
         // to "computed". But after calling clear(), the state becomes
         // "unset".
-        logln("Set to 2003/10/31 after clear():");
+        System.out.println("Set to 2003/10/31 after clear():");
         cal.clear();
         cal.set(2003, OCTOBER, 31);
         cal.getTime();
         cal.set(DAY_OF_WEEK, MONDAY);
         if (!cal.checkDate(2003, OCTOBER, 27, MONDAY)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
 
-        logln("Set to 2003/10/31 after clear(), then to the 51st week of year (12/19):");
+        System.out.println("Set to 2003/10/31 after clear(), then to the 51st week of year (12/19):");
         cal.clear();
         cal.set(2003, OCTOBER, 31);
         cal.getTime();
         cal.set(WEEK_OF_YEAR, 51);
         if (!cal.checkFieldValue(WEEK_OF_YEAR, 51)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
         if (!cal.checkDate(2003, DECEMBER, 19, FRIDAY)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
 
-        logln("Set to 2003/10 Mon of 4th week (10/20: 43rd week of year, 293rd day):");
+        System.out.println("Set to 2003/10 Mon of 4th week (10/20: 43rd week of year, 293rd day):");
         cal.clear();
         cal.set(YEAR, 2003);
         cal.set(MONTH, OCTOBER);
@@ -118,32 +124,32 @@ public class FieldStateTest extends IntlTest {
         cal.set(WEEK_OF_MONTH, 4);
         cal.getTime();
         if (!cal.checkFieldValue(DAY_OF_MONTH, 20)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
         if (!cal.checkFieldValue(DAY_OF_YEAR, 293)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
         if (!cal.checkFieldValue(WEEK_OF_YEAR, 43)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
 
-        logln("Set to 2003/10 Mon of 43rd week of year (10/20: 4th week of month, 293rd day):");
+        System.out.println("Set to 2003/10 Mon of 43rd week of year (10/20: 4th week of month, 293rd day):");
         cal.clear();
         cal.set(YEAR, 2003);
         cal.set(DAY_OF_WEEK, MONDAY);
         cal.set(WEEK_OF_YEAR, 43);
         cal.getTime();
         if (!cal.checkDate(2003, OCTOBER, 20, MONDAY)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
         if (!cal.checkFieldValue(WEEK_OF_MONTH, 4)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
         if (!cal.checkFieldValue(DAY_OF_YEAR, 293)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
 
-        logln("Set day of week to SUNDAY and date to 2003/10/31. "
+        System.out.println("Set day of week to SUNDAY and date to 2003/10/31. "
                 + "Then, getTime and set week of year to 43.");
 
         @SuppressWarnings("deprecation")
@@ -161,15 +167,16 @@ public class FieldStateTest extends IntlTest {
         cal.getTime();
         cal.set(WEEK_OF_YEAR, 43);
         if (!cal.checkDate(2003, OCTOBER, 24, FRIDAY)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
     }
 
     /*
      * 4916815: REGRESSION: Problem with java.util.Calendar VM 1.4.2-b28
      */
+    @Test
     public void Test4916815() {
-        logln("Set date to 2003/9/26 (Fri). Roll to Aug and back to Sep. "
+        System.out.println("Set date to 2003/9/26 (Fri). Roll to Aug and back to Sep. "
                 + "Set dayofweek to Sunday which should be 2003/9/21.");
         Koyomi cal = new Koyomi();
         cal.clear();
@@ -183,13 +190,14 @@ public class FieldStateTest extends IntlTest {
         // Sunday of the week should be 2003/9/21.
         cal2.set(DAY_OF_WEEK, SUNDAY);
         if (!cal2.checkDate(2003, SEPTEMBER, 21, SUNDAY)) {
-            errln(cal2.getMessage());
+            fail(cal2.getMessage());
         }
     }
 
     /*
      * 4867075: GregorianCalendar get() calls complete() internally, should getTime() too?
      */
+    @Test
     public void Test4867075() {
         Koyomi cal = new Koyomi(Locale.US);
         cal.clear();
@@ -209,7 +217,7 @@ public class FieldStateTest extends IntlTest {
         cal.set(DAY_OF_WEEK, dayOfWeek);
         cal.getTime();
         if (!cal.checkInternalDate(expectedYear, expectedMonth, expectedDayOfMonth, dayOfWeek)) {
-            errln(cal.getMessage());
+            fail(cal.getMessage());
         }
     }
 

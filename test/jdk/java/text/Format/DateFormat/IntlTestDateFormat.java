@@ -25,8 +25,7 @@
  * @test
  * @summary test International Date Format
  * @bug 8008577
- * @library /java/text/testlib
- * @run main/othervm -Djava.locale.providers=COMPAT,SPI IntlTestDateFormat
+ * @run junit/othervm -Djava.locale.providers=COMPAT,SPI IntlTestDateFormat
  * @key randomness
  */
 /*
@@ -44,7 +43,12 @@ attribution to Taligent may not be removed.
 import java.text.*;
 import java.util.*;
 
-public class IntlTestDateFormat extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class IntlTestDateFormat {
     // Values in milliseconds (== Date)
     private static final long ONESECOND = 1000;
     private static final long ONEMINUTE = 60 * ONESECOND;
@@ -66,6 +70,7 @@ public class IntlTestDateFormat extends IntlTest {
         new IntlTestDateFormat().run(args);
     }
 
+    @Test
     public void TestLocale() {
         localeTest(Locale.getDefault(), "Default Locale");
     }
@@ -85,7 +90,7 @@ public class IntlTestDateFormat extends IntlTest {
                 fFormat = DateFormat.getTimeInstance(timeStyle, locale);
             }
             catch(StringIndexOutOfBoundsException e) {
-                errln("FAIL: localeTest time getTimeInstance exception");
+                fail("FAIL: localeTest time getTimeInstance exception");
                 throw e;
             }
             TestFormat();
@@ -99,7 +104,7 @@ public class IntlTestDateFormat extends IntlTest {
                 fFormat = DateFormat.getDateInstance(dateStyle, locale);
             }
             catch(StringIndexOutOfBoundsException e) {
-                errln("FAIL: localeTest date getTimeInstance exception");
+                fail("FAIL: localeTest date getTimeInstance exception");
                 throw e;
             }
             TestFormat();
@@ -112,7 +117,7 @@ public class IntlTestDateFormat extends IntlTest {
                     fFormat = DateFormat.getDateTimeInstance(dateStyle, timeStyle, locale);
                 }
                 catch(StringIndexOutOfBoundsException e) {
-                    errln("FAIL: localeTest date/time getDateTimeInstance exception");
+                    fail("FAIL: localeTest date/time getDateTimeInstance exception");
                     throw e;
                 }
                 TestFormat();
@@ -120,12 +125,13 @@ public class IntlTestDateFormat extends IntlTest {
         }
     }
 
+    @Test
     public void TestFormat() {
         if (fFormat == null) {
-            errln("FAIL: DateFormat creation failed");
+            fail("FAIL: DateFormat creation failed");
             return;
         }
-        //        logln("TestFormat: " + fTestName);
+        //        System.out.println("TestFormat: " + fTestName);
         Date now = new Date();
         tryDate(new Date(0));
         tryDate(new Date((long) 1278161801778.0));
@@ -142,13 +148,13 @@ public class IntlTestDateFormat extends IntlTest {
 
     private void describeTest() {
         if (fFormat == null) {
-            errln("FAIL: no DateFormat");
+            fail("FAIL: no DateFormat");
             return;
         }
 
         // Assume it's a SimpleDateFormat and get some info
         SimpleDateFormat s = (SimpleDateFormat) fFormat;
-        logln(fTestName + " Pattern " + s.toPattern());
+        System.out.println(fTestName + " Pattern " + s.toPattern());
     }
 
     private void tryDate(Date theDate) {
@@ -169,7 +175,7 @@ public class IntlTestDateFormat extends IntlTest {
                 }
                 catch (ParseException e) {
                     describeTest();
-                    errln("********** FAIL: Parse of " + string[i-1] + " failed.");
+                    fail("********** FAIL: Parse of " + string[i-1] + " failed.");
                     dump = true;
                     break;
                 }
@@ -180,14 +186,14 @@ public class IntlTestDateFormat extends IntlTest {
                 if (dateMatch == 0 && date[i] == date[i-1]) dateMatch = i;
                 else if (dateMatch > 0 && date[i] != date[i-1]) {
                     describeTest();
-                    errln("********** FAIL: Date mismatch after match.");
+                    fail("********** FAIL: Date mismatch after match.");
                     dump = true;
                     break;
                 }
                 if (stringMatch == 0 && string[i] == string[i-1]) stringMatch = i;
                 else if (stringMatch > 0 && string[i] != string[i-1]) {
                     describeTest();
-                    errln("********** FAIL: String mismatch after match.");
+                    fail("********** FAIL: String mismatch after match.");
                     dump = true;
                     break;
                 }
@@ -198,13 +204,13 @@ public class IntlTestDateFormat extends IntlTest {
 
         if (stringMatch > fLimit || dateMatch > fLimit) {
             describeTest();
-            errln("********** FAIL: No string and/or date match within " + fLimit + " iterations.");
+            fail("********** FAIL: No string and/or date match within " + fLimit + " iterations.");
             dump = true;
         }
 
         if (dump) {
             for (int k=0; k<=i; ++k) {
-                logln("" + k + ": " + date[k] + " F> " + string[k] + " P> ");
+                System.out.println("" + k + ": " + date[k] + " F> " + string[k] + " P> ");
             }
         }
     }
@@ -235,34 +241,36 @@ public class IntlTestDateFormat extends IntlTest {
         return rand.nextDouble();
     }
 
+    @Test
     public void TestAvailableLocales() {
         final Locale[] locales = DateFormat.getAvailableLocales();
         long count = locales.length;
-        logln("" + count + " available locales");
+        System.out.println("" + count + " available locales");
         if (locales != null  &&  count != 0) {
             StringBuffer all = new StringBuffer();
             for (int i=0; i<count; ++i) {
                 if (i!=0) all.append(", ");
                 all.append(locales[i].getDisplayName());
             }
-            logln(all.toString());
+            System.out.println(all.toString());
         }
-        else errln("********** FAIL: Zero available locales or null array pointer");
+        else fail("********** FAIL: Zero available locales or null array pointer");
     }
 
     /* This test is too slow; we disable it for now
+    @Test
     public void TestMonster() {
         final Locale[] locales = DateFormat.getAvailableLocales();
         long count = locales.length;
         if (locales != null  &&  count != 0) {
             for (int i=0; i<count; ++i) {
                 String name = locales[i].getDisplayName();
-                logln("Testing " + name + "...");
+                System.out.println("Testing " + name + "...");
                 try {
                     localeTest(locales[i], name);
                 }
                 catch(Exception e) {
-                    errln("FAIL: TestMonster localeTest exception" + e);
+                    fail("FAIL: TestMonster localeTest exception" + e);
                 }
             }
         }

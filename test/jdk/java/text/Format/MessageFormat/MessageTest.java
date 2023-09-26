@@ -23,8 +23,8 @@
 
 /*
  * @test
- * @library /java/text/testlib
  * @summary test MessageFormat
+ * @run junit MessageTest
  */
 /*
 (C) Copyright Taligent, Inc. 1996 - All Rights Reserved
@@ -43,14 +43,20 @@ import java.util.*;
 import java.io.*;
 import java.text.*;
 
-public class MessageTest extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class MessageTest {
 
     public static void main(String[] args) throws Exception {
         new MessageTest().run(args);
     }
 
 
-   public void TestMSGPatternTest() {
+   @Test
+    public void TestMSGPatternTest() {
         Object[] testArgs = {
              1D, 3456D,
             "Disk", new Date(10000000000L)};
@@ -71,12 +77,12 @@ public class MessageTest extends IntlTest {
             Locale save = Locale.getDefault();
             try {
                 Locale.setDefault(Locale.US);
-                logln("");
-                logln( i + " Pat in:  " + testCases[i]);
+                System.out.println("");
+                System.out.println( i + " Pat in:  " + testCases[i]);
                 MessageFormat form = new MessageFormat(testCases[i]);
-                logln( i + " Pat out: " + form.toPattern());
+                System.out.println( i + " Pat out: " + form.toPattern());
                 String result = form.format(testArgs);
-                logln( i + " Result:  " + result);
+                System.out.println( i + " Result:  " + result);
                 Object[] values = form.parse(result);
                 for (int j = 0; j < testArgs.length; ++j) {
                     Object testArg = testArgs[j];
@@ -86,8 +92,8 @@ public class MessageTest extends IntlTest {
                     }
                     if ((testArg == null && value != null)
                         || (testArg != null && !testArg.equals(value))) {
-                       logln( i + " " + j + " old: " + testArg);
-                       logln( i + " " + j + " new: " + value);
+                       System.out.println( i + " " + j + " old: " + testArg);
+                       System.out.println( i + " " + j + " new: " + value);
                     }
                 }
             }

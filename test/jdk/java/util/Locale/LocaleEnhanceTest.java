@@ -46,12 +46,16 @@ import java.util.Set;
  * @bug 6875847 6992272 7002320 7015500 7023613 7032820 7033504 7004603
  *    7044019 8008577 8176853 8255086 8263202 8287868
  * @summary test API changes to Locale
- * @library /java/text/testlib
  * @modules jdk.localedata
  * @compile LocaleEnhanceTest.java
- * @run main/othervm -Djava.locale.providers=JRE,SPI -esa LocaleEnhanceTest
+ * @run junit/othervm -Djava.locale.providers=JRE,SPI -esa LocaleEnhanceTest
  */
-public class LocaleEnhanceTest extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class LocaleEnhanceTest {
 
     public static void main(String[] args) throws Exception {
         List<String> argList = new ArrayList<String>();
@@ -131,7 +135,7 @@ public class LocaleEnhanceTest extends IntlTest {
                 assertEquals(msg + "id", id, l.toString());
             }
             catch (IllegalArgumentException e) {
-                errln(msg + e.getMessage());
+                fail(msg + e.getMessage());
             }
         }
     }
@@ -188,7 +192,7 @@ public class LocaleEnhanceTest extends IntlTest {
                 assertEquals(msg + "id", id, l.toString());
             }
             catch (IllegalArgumentException e) {
-                errln(msg + e.getMessage());
+                fail(msg + e.getMessage());
             }
         }
     }
@@ -363,7 +367,7 @@ public class LocaleEnhanceTest extends IntlTest {
         // result is not mutable
         try {
             result.add('x');
-            errln("expected exception on add to extension key set");
+            fail("expected exception on add to extension key set");
         }
         catch (UnsupportedOperationException e) {
             // ok
@@ -422,7 +426,7 @@ public class LocaleEnhanceTest extends IntlTest {
         // result is not modifiable
         try {
             result.add("frobozz");
-            errln("expected exception when add to locale key set");
+            fail("expected exception when add to locale key set");
         }
         catch (UnsupportedOperationException e) {
             // ok
@@ -589,7 +593,7 @@ public class LocaleEnhanceTest extends IntlTest {
                 assertEquals(msg, test[2], locale.toLanguageTag());
             }
             catch (IllegalArgumentException e) {
-                errln(msg + " caught exception: " + e);
+                fail(msg + " caught exception: " + e);
             }
         }
 
@@ -1161,7 +1165,7 @@ public class LocaleEnhanceTest extends IntlTest {
 
                 assertEquals("roundtrip " + locale, locale, o);
             } catch (Exception e) {
-                errln(locale + " encountered exception:" + e.getLocalizedMessage());
+                fail(locale + " encountered exception:" + e.getLocalizedMessage());
             }
         }
     }
@@ -1184,10 +1188,10 @@ public class LocaleEnhanceTest extends IntlTest {
         }
 
         if (dataDir == null) {
-            errln("'dataDir' is null. serialized.data.dir Property value is "+dataDirName);
+            fail("'dataDir' is null. serialized.data.dir Property value is "+dataDirName);
             return;
         } else if (!dataDir.isDirectory()) {
-            errln("'dataDir' is not a directory. dataDir: "+dataDir.toString());
+            fail("'dataDir' is not a directory. dataDir: "+dataDir.toString());
             return;
         }
 
@@ -1219,7 +1223,7 @@ public class LocaleEnhanceTest extends IntlTest {
                 Object o = ois.readObject();
                 assertEquals("Deserialize Java 6 Locale " + locale, o, locale);
             } catch (Exception e) {
-                errln("Exception while reading " + testfile.getAbsolutePath() + " - " + e.getMessage());
+                fail("Exception while reading " + testfile.getAbsolutePath() + " - " + e.getMessage());
             }
         }
     }
@@ -1318,13 +1322,13 @@ public class LocaleEnhanceTest extends IntlTest {
 
     private void assertTrue(String msg, boolean v) {
         if (!v) {
-            errln(msg + ": expected true");
+            fail(msg + ": expected true");
         }
     }
 
     private void assertFalse(String msg, boolean v) {
         if (v) {
-            errln(msg + ": expected false");
+            fail(msg + ": expected false");
         }
     }
 
@@ -1336,7 +1340,7 @@ public class LocaleEnhanceTest extends IntlTest {
             if (v != null) {
                 v = "'" + v + "'";
             }
-            errln(msg + ": expected " + e + " but got " + v);
+            fail(msg + ": expected " + e + " but got " + v);
         }
     }
 
@@ -1345,19 +1349,19 @@ public class LocaleEnhanceTest extends IntlTest {
             if (e != null) {
                 e = "'" + e + "'";
             }
-            errln(msg + ": expected not equal " + e);
+            fail(msg + ": expected not equal " + e);
         }
     }
 
     private void assertNull(String msg, Object o) {
         if (o != null) {
-            errln(msg + ": expected null but got '" + o + "'");
+            fail(msg + ": expected null but got '" + o + "'");
         }
     }
 
     private void assertNotNull(String msg, Object o) {
         if (o == null) {
-            errln(msg + ": expected non null");
+            fail(msg + ": expected non null");
         }
     }
 
@@ -1383,7 +1387,7 @@ public class LocaleEnhanceTest extends IntlTest {
             if (failMsg != null) {
                 String msg = message();
                 msg = msg == null ? "" : msg + " ";
-                errln(msg + failMsg);
+                fail(msg + failMsg);
             }
         }
 

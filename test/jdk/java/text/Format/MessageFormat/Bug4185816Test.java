@@ -26,7 +26,7 @@
  * @bug 4185816
  * @library /java/text/testlib
  * @build Bug4185816Test IntlTest HexDumpReader
- * @run main Bug4185816Test
+ * @run junit Bug4185816Test
  * @summary test that MessageFormat invariants are preserved across serialization
  */
 /*
@@ -71,7 +71,12 @@ import java.text.MessageFormat;
 /**
  *  A Locale can never contains language codes of he, yi or id.
  */
-public class Bug4185816Test extends IntlTest {
+      
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class Bug4185816Test {
     private static final String FILE_NAME = "Bug4185816.ser";
     private static final String CORRUPT_FILE_NAME = "Bug4185816Corrupt.ser";
 
@@ -86,12 +91,12 @@ public class Bug4185816Test extends IntlTest {
     public void testIt() throws Exception {
         Exception e = checkStreaming(FILE_NAME);
         if (e != null) {
-            errln("MessageFormat did not stream in valid stream: "+e);
+            fail("MessageFormat did not stream in valid stream: "+e);
             e.printStackTrace();
         }
         e = checkStreaming(CORRUPT_FILE_NAME);
         if (!(e instanceof InvalidObjectException)) {
-            errln("MessageFormat did NOT detect corrupt stream: "+e);
+            fail("MessageFormat did NOT detect corrupt stream: "+e);
             e.printStackTrace();
         }
     }
