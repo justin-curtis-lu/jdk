@@ -187,9 +187,9 @@ import java.util.Arrays;
  *
  * <i>Note:The relation &le; is not equivalent to &lt;&equals;</i>
  *
- * <p>If a <i>Relation</i> symbol is to be used within a <i>Format</i> without
- * throwing an exception, it must be single quoted. For example, {@code new
- * ChoiceFormat("1# '#'1 ").format(1)} returns {@code " #1 "}.
+ * <p>If a <i>Relation</i> symbol is to be used within a <i>Format</i> pattern
+ * it must be single quoted. For example,
+ * {@code new ChoiceFormat("1# '#'1 ").format(1)} returns {@code " #1 "}.
  * Use two single quotes in a row to produce a literal single quote. For example,
  * {@code new ChoiceFormat("1# ''one'' ").format(1)} returns {@code " 'one' "}.
  *
