@@ -23,9 +23,9 @@
 
 /*
  * @test
- * @summary Confirm that the decimal separator is shown when explicitly requested.
- *          Tests against double, long, BigDecimal, and BigInteger with a combination
- *          of patterns.
+ * @summary Confirm that the decimal separator is shown when explicitly requested
+ *          (or not shown if not requested). Tests against double, long, BigDecimal,
+ *          and BigInteger with a combination of different patterns.
  * @bug 4208135
  * @run junit Bug4208135
  */
@@ -36,8 +36,8 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -46,14 +46,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Bug4208135 {
 
-    static DecimalFormat df;
+    private static DecimalFormat df;
+    // Save JVM default Locale
+    private static final Locale savedLocale = Locale.getDefault();
 
-    @BeforeEach
-    void init() {
+    // Set JVM default locale to US
+    @BeforeAll
+    static void init() {
         Locale.setDefault(Locale.US);
     }
 
-    // Separator with fractional exponent pattern
+    // Restore JVM default locale
+    @AfterAll
+    static void tearDown() {
+        Locale.setDefault(savedLocale);
+    }
+
+    // Confirm that decimal separator shown when formatting a number
     @ParameterizedTest
     @MethodSource("fractionalDigitsWithSeparatorProvider")
     public void fractionalDigitsWithSeparatorTest(Number num, String expected) {
@@ -62,6 +71,7 @@ public class Bug4208135 {
         assertEquals(expected, actualFormatted, getErrMsg("0.#E0", true));
     }
 
+    // Combination of numbers and a fractional exponent pattern with a separator
     private static Stream<Arguments> fractionalDigitsWithSeparatorProvider() {
         return Stream.of(
                 Arguments.of(0.0, "0.E0"),
@@ -79,7 +89,7 @@ public class Bug4208135 {
         );
     }
 
-    // No separator with fractional exponent pattern
+    // Confirm that decimal separator not shown when formatting a number
     @ParameterizedTest
     @MethodSource("fractionalDigitsNoSeparatorProvider")
     public void fractionalDigitsNoSeparatorTest(Number num, String expected) {
@@ -88,6 +98,7 @@ public class Bug4208135 {
         assertEquals(expected, actualFormatted, getErrMsg("0.#E0", false));
     }
 
+    // Combination of numbers and a fractional exponent pattern with no separator
     private static Stream<Arguments> fractionalDigitsNoSeparatorProvider() {
         return Stream.of(
                 Arguments.of(0.0, "0E0"),
@@ -105,7 +116,7 @@ public class Bug4208135 {
         );
     }
 
-    // Separator with no fractional no exponent pattern
+    // Confirm that decimal separator shown when formatting a number
     @ParameterizedTest
     @MethodSource("noFractionalDigitsWithSeparatorProvider")
     public void noFractionalDigitsWithSeparatorTest(Number num, String expected) {
@@ -114,6 +125,7 @@ public class Bug4208135 {
         assertEquals(expected, actualFormatted, getErrMsg("0.###", true));
     }
 
+    // Combination of numbers and a non-fractional exponent pattern with a separator
     private static Stream<Arguments> noFractionalDigitsWithSeparatorProvider() {
         return Stream.of(
                 Arguments.of(0.0, "0."),
@@ -131,7 +143,7 @@ public class Bug4208135 {
         );
     }
 
-    // No separator with no fractional no exponent pattern
+    // Confirm that decimal separator not shown when formatting a number
     @ParameterizedTest
     @MethodSource("noFractionalDigitsNoSeparatorProvider")
     public void noFractionalDigitsNoSeparatorTest(Number num, String expected) {
@@ -140,6 +152,7 @@ public class Bug4208135 {
         assertEquals(expected, actualFormatted, getErrMsg("0.###", false));
     }
 
+    // Combination of numbers and a non-fractional exponent pattern with no separator
     private static Stream<Arguments> noFractionalDigitsNoSeparatorProvider() {
         return Stream.of(
                 Arguments.of(0.0, "0"),
@@ -165,6 +178,7 @@ public class Bug4208135 {
         return df;
     }
 
+    // Utility to get a helpful error message when values are not as expected
     private static String getErrMsg(String pattern, boolean separatorShown) {
         return String.format("Fails with pattern= %s, with separatorShown = %s",
                 pattern, separatorShown);
