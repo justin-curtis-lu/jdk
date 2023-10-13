@@ -42,6 +42,7 @@ import java.io.InvalidObjectException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * {@code ChoiceFormat} is a concrete subclass of {@code NumberFormat} that
@@ -187,6 +188,10 @@ import java.util.Arrays;
  *
  * <i>Note:The relation &le; is not equivalent to &lt;&equals;</i>
  *
+ * @implSpec For compatibility reasons, if a Pattern ends with an incomplete subPattern,
+ * the incorrect portion will be discarded and the rest of the pattern accepted.
+ * All other incorrect patterns will throw an exception.
+ *
  * <p>Below is an example of constructing a ChoiceFormat with a pattern:
  * <blockquote>
  * {@snippet lang=java :
@@ -239,6 +244,7 @@ public class ChoiceFormat extends NumberFormat {
      * @see #ChoiceFormat(String)
      */
     public void applyPattern(String newPattern) {
+        Objects.requireNonNull(newPattern, "pattern must not be null");
         StringBuilder[] segments = new StringBuilder[2];
         for (int i = 0; i < segments.length; ++i) {
             segments[i] = new StringBuilder();
@@ -246,7 +252,7 @@ public class ChoiceFormat extends NumberFormat {
         double[] newChoiceLimits = new double[30];
         String[] newChoiceFormats = new String[30];
         int count = 0;
-        int part = 0;
+        int part = 0; // part == 0 denotes a Limit, part == 1 denotes a Format
         double startValue = 0;
         double oldStartValue = Double.NaN;
         boolean inQuote = false;
@@ -286,8 +292,13 @@ public class ChoiceFormat extends NumberFormat {
                             + " intervals, must be in ascending order");
                 }
                 segments[0].setLength(0);
-                part = 1;
+                part = 1; // As Relation is found, increment part, denoting Format
             } else if (ch == '|') {
+                // Checks that the subPattern contained a relation symbol
+                if (part != 1) {
+                    throw new IllegalArgumentException("Each interval must"
+                            + " contain a number before a format");
+                }
                 if (count == newChoiceLimits.length) {
                     newChoiceLimits = doubleArraySize(newChoiceLimits);
                     newChoiceFormats = doubleArraySize(newChoiceFormats);
@@ -297,12 +308,21 @@ public class ChoiceFormat extends NumberFormat {
                 ++count;
                 oldStartValue = startValue;
                 segments[1].setLength(0);
+                // As '|' is found, decrement part, indicating a new SubPattern
                 part = 0;
             } else {
+                // Builds limit portion if part == 0, builds Format if part == 1
                 segments[part].append(ch);
             }
         }
-        // clean up last one
+
+        // Cannot discard the incorrect portion, if the entire pattern is incorrect.
+        if (part == 0 && count == 0) {
+            throw new IllegalArgumentException("Each interval must"
+                    + " contain a number before a format");
+        } // Otherwise, discard the incorrect portion.
+
+        // Clean up last one if part == 1
         if (part == 1) {
             if (count == newChoiceLimits.length) {
                 newChoiceLimits = doubleArraySize(newChoiceLimits);
@@ -312,6 +332,7 @@ public class ChoiceFormat extends NumberFormat {
             newChoiceFormats[count] = segments[1].toString();
             ++count;
         }
+
         choiceLimits = new double[count];
         System.arraycopy(newChoiceLimits, 0, choiceLimits, 0, count);
         choiceFormats = new String[count];

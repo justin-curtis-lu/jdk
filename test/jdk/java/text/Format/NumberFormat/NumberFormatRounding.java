@@ -81,7 +81,7 @@ public class NumberFormatRounding {
             // continue testing
         }
 
-        ChoiceFormat cf = new ChoiceFormat("");
+        ChoiceFormat cf = new ChoiceFormat("0#ignored");
 
         try {
             cf.setRoundingMode(RoundingMode.HALF_EVEN);
