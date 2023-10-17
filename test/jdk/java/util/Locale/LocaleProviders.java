@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -128,15 +128,19 @@ public class LocaleProviders {
 
     static void adapterTest(String expected, String lang, String ctry) {
         Locale testLocale = Locale.of(lang, ctry);
+        System.out.printf("$$$ %s%n", testLocale);
         LocaleProviderAdapter ldaExpected =
             LocaleProviderAdapter.forType(LocaleProviderAdapter.Type.valueOf(expected));
+        System.out.printf("$$$ %s%n", ldaExpected);
         if (!ldaExpected.getDateFormatProvider().isSupportedLocale(testLocale)) {
             System.out.println("test locale: "+testLocale+" is not supported by the expected provider: "+ldaExpected+". Ignoring the test.");
             return;
         }
         String preference = System.getProperty("java.locale.providers", "");
         LocaleProviderAdapter lda = LocaleProviderAdapter.getAdapter(DateFormatProvider.class, testLocale);
+        System.out.printf("$$$ %s%n", lda);
         LocaleProviderAdapter.Type type = lda.getAdapterType();
+        System.out.printf("$$$ %s%n", type);
         System.out.printf("testLocale: %s, got: %s, expected: %s\n", testLocale, type, expected);
         if (!type.toString().equals(expected)) {
             throw new RuntimeException("Returned locale data adapter is not correct.");
@@ -145,10 +149,14 @@ public class LocaleProviders {
 
     static void bug7198834Test() {
         LocaleProviderAdapter lda = LocaleProviderAdapter.getAdapter(DateFormatProvider.class, Locale.US);
+        System.out.printf("$$$ %s%n", lda);
         LocaleProviderAdapter.Type type = lda.getAdapterType();
+        System.out.printf("$$$ %s%n", type);
         if (type == LocaleProviderAdapter.Type.HOST && IS_WINDOWS) {
             DateFormat df = DateFormat.getDateInstance(DateFormat.FULL, Locale.US);
+            System.out.printf("$$$ %s%n", df);
             String date = df.format(new Date());
+            System.out.printf("$$$ %s%n", date);
             if (date.charAt(date.length()-1) == ' ') {
                 throw new RuntimeException("Windows Host Locale Provider returns a trailing space.");
             }
@@ -322,7 +330,9 @@ public class LocaleProviders {
 
     static void bug8232871Test() {
         LocaleProviderAdapter lda = LocaleProviderAdapter.getAdapter(CalendarNameProvider.class, Locale.US);
+        System.out.printf("$$$ %s%n", lda);
         LocaleProviderAdapter.Type type = lda.getAdapterType();
+        System.out.printf("$$$ %s%n", type);
         var lang = Locale.getDefault().getLanguage();
         var cal = Calendar.getInstance();
         var calType = cal.getCalendarType();
@@ -336,6 +346,7 @@ public class LocaleProviders {
             cal.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL,
                             Locale.JAPAN);
+            System.out.printf("$$$ %s%n", df);
             df.setCalendar(cal);
             var result = df.format(cal.getTime());
             if (result.equals(expected)) {
@@ -362,13 +373,18 @@ public class LocaleProviders {
         var ifExpectedList = List.of("123", "123");
 
         var defLoc = Locale.getDefault(Locale.Category.FORMAT);
+        System.out.printf("$$$ %s%n", defLoc);
         var type = LocaleProviderAdapter.getAdapter(CalendarNameProvider.class, Locale.US)
                                         .getAdapterType();
+        System.out.printf("$$$ %s%n", type);
         if (defLoc.equals(Locale.US) &&
             type == LocaleProviderAdapter.Type.HOST &&
             (IS_WINDOWS || IS_MAC)) {
+            System.out.printf("$$$ %s%n", "Entered conditional");
             final var numf = NumberFormat.getNumberInstance(Locale.US);
+            System.out.printf("$$$ %s%n", numf);
             final var intf = NumberFormat.getIntegerInstance(Locale.US);
+            System.out.printf("$$$ %s%n", intf);
 
             IntStream.range(0, inputList.size())
                 .forEach(i -> {
@@ -427,15 +443,23 @@ public class LocaleProviders {
 
     static void bug8248695Test() {
         Locale l = Locale.getDefault(Locale.Category.FORMAT);
+        System.out.printf("$$$ %s%n", l);
         LocaleProviderAdapter lda = LocaleProviderAdapter.getAdapter(DateFormatProvider.class, l);
+        System.out.printf("$$$ %s%n", lda);
         LocaleProviderAdapter.Type type = lda.getAdapterType();
+        System.out.printf("$$$ %s%n", type);
         if (type == LocaleProviderAdapter.Type.HOST) {
             System.out.println("Locale: " + l);
             var ld = LocalDate.now();
+            System.out.printf("$$$ %s%n", ld);
             var zdt = ZonedDateTime.now(ZoneId.of("America/Los_Angeles"));
+            System.out.printf("$$$ %s%n", zdt);
             var df = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(l);
+            System.out.printf("$$$ %s%n", df);
             var tf = DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL).withLocale(l);
+            System.out.printf("$$$ %s%n", tf);
             var dtf = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL).withLocale(l);
+            System.out.printf("$$$ %s%n", dtf);
 
             // Checks there's no "unsupported temporal field" exception thrown, such as HourOfDay
             System.out.println(df.format(ld));
@@ -450,12 +474,15 @@ public class LocaleProviders {
     // Run only if the platform locale is en-GB
     static void bug8257964Test() {
         var defLoc = Locale.getDefault(Locale.Category.FORMAT);
+        System.out.printf("$$$ %s%n", defLoc);
         var type = LocaleProviderAdapter.getAdapter(CalendarNameProvider.class, Locale.UK)
                 .getAdapterType();
+        System.out.printf("$$$ %s%n", type);
         if (defLoc.equals(Locale.UK) &&
                 type == LocaleProviderAdapter.Type.HOST &&
                 (IS_WINDOWS || IS_MAC)) {
             Calendar instance = Calendar.getInstance(Locale.UK);
+            System.out.printf("$$$ %s%n", instance);
             int result = instance.getMinimalDaysInFirstWeek();
             if (result != 4) {
                 throw new RuntimeException("MinimalDaysInFirstWeek for Locale.UK is incorrect. " +

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -192,10 +192,15 @@ public class LocaleProvidersRun {
                 .addToolArg(param1)
                 .addToolArg(param2)
                 .addToolArg(param3);
+        System.out.printf("$$$ Launching test method: %s%n", methodName);
+        if (prefList.contains("HOST") && System.getProperty("os.name").startsWith("Mac")) {
+            System.out.printf("$$$ Testing on MAC/HOST combination%n");
+        }
         int exitCode = ProcessTools.executeCommand(launcher.getCommand())
                 .getExitValue();
         if (exitCode != 0) {
             throw new RuntimeException("Unexpected exit code: " + exitCode);
         }
+        System.out.printf("$$$ Passed test method: %s%n%n", methodName);
     }
 }
