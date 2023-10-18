@@ -193,6 +193,7 @@ public class LocaleProvidersRun {
                 .addToolArg(param2)
                 .addToolArg(param3);
         System.out.printf("$$$ Launching test method: %s%n", methodName);
+        System.out.printf("$$$ The current locale is: %s%n", Locale.getDefault());
         if (prefList.contains("HOST") && System.getProperty("os.name").startsWith("Mac")) {
             System.out.printf("$$$ Testing on MAC/HOST combination%n");
         }
