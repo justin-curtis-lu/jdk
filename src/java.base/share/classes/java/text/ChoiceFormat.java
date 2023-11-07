@@ -459,8 +459,8 @@ public class ChoiceFormat extends NumberFormat {
      * @param toAppendTo where text is appended.
      * @param status ignore no useful status is returned.
      * @throws    ArrayIndexOutOfBoundsException This method throws an
-     *            {@code ArrayIndexOutOfBoundsException} if the {@code limits}
-     *            and {@code formats} are empty
+     *            {@code ArrayIndexOutOfBoundsException} if either {@code limits}
+     *            or {@code formats} are empty
      * @throws    NullPointerException if {@code toAppendTo}
      *            is {@code null}
      */
@@ -477,8 +477,8 @@ public class ChoiceFormat extends NumberFormat {
      * @param toAppendTo where text is appended.
      * @param status ignore no useful status is returned.
      * @throws    ArrayIndexOutOfBoundsException This method throws an
-     *            {@code ArrayIndexOutOfBoundsException} if the {@code limits}
-     *            and {@code formats} are empty
+     *            {@code ArrayIndexOutOfBoundsException} if either {@code limits}
+     *            or {@code formats} are empty
      * @throws    NullPointerException if {@code toAppendTo}
      *            is {@code null}
      */
