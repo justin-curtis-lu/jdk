@@ -1436,11 +1436,10 @@ public class MessageFormat extends Format {
                 } else if (obj instanceof Date) {
                     // format a Date if can
                     subFormatter = DateFormat.getDateTimeInstance(
-                            DateFormat.SHORT, DateFormat.SHORT, locale);//fix
+                             DateFormat.SHORT, DateFormat.SHORT, locale);//fix
                 } else if (obj instanceof String) {
                     arg = (String) obj;
-                } // Temporal type does not need check. toString() provides sufficient format
-                else {
+                } else {
                     arg = obj.toString();
                     if (arg == null) arg = "null";
                 }
