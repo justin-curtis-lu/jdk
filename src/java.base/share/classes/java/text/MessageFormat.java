@@ -1439,6 +1439,7 @@ public class MessageFormat extends Format {
                              DateFormat.SHORT, DateFormat.SHORT, locale);//fix
                 } else if (obj instanceof String) {
                     arg = (String) obj;
+
                 } else {
                     arg = obj.toString();
                     if (arg == null) arg = "null";
