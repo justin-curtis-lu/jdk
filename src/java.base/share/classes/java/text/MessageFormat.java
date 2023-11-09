@@ -1632,7 +1632,6 @@ public class MessageFormat extends Format {
         } catch (IllegalArgumentException iae) {
             throw new IllegalArgumentException("unknown format type: " + type);
         }
-
         // Get the style if recognized, otherwise treat modifier as a sub_format pattern
         FormatStyle fStyle;
         try {
@@ -1640,7 +1639,6 @@ public class MessageFormat extends Format {
         } catch (IllegalArgumentException iae) {
             fStyle = FormatStyle.SUBFORMAT_PATTERN;
         }
-
         return switch (fType) {
             case NUMBER -> switch (fStyle) {
                 case DEFAULT -> NumberFormat.getInstance(locale);
