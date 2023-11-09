@@ -1711,19 +1711,21 @@ public class MessageFormat extends Format {
 
     // Either returns a Format created from a Subformat pattern, or catches an
     // exception and propagates it back up as an IllegalArgumentException (as specified)
-    private Format getSubformatFromPattern(FormatType type, String modifier) {
+    private Format getSubformatFromPattern(FormatType fType, String pattern) {
         try {
-            return switch(type) {
-                case NUMBER -> new DecimalFormat(modifier, DecimalFormatSymbols.getInstance(locale));
-                case DATE, TIME -> new SimpleDateFormat(modifier, locale);
-                case CHOICE -> new ChoiceFormat(modifier);
-                case TEMPORAL -> DateTimeFormatter.ofPattern(modifier).toFormat();
+            return switch(fType) {
+                case NUMBER -> new DecimalFormat(pattern, DecimalFormatSymbols.getInstance(locale));
+                case DATE, TIME -> new SimpleDateFormat(pattern, locale);
+                case CHOICE -> new ChoiceFormat(pattern);
+                case TEMPORAL -> DateTimeFormatter.ofPattern(pattern).toFormat();
                 default -> throw new RuntimeException(String.format("Type: %s " +
-                        "does not support Subformat patterns", type));
+                        "does not support Subformat patterns", fType));
             };
         } catch (Exception e) {
+            String type = fType.getText().substring(0,1).toUpperCase(Locale.ROOT)
+                    + fType.getText().substring(1);
                 throw new IllegalArgumentException(String.format(
-                        "Type: %s and Style: %s cannot produce valid Format.", type, modifier), e);
+                        "%s pattern incorrect: %s", type, pattern), e);
         }
     }
 
@@ -1792,6 +1794,10 @@ public class MessageFormat extends Format {
         TEMPORAL("temporal");
 
         private final String text;
+
+        public String getText() {
+            return text;
+        }
 
         FormatType(String text){
             this.text = text;
