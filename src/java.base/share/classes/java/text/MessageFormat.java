@@ -672,6 +672,8 @@ public class MessageFormat extends Format {
                         result.append(",number,").append(dFmt.toPattern());
                     } else if (fmt instanceof ChoiceFormat cFmt) {
                         result.append(",choice,").append(cFmt.toPattern());
+                    } else {
+                        // Other future or user defined subclass of NumberFormat
                     }
                 }
             } else if (fmt instanceof DateFormat) {
@@ -695,6 +697,8 @@ public class MessageFormat extends Format {
                         // Could not match to a DateFormat constant, thus it's
                         // a user-defined Subformat pattern
                         result.append(",date,").append(sdFmt.toPattern());
+                    } else {
+                        // Other future or user defined subclass of DateFormat
                     }
                 } else if (index != 0) {
                     // Only append a modifier if it's not DEFAULT (0)
@@ -707,6 +711,9 @@ public class MessageFormat extends Format {
                     result.append(",list,or");
                 } else if (fmt.equals(ListFormat.getInstance(locale, ListFormat.Type.UNIT, ListFormat.Style.FULL))) {
                     result.append(",list,unit");
+                } else {
+                    // ListFormat does not have toPattern(), cannot recognize
+                    // other instances
                 }
             } else if (fmt != null) {
                 // Since ClassicFormat is not public, cannot use instanceof check
@@ -721,9 +728,8 @@ public class MessageFormat extends Format {
                 } else if (fmt.equals(DateTimeFormatter.ISO_INSTANT.toFormat())) {
                     result.append(",temporal,iso-instant");
                 }
-                // If we have not matched to a defined ClassicFormat
-                // This means the current format is an unknown user defined
-                // Format subclass which cannot be synthesized
+                // Either a non-recognized DateTimeFormatter or a user-defined
+                // Format subclass, both cannot be converted.
             }
             result.append('}');
         }
