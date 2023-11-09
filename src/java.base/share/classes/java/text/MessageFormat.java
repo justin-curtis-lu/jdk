@@ -724,7 +724,7 @@ public class MessageFormat extends Format {
                 } else if (fmt.equals(DateTimeFormatter.ISO_LOCAL_DATE_TIME.toFormat())) {
                     result.append(",temporal,iso-local-date-time");
                 } else if (fmt.equals(DateTimeFormatter.ISO_OFFSET_DATE_TIME.toFormat())) {
-                    result.append(",temporal,iso-local-date-time");
+                    result.append(",temporal,iso-offset-date-time");
                 } else if (fmt.equals(DateTimeFormatter.ISO_INSTANT.toFormat())) {
                     result.append(",temporal,iso-instant");
                 }
