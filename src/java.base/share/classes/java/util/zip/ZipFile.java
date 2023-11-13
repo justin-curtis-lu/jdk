@@ -96,6 +96,7 @@ import static java.util.zip.ZipUtils.*;
 public class ZipFile implements ZipConstants, Closeable {
 
     private final String name;     // zip file name
+    private final String baseName;     // zip file name (without parent path)
     private volatile boolean closeRequested;
 
     // The "resource" used by this zip file that needs to be
@@ -246,6 +247,7 @@ public class ZipFile implements ZipConstants, Closeable {
         Objects.requireNonNull(charset, "charset");
 
         this.name = name;
+        this.baseName = file.getName();
         long t0 = System.nanoTime();
 
         this.res = new CleanableResource(this, ZipCoder.get(charset), file, mode);
@@ -479,11 +481,21 @@ public class ZipFile implements ZipConstants, Closeable {
     }
 
     /**
-     * Returns the path name of the ZIP file.
-     * @return the path name of the ZIP file
+     * {@return the path name of the ZIP file}
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * {@return the string representation of the ZIP file}
+     *
+     * This string is equivalent to the base name in the value returned by
+     * {@link #getName()}.
+     */
+    @Override
+    public String toString() {
+        return baseName;
     }
 
     private class ZipEntryIterator<T extends ZipEntry>
@@ -531,8 +543,7 @@ public class ZipFile implements ZipConstants, Closeable {
     }
 
     /**
-     * Returns an enumeration of the ZIP file entries.
-     * @return an enumeration of the ZIP file entries
+     * {@return an enumeration of the ZIP file entries}
      * @throws IllegalStateException if the zip file has been closed
      */
     public Enumeration<? extends ZipEntry> entries() {
@@ -579,12 +590,11 @@ public class ZipFile implements ZipConstants, Closeable {
     }
 
     /**
-     * Returns an ordered {@code Stream} over the ZIP file entries.
+     * {@return an ordered {@code Stream} of entries in this ZIP file}
      *
      * Entries appear in the {@code Stream} in the order they appear in
      * the central directory of the ZIP file.
      *
-     * @return an ordered {@code Stream} of entries in this ZIP file
      * @throws IllegalStateException if the zip file has been closed
      * @since 1.8
      */
@@ -694,9 +704,8 @@ public class ZipFile implements ZipConstants, Closeable {
     }
 
     /**
-     * Returns the number of entries in the ZIP file.
+     * {@return the number of entries in the ZIP file}
      *
-     * @return the number of entries in the ZIP file
      * @throws IllegalStateException if the zip file has been closed
      */
     public int size() {
