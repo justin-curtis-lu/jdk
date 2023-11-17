@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -39,9 +39,8 @@
 
 import java.util.Locale;
 
-import jdk.test.lib.JDKToolLauncher;
-import jdk.test.lib.process.ProcessTools;
 import jdk.test.lib.Utils;
+import jdk.test.lib.process.ProcessTools;
 
 public class LocaleProvidersRun {
     public static void main(String[] args) throws Throwable {
@@ -178,22 +177,19 @@ public class LocaleProvidersRun {
     }
 
     private static void testRun(String prefList, String methodName,
-            String param1, String param2, String param3) throws Throwable{
-        JDKToolLauncher launcher = JDKToolLauncher.createUsingTestJDK("java");
-        launcher.addToolArg("-ea")
-                .addToolArg("-esa")
-                .addToolArg("-cp")
-                .addToolArg(Utils.TEST_CLASS_PATH)
-                .addToolArg("-Djava.util.logging.config.class=LocaleProviders$LogConfig")
-                .addToolArg("-Djava.locale.providers=" + prefList)
-                .addToolArg("--add-exports=java.base/sun.util.locale.provider=ALL-UNNAMED")
-                .addToolArg("LocaleProviders")
-                .addToolArg(methodName)
-                .addToolArg(param1)
-                .addToolArg(param2)
-                .addToolArg(param3);
-        int exitCode = ProcessTools.executeCommand(launcher.getCommand())
-                .getExitValue();
+            String param1, String param2, String param3) throws Throwable {
+
+        ProcessBuilder pb = ProcessTools.executeTestJvm(
+                "-ea",
+                "-esa",
+                "-cp",
+                Utils.TEST_CLASS_PATH,
+                "-Djava.util.logging.config.class=LocaleProviders$LogConfig",
+                "-Djava.locale.providers=" + prefList,
+                "--add-exports=java.base/sun.util.locale.provider=ALL-UNNAMED",
+                "LocaleProviders",
+                methodName, param1, param2, param3);
+        int exitCode = ProcessTools.executeCommand(pb).getExitValue();
         if (exitCode != 0) {
             throw new RuntimeException("Unexpected exit code: " + exitCode);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2017, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -71,16 +71,15 @@ public class LayerTest {
     }
 
     private static void runCmd() throws Throwable {
-        JDKToolLauncher launcher = JDKToolLauncher.createUsingTestJDK("java");
-        launcher.addToolArg("-ea")
-                .addToolArg("-esa")
-                .addToolArg("-cp")
-                .addToolArg(Utils.TEST_CLASSES)
-                .addToolArg("Main")
-                .addToolArg(Utils.TEST_CLASSES);
+        ProcessBuilder pb = ProcessTools.createTestJavaProcessBuilder(
+                "-ea",
+                "-esa",
+                "-cp",
+                Utils.TEST_CLASSES,
+                "Main",
+                Utils.TEST_CLASSES);
 
-        int exitCode = ProcessTools.executeCommand(launcher.getCommand())
-                                   .getExitValue();
+        int exitCode = ProcessTools.executeCommand(pb).getExitValue();
         if (exitCode != 0) {
             throw new RuntimeException("Execution of the test failed. "
                     + "Unexpected exit code: " + exitCode);
