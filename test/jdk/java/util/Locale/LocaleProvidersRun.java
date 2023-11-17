@@ -179,7 +179,7 @@ public class LocaleProvidersRun {
     private static void testRun(String prefList, String methodName,
             String param1, String param2, String param3) throws Throwable {
 
-        ProcessBuilder pb = ProcessTools.executeTestJvm(
+        int exitCode = ProcessTools.executeTestJvm(
                 "-ea",
                 "-esa",
                 "-cp",
@@ -188,8 +188,7 @@ public class LocaleProvidersRun {
                 "-Djava.locale.providers=" + prefList,
                 "--add-exports=java.base/sun.util.locale.provider=ALL-UNNAMED",
                 "LocaleProviders",
-                methodName, param1, param2, param3);
-        int exitCode = ProcessTools.executeCommand(pb).getExitValue();
+                methodName, param1, param2, param3).getExitValue();
         if (exitCode != 0) {
             throw new RuntimeException("Unexpected exit code: " + exitCode);
         }
