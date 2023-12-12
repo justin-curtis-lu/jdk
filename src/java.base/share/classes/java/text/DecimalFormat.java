@@ -2997,6 +2997,17 @@ public class DecimalFormat extends NumberFormat {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return
+                """
+                DecimalFormat [locale: "%s", pattern: "%s"]
+                """.formatted(this.symbols.getLocale().getDisplayName(), toPattern());
+    }
+
+    /**
      * Synthesizes a pattern string that represents the current state
      * of this Format object.
      *

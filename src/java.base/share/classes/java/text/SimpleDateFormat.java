@@ -2423,6 +2423,17 @@ public class SimpleDateFormat extends DateFormat {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return
+                """
+                SimpleDateFormat [locale: "%s", pattern: "%s"]
+                """.formatted(this.locale.getDisplayName(), toPattern());
+    }
+
+    /**
      * Compares the specified object with this {@code SimpleDateFormat} for equality.
      * Returns true if the object is also a {@code SimpleDateFormat} and the
      * two formats would format any value the same.

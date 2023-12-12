@@ -1195,6 +1195,17 @@ public class MessageFormat extends Format {
         return pattern.hashCode(); // enough for reasonable distribution
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return
+                """
+                ListFormat [locale: "%s", pattern: "%s]
+                """.formatted(locale.getDisplayName(), toPattern());
+    }
+
 
     /**
      * Defines constants that are used as attribute keys in the

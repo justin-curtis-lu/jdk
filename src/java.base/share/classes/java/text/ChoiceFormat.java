@@ -625,6 +625,17 @@ public class ChoiceFormat extends NumberFormat {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return
+                """
+                ChoiceFormat [pattern: "%s"]
+                """.formatted(toPattern());
+    }
+
+    /**
      * Compares the specified object with this {@code ChoiceFormat} for equality.
      * Returns true if the object is also a {@code ChoiceFormat} and the
      * two formats would format any value the same.
