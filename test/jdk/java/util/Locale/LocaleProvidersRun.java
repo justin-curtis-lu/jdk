@@ -24,7 +24,7 @@
 /*
  * @test
  * @bug 6336885 7196799 7197573 8008577 8010666 8013233 8015960 8028771
- *      8054482 8062006 8150432 8215913 8220227 8236495 8248695
+ *      8054482 8062006 8150432 8215913 8220227 8236495
  * @summary General Locale provider test (ex: adapter loading). See the
  *          other LocaleProviders* test classes for more specific tests (ex:
  *          java.text.Format related bugs).
@@ -34,21 +34,17 @@
  * @run junit/othervm LocaleProvidersRun
  */
 
-import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import jdk.test.lib.Utils;
-import jdk.test.lib.process.ProcessTools;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.condition.OS.MAC;
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 /*
@@ -86,7 +82,7 @@ public class LocaleProvidersRun {
     @MethodSource
     public void adapterTest(String prefList, String param1,
                             String param2, String param3) throws Throwable {
-        testRun(prefList, "adapterTest", param1, param2, param3);
+        LocaleProviders.testRun(prefList, "adapterTest", param1, param2, param3);
     }
 
     /*
@@ -156,10 +152,9 @@ public class LocaleProvidersRun {
     // in HOST Windows provider (English locale)
     @Test
     @EnabledOnOs(WINDOWS)
+    @EnabledIfSystemProperty(named = "user.language", matches = "en")
     public void currencyNameProviderWindowsHost() throws Throwable {
-        if (defLang.equals("en")) {
-            testRun("HOST", "bug8010666Test");
-        }
+        LocaleProviders.testRun("HOST", "bug8010666Test");
     }
 
     // 8220227: Ensure Locale::getDisplayCountry does not display error message
@@ -168,35 +163,7 @@ public class LocaleProvidersRun {
     @EnabledOnOs(WINDOWS)
     public void nonEnglishDisplayCountryHost() throws Throwable {
         if (!defLang.equals("en")) {
-            testRun("HOST", "bug8220227Test");
-        }
-    }
-
-    // 8248695: Ensure DateTimeFormatter::ofLocalizedDate does not throw exception
-    // under HOST (date only pattern leaks time field)
-    @Test
-    public void dateOnlyJavaTimePattern() throws Throwable {
-        testRun("HOST", "bug8248695Test");
-    }
-
-    static void testRun(String prefList, String methodName, String... params) throws Throwable {
-
-        List<String> command = List.of(
-                "-ea", "-esa",
-                "-cp", Utils.TEST_CLASS_PATH,
-                "-Djava.locale.providers=" + prefList,
-                "--add-exports=java.base/sun.util.locale.provider=ALL-UNNAMED",
-                "LocaleProviders", methodName);
-
-        // Build process with arguments, if required by the method
-        ProcessBuilder pb = ProcessTools.createTestJavaProcessBuilder(
-                Stream.concat(command.stream(), Stream.of(params)).toList());
-
-
-        // Evaluate process status
-        int exitCode = ProcessTools.executeCommand(pb).getExitValue();
-        if (exitCode != 0) {
-            throw new RuntimeException("Unexpected exit code: " + exitCode);
+            LocaleProviders.testRun("HOST", "bug8220227Test");
         }
     }
 }

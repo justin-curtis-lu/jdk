@@ -23,48 +23,22 @@
 
 /*
  * @test
- * @bug 8228465 8232871 8257964
- * @summary Test any Calendar Locale provider related issues
+ * @bug 8248695
+ * @summary Test any java.time.DateTimeFormatter Locale provider related issues
  * @library /test/lib
  * @build LocaleProviders
  * @modules java.base/sun.util.locale.provider
- * @run junit/othervm LocaleProvidersCalendar
+ * @run junit/othervm LocaleProvidersDateTimeFormatter
  */
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
 
-import static org.junit.jupiter.api.condition.OS.MAC;
-import static org.junit.jupiter.api.condition.OS.WINDOWS;
+public class LocaleProvidersDateTimeFormatter {
 
-public class LocaleProvidersCalendar {
-
-    /*
-     * 8228465 (Windows only): Ensure correct ERA display name under HOST Windows
-     */
+    // 8248695: Ensure DateTimeFormatter::ofLocalizedDate does not throw exception
+    // under HOST (date only pattern leaks time field)
     @Test
-    @EnabledOnOs(WINDOWS)
-    public void gregCalEraHost() throws Throwable {
-        LocaleProviders.testRun("HOST", "bug8228465Test");
-    }
-
-    /*
-     * 8232871 (macOS only): Ensure correct Japanese calendar values under
-     * HOST Mac.
-     */
-    @Test
-    @EnabledOnOs(MAC)
-    public void japaneseCalValuesHost() throws Throwable {
-        LocaleProviders.testRun("HOST", "bug8232871Test");
-    }
-
-    /*
-     * 8257964 (macOS/Windows only): Ensure correct Calendar::getMinimalDaysInFirstWeek
-     * value under HOST Windows / Mac
-     */
-    @Test
-    @EnabledOnOs({WINDOWS, MAC})
-    public void minDaysFirstWeekHost() throws Throwable {
-        LocaleProviders.testRun("HOST", "bug8257964Test");
+    public void dateOnlyJavaTimePattern() throws Throwable {
+        LocaleProviders.testRun("HOST", "bug8248695Test");
     }
 }

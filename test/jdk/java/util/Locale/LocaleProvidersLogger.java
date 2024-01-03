@@ -31,15 +31,9 @@
  * @run junit/othervm -Djdk.lang.Process.allowAmbiguousCommands=false LocaleProvidersLogger
  */
 
-import java.util.List;
-import java.util.stream.Stream;
-
-import jdk.test.lib.Utils;
-import jdk.test.lib.process.ProcessTools;
-
 import org.junit.jupiter.api.Test;
 
-public class LocaleProvidersLogger {
+public class LocaleProvidersLogger extends LocaleProvidersRun {
 
     /*
      * 8245241 8246721 8261919: Ensure if an incorrect system property for locale providers is set,
@@ -49,29 +43,7 @@ public class LocaleProvidersLogger {
      */
     @Test
     public void logIncorrectLocaleProvider() throws Throwable {
-        testRun("FOO", "bug8245241Test",
+        LocaleProviders.testRun("FOO", "bug8245241Test",
                 "Invalid locale provider adapter \"FOO\" ignored.");
-    }
-
-    static void testRun(String prefList, String methodName, String... params) throws Throwable {
-
-        List<String> command = List.of(
-                "-ea", "-esa",
-                "-cp", Utils.TEST_CLASS_PATH,
-                "-Djava.util.logging.config.class=LocaleProviders$LogConfig",
-                "-Djava.locale.providers=" + prefList,
-                "--add-exports=java.base/sun.util.locale.provider=ALL-UNNAMED",
-                "LocaleProviders", methodName);
-
-        // Build process with arguments, if required by the method
-        ProcessBuilder pb = ProcessTools.createTestJavaProcessBuilder(
-                Stream.concat(command.stream(), Stream.of(params)).toList());
-
-
-        // Evaluate process status
-        int exitCode = ProcessTools.executeCommand(pb).getExitValue();
-        if (exitCode != 0) {
-            throw new RuntimeException("Unexpected exit code: " + exitCode);
-        }
     }
 }

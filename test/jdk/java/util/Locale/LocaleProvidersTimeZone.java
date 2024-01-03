@@ -32,12 +32,6 @@
  * @run junit/othervm LocaleProvidersTimeZone
  */
 
-import java.util.List;
-import java.util.stream.Stream;
-
-import jdk.test.lib.Utils;
-import jdk.test.lib.process.ProcessTools;
-
 import org.junit.jupiter.api.Test;
 
 public class LocaleProvidersTimeZone {
@@ -46,30 +40,9 @@ public class LocaleProvidersTimeZone {
     // SPI defined.
     @Test
     public void timeZoneWithCustomProvider() throws Throwable {
-        testRun("JRE", "tzNameTest", "Europe/Moscow");
-        testRun("COMPAT", "tzNameTest", "Europe/Moscow");
-        testRun("JRE", "tzNameTest", "America/Los_Angeles");
-        testRun("COMPAT", "tzNameTest", "America/Los_Angeles");
-    }
-
-    static void testRun(String prefList, String methodName, String... params) throws Throwable {
-
-        List<String> command = List.of(
-                "-ea", "-esa",
-                "-cp", Utils.TEST_CLASS_PATH,
-                "-Djava.locale.providers=" + prefList,
-                "--add-exports=java.base/sun.util.locale.provider=ALL-UNNAMED",
-                "LocaleProviders", methodName);
-
-        // Build process with arguments, if required by the method
-        ProcessBuilder pb = ProcessTools.createTestJavaProcessBuilder(
-                Stream.concat(command.stream(), Stream.of(params)).toList());
-
-
-        // Evaluate process status
-        int exitCode = ProcessTools.executeCommand(pb).getExitValue();
-        if (exitCode != 0) {
-            throw new RuntimeException("Unexpected exit code: " + exitCode);
-        }
+        LocaleProviders.testRun("JRE", "tzNameTest", "Europe/Moscow");
+        LocaleProviders.testRun("COMPAT", "tzNameTest", "Europe/Moscow");
+        LocaleProviders.testRun("JRE", "tzNameTest", "America/Los_Angeles");
+        LocaleProviders.testRun("COMPAT", "tzNameTest", "America/Los_Angeles");
     }
 }

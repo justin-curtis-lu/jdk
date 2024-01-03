@@ -35,6 +35,10 @@ import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
 import java.util.spi.*;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import jdk.test.lib.Utils;
+import jdk.test.lib.process.ProcessTools;
 import sun.util.locale.provider.LocaleProviderAdapter;
 
 import static java.util.logging.LogManager.*;
@@ -160,6 +164,7 @@ public class LocaleProviders {
     static void tzNameTest(String id) {
         TimeZone tz = TimeZone.getTimeZone(id);
         String tzName = tz.getDisplayName(false, TimeZone.SHORT, Locale.US);
+        System.out.println(tzName);
         if (tzName.startsWith("GMT")) {
             throw new RuntimeException("JRE's localized time zone name for "+id+" could not be retrieved. Returned name was: "+tzName);
         }
@@ -402,6 +407,7 @@ public class LocaleProviders {
         // this will ensure LocaleProviderAdapter initialization
         DateFormat.getDateInstance();
         LogConfig.handler.flush();
+        System.out.println(System.getProperty("java.locale.providers"));
 
         if (LogConfig.logRecordList.stream()
                 .noneMatch(r -> r.getLevel() == Level.INFO &&
@@ -474,6 +480,28 @@ public class LocaleProviders {
                     "Default format locale is not Locale.UK: " + defLoc + ", or\n" +
                     "OS is neither macOS/Windows, or\n" +
                     "provider is not HOST: " + type);
+        }
+    }
+
+    static void testRun(String prefList, String methodName, String... params) throws Throwable {
+
+        List<String> command = List.of(
+                "-ea", "-esa",
+                "-cp", Utils.TEST_CLASS_PATH,
+                "-Djava.util.logging.config.class=LocaleProviders$LogConfig",
+                "-Djava.locale.providers=" + prefList,
+                "--add-exports=java.base/sun.util.locale.provider=ALL-UNNAMED",
+                "LocaleProviders", methodName);
+
+        // Build process with arguments, if required by the method
+        ProcessBuilder pb = ProcessTools.createTestJavaProcessBuilder(
+                Stream.concat(command.stream(), Stream.of(params)).toList());
+
+
+        // Evaluate process status
+        int exitCode = ProcessTools.executeCommand(pb).getExitValue();
+        if (exitCode != 0) {
+            throw new RuntimeException("Unexpected exit code: " + exitCode);
         }
     }
 }

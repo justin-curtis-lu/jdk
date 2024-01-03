@@ -33,12 +33,6 @@
  * @run junit/othervm -Duser.language=zh -Duser.country=CN LocaleProvidersFormat
  */
 
-import jdk.test.lib.Utils;
-import jdk.test.lib.process.ProcessTools;
-
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -54,7 +48,7 @@ public class LocaleProvidersFormat {
     @Test
     @EnabledOnOs(WINDOWS)
     public void dateFormatExtraSpace() throws Throwable {
-        testRun("HOST", "bug7198834Test");
+        LocaleProviders.testRun("HOST", "bug7198834Test");
     }
 
     /*
@@ -64,7 +58,7 @@ public class LocaleProvidersFormat {
      */
     @Test
     public void formatWithInvalidLocaleExtension() throws Throwable {
-        testRun("CLDR", "bug8001440Test");
+        LocaleProviders.testRun("CLDR", "bug8001440Test");
     }
 
     /*
@@ -74,8 +68,8 @@ public class LocaleProvidersFormat {
      */
     @Test
     public void simpleDateFormatWithTZNProvider() throws Throwable {
-        testRun("JRE,SPI", "bug8013086Test", "ja", "JP");
-        testRun("COMPAT,SPI", "bug8013086Test", "ja", "JP");
+        LocaleProviders.testRun("JRE,SPI", "bug8013086Test", "ja", "JP");
+        LocaleProviders.testRun("COMPAT,SPI", "bug8013086Test", "ja", "JP");
     }
 
 
@@ -86,9 +80,9 @@ public class LocaleProvidersFormat {
     @Test
     @EnabledOnOs(WINDOWS)
     public void windowsJapaneseDateFields() throws Throwable {
-        testRun("HOST,JRE", "bug8013903Test");
-        testRun("HOST", "bug8013903Test");
-        testRun("HOST,COMPAT", "bug8013903Test");
+        LocaleProviders.testRun("HOST,JRE", "bug8013903Test");
+        LocaleProviders.testRun("HOST", "bug8013903Test");
+        LocaleProviders.testRun("HOST,COMPAT", "bug8013903Test");
     }
 
     /*
@@ -100,9 +94,9 @@ public class LocaleProvidersFormat {
     @EnabledIfSystemProperty(named = "user.language", matches = "zh")
     @EnabledIfSystemProperty(named = "user.country", matches = "CN")
     public void windowsChineseCurrencySymbol() throws Throwable {
-        testRun("JRE,HOST", "bug8027289Test", "FFE5");
-        testRun("COMPAT,HOST", "bug8027289Test", "FFE5");
-        testRun("HOST", "bug8027289Test", "00A5");
+        LocaleProviders.testRun("JRE,HOST", "bug8027289Test", "FFE5");
+        LocaleProviders.testRun("COMPAT,HOST", "bug8027289Test", "FFE5");
+        LocaleProviders.testRun("HOST", "bug8027289Test", "00A5");
     }
 
     /*
@@ -112,27 +106,6 @@ public class LocaleProvidersFormat {
     @Test
     @EnabledOnOs({WINDOWS, MAC})
     public void hostOptionalFracDigits() throws Throwable {
-        testRun("HOST", "bug8232860Test");
-    }
-
-    static void testRun(String prefList, String methodName, String... params) throws Throwable {
-
-        List<String> command = List.of(
-                "-ea", "-esa",
-                "-cp", Utils.TEST_CLASS_PATH,
-                "-Djava.locale.providers=" + prefList,
-                "--add-exports=java.base/sun.util.locale.provider=ALL-UNNAMED",
-                "LocaleProviders", methodName);
-
-        // Build process with arguments, if required by the method
-        ProcessBuilder pb = ProcessTools.createTestJavaProcessBuilder(
-                Stream.concat(command.stream(), Stream.of(params)).toList());
-
-
-        // Evaluate process status
-        int exitCode = ProcessTools.executeCommand(pb).getExitValue();
-        if (exitCode != 0) {
-            throw new RuntimeException("Unexpected exit code: " + exitCode);
-        }
+        LocaleProviders.testRun("HOST", "bug8232860Test");
     }
 }
