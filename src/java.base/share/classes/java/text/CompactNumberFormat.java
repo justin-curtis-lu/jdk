@@ -2398,8 +2398,8 @@ public final class CompactNumberFormat extends NumberFormat {
     public String toString() {
         return
             """
-            CompactNumberFormat [locale: "%s", compactPattern: "%s", decimalPattern: "%s"]
-            """.formatted(symbols.getLocale().getDisplayName(), compactPatterns.toString(), decimalPattern);
+            CompactNumberFormat [locale: "%s", compactPatterns: "%s", decimalPattern: "%s"]
+            """.formatted(symbols.getLocale().getDisplayName(), Arrays.toString(compactPatterns), decimalPattern);
     }
 
     /**
