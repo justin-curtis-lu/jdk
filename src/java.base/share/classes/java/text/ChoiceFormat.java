@@ -625,14 +625,14 @@ public class ChoiceFormat extends NumberFormat {
     }
 
     /**
-     * {@inheritDoc}
+     * {@return a string identifying this {@code ChoiceFormat}, for debugging}
      */
     @Override
     public String toString() {
         return
-                """
-                ChoiceFormat [pattern: "%s"]
-                """.formatted(toPattern());
+            """
+            ChoiceFormat [pattern: "%s"]
+            """.formatted(toPattern());
     }
 
     /**

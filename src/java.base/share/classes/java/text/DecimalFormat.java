@@ -2997,14 +2997,14 @@ public class DecimalFormat extends NumberFormat {
     }
 
     /**
-     * {@inheritDoc}
+     * {@return a string identifying this {@code DecimalFormat}, for debugging}
      */
     @Override
     public String toString() {
         return
-                """
-                DecimalFormat [locale: "%s", pattern: "%s"]
-                """.formatted(this.symbols.getLocale().getDisplayName(), toPattern());
+            """
+            DecimalFormat [locale: "%s", pattern: "%s"]
+            """.formatted(symbols.getLocale().getDisplayName(), toPattern());
     }
 
     /**

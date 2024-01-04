@@ -1196,14 +1196,14 @@ public class MessageFormat extends Format {
     }
 
     /**
-     * {@inheritDoc}
+     * {@return a string identifying this {@code MessageFormat}, for debugging}
      */
     @Override
     public String toString() {
         return
-                """
-                ListFormat [locale: "%s", pattern: "%s]
-                """.formatted(locale.getDisplayName(), toPattern());
+            """
+            ListFormat [locale: "%s", pattern: "%s]
+            """.formatted(locale.getDisplayName(), toPattern());
     }
 
 

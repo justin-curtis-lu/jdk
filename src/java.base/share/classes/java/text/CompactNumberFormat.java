@@ -2392,14 +2392,14 @@ public final class CompactNumberFormat extends NumberFormat {
     }
 
     /**
-     * {@inheritDoc}
+     * {@return a string identifying this {@code CompactNumberFormat}, for debugging}
      */
     @Override
     public String toString() {
         return
-                """
-                CompactNumberFormat [locale: "%s", compactPattern: "%s", decimalPattern: "%s"]
-                """.formatted(this.symbols.getLocale().getDisplayName(), this.compactPatterns.toString(), this.decimalPattern);
+            """
+            CompactNumberFormat [locale: "%s", compactPattern: "%s", decimalPattern: "%s"]
+            """.formatted(symbols.getLocale().getDisplayName(), compactPatterns.toString(), decimalPattern);
     }
 
     /**

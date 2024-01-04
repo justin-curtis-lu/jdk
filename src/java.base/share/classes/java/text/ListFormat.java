@@ -530,7 +530,7 @@ public final class ListFormat extends Format {
     }
 
     /**
-     * {@inheritDoc}
+     * {@return a string identifying this {@code ListFormat}, for debugging}
      */
     @Override
     public String toString() {

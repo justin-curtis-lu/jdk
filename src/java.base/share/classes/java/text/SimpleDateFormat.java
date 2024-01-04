@@ -2423,14 +2423,14 @@ public class SimpleDateFormat extends DateFormat {
     }
 
     /**
-     * {@inheritDoc}
+     * {@return a string identifying this {@code SimpleDateFormat}, for debugging}
      */
     @Override
     public String toString() {
         return
-                """
-                SimpleDateFormat [locale: "%s", pattern: "%s"]
-                """.formatted(this.locale.getDisplayName(), toPattern());
+            """
+            SimpleDateFormat [locale: "%s", pattern: "%s"]
+            """.formatted(locale.getDisplayName(), toPattern());
     }
 
     /**
