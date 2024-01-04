@@ -1202,7 +1202,7 @@ public class MessageFormat extends Format {
     public String toString() {
         return
             """
-            ListFormat [locale: "%s", pattern: "%s]
+            MessageFormat [locale: "%s", pattern: "%s"]
             """.formatted(locale.getDisplayName(), toPattern());
     }
 
