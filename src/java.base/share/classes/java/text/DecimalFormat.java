@@ -2467,6 +2467,8 @@ public class DecimalFormat extends NumberFormat {
             // We have to track digitCount ourselves, because digits.count will
             // pin when the maximum allowable digits is reached.
             int digitCount = 0;
+            int leadingZeros = 0;
+            int prevSeparator = -groupingSize;
 
             int backup = -1;
             for (; position < text.length(); ++position) {
@@ -2497,6 +2499,7 @@ public class DecimalFormat extends NumberFormat {
                     if (digits.count == 0) {
                         // Ignore leading zeros in integer part of number.
                         if (!sawDecimal) {
+                            ++leadingZeros;
                             continue;
                         }
 
@@ -2525,12 +2528,13 @@ public class DecimalFormat extends NumberFormat {
                     digits.decimalAt = digitCount; // Not digits.count!
                     sawDecimal = true;
                 } else if (!isExponent && ch == grouping && isGroupingUsed()) {
-                    if (sawDecimal) {
+                    if (sawDecimal ||  digitCount + leadingZeros < prevSeparator + groupingSize) {
                         break;
                     }
                     // Ignore grouping characters, if we are using them, but
                     // require that they be followed by a digit.  Otherwise
                     // we backup and reprocess them.
+                    prevSeparator = digitCount + leadingZeros;
                     backup = position;
                 } else if (checkExponent && !isExponent && text.regionMatches(position, exponentString, 0, exponentString.length())
                         && !sawExponent) {
