@@ -2160,8 +2160,7 @@ public class DecimalFormat extends NumberFormat {
      * after the prefix cannot be parsed.
      * <p>
      * When <b>strict</b>, this method will return {@code null} and {@link #parse(String)}
-     * will throw a {@code ParseException} if parsing ends early since not every
-     * character was used, indicating a failure when strict.
+     * will throw a {@code ParseException} if every character is not parsed, indicating a failure.
      * {@code pos} can be used to obtain the cause of the failure by calling
      * {@link ParsePosition#getErrorIndex()}. When strict, a failure will occur,
      * if in {@code text},
