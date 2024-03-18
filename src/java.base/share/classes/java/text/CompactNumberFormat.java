@@ -1526,8 +1526,8 @@ public final class CompactNumberFormat extends NumberFormat {
      * {@link ParsePosition#getErrorIndex()}. When strict, a failure will occur,
      * if in {@code text},
      * <ul>
-     *   <li> The default / a compact prefix is not found, for example: "{@code $}"
-     *   <li> The default / a compact suffix is not found, for example: "{@code K}"
+     *   <li> The default or a compact prefix is not found, for example: "{@code $}"
+     *   <li> The default or a compact suffix is not found, for example: "{@code K}"
      *   <li> {@link #isGroupingUsed()} returns {@code false}, and the grouping
      *   symbol is found
      *   <li> {@link #isGroupingUsed()} returns {@code true}, and {@link
