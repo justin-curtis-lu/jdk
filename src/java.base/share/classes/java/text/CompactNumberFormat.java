@@ -1521,8 +1521,7 @@ public final class CompactNumberFormat extends NumberFormat {
      * the default prefix/suffix to a compact prefix/suffix interchangeably.
      * <p>
      * When <b>strict</b>, this method will return {@code null} and {@link #parse(String)}
-     * will throw a {@code ParseException} if every character is not parsed,
-     * indicating a failure.
+     * will throw a {@code ParseException} if not every character is parsed, indicating a failure.
      * {@code pos} can be used to obtain the cause of the failure by calling
      * {@link ParsePosition#getErrorIndex()}. When strict, a failure will occur,
      * if in {@code text},
