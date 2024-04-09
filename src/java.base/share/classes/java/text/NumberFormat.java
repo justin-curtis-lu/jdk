@@ -58,103 +58,84 @@ import sun.util.locale.provider.LocaleServiceProviderPool;
 /**
  * {@code NumberFormat} is the abstract base class for all number
  * formats. This class provides the interface for formatting and parsing
- * numbers. {@code NumberFormat} also provides methods for determining
- * which locales have number formats, and what their names are.
+ * numbers in a localized manner. This enables code that can be completely
+ * independent of the locale conventions for decimal points, thousands-separators,
+ * whether the number format is even decimal, or even the particular decimal
+ * digits used. For example, this class could be used to format a number
+ * according to French numerical conventions.
  *
- * <p>
- * {@code NumberFormat} helps you to format and parse numbers for any locale.
- * Your code can be completely independent of the locale conventions for
- * decimal points, thousands-separators, or even the particular decimal
- * digits used, or whether the number format is even decimal.
+ * <h2>Getting a NumberFormat</h2>
+ * To get a {@code NumberFormat} for the default Locale, use one of the static
+ * factory class methods that return a concrete subclass of {@code NumberFormat}.
+ * The following formats all provide an example of formatting the {@code Number}
+ * "2000.50" with the {@link java.util.Locale#US US} locale as the default locale.
+ * <ul>
+ * <li> Use {@link #getInstance()} or {@link #getNumberInstance()} to get
+ * a decimal format. For example, {@code "2,000.5"}.
+ * <li> Use {@link #getIntegerInstance()} to get an integer number format.
+ * For example, {@code "2,000"}.
+ * <li> Use {@link #getCurrencyInstance} to get a currency number format.
+ * For example, {@code "$2,000.50"}.
+ * <li> Use {@link #getCompactNumberInstance} to get a compact number format.
+ * For example, {@code "2K"} with {@link NumberFormat.Style#SHORT} or
+ * {@code "2 thousand"} with {@link NumberFormat.Style#LONG}.
+ * <li> Use {@link #getPercentInstance} to get a format for displaying percentages.
+ * For example, {@code "200,050%"}.
+ * </ul>
  *
- * <p>
- * To format a number for the current Locale, use one of the factory
- * class methods:
- * <blockquote>
- * {@snippet lang=java :
- * myString = NumberFormat.getInstance().format(myNumber);
- * }
- * </blockquote>
- * If you are formatting multiple numbers, it is
- * more efficient to get the format and use it multiple times so that
- * the system doesn't have to fetch the information about the local
- * language and country conventions multiple times.
- * <blockquote>
- * {@snippet lang=java :
- * NumberFormat nf = NumberFormat.getInstance();
- * for (var myNumber : numbers) {
- *     output.println(nf.format(myNumber) + "; ");
- * }
- * }
- * </blockquote>
- * To format a number for a different Locale, specify it in the
- * call to {@code getInstance}.
- * <blockquote>
- * {@snippet lang=java :
- * NumberFormat nf = NumberFormat.getInstance(Locale.FRENCH);
- * }
- * </blockquote>
+ * Alternatively, if a {@code NumberFormat} for a different locale is required, use
+ * one of the factory method variants that take {@code locale} as a parameter,
+ * for example, {@link #getIntegerInstance(Locale)}. {@link
+ * NumberFormat#getAvailableLocales()} can be used to determine if the desired
+ * locale is supported.
  *
- * <p>If the locale contains "nu" (numbers) and/or "rg" (region override)
+ * <h3>Locale Extensions</h3>
+ * <p>If the locale used for formatting contains "nu" (numbers) and/or "rg" (region override)
  * <a href="../util/Locale.html#def_locale_extension">Unicode extensions</a>,
  * the decimal digits, and/or the country used for formatting are overridden.
  * If both "nu" and "rg" are specified, the decimal digits from the "nu"
- * extension supersedes the implicit one from the "rg" extension.
+ * extension supersedes the implicit one from the "rg" extension. For example,
+ * a US locale with thai numerics,
+ * <blockquote>{@code NumberFormat.getInstance(Locale.forLanguageTag("en-US-u-nu-thai"));}</blockquote>
  *
- * <p>You can also use a {@code NumberFormat} to parse numbers:
- * <blockquote>
+ * <h2>Using NumberFormat</h2>
+ * The following is an example of formatting and parsing in a localized fashion,
+ *
  * {@snippet lang=java :
- * myNumber = nf.parse(myString);
+ * NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
+ * currencyFormat.format(100000); // returns "$100,000.00"
+ * currencyFormat.parse("$100,000.00"); // returns 100000
  * }
- * </blockquote>
- * Use {@code getInstance} or {@code getNumberInstance} to get the
- * normal number format. Use {@code getIntegerInstance} to get an
- * integer number format. Use {@code getCurrencyInstance} to get the
- * currency number format. Use {@code getCompactNumberInstance} to get the
- * compact number format to format a number in shorter form. For example,
- * {@code 2000} can be formatted as {@code "2K"} in
- * {@link java.util.Locale#US US locale}. Use {@code getPercentInstance}
- * to get a format for displaying percentages. With this format, a fraction
- * like 0.53 is displayed as 53%.
+ *
+ * <h2>Customizing NumberFormat</h2>
+ * {@code NumberFormat} provides API to customize formatting and parsing behavior,
+ * <ul>
+ * <li> {@link #setParseIntegerOnly(boolean)}; when {@code true}, will only return the
+ * integer portion of the number parsed from the String.
+ * <li> {@link #setMinimumFractionDigits}; Use to adjust the expected digits when
+ * formatting. Use any of the other minimum/maximum or fraction/integer setter methods
+ * in the same manner.
+ * <li> {@link #setGroupingUsed}; when {@code true}, formatted numbers will be displayed
+ * with grouping separators. Additionally, when {@code false}, parsing will not expect
+ * grouping separators in the parsed String.
+ * </ul>
  *
  * <p>
- * You can also control the display of numbers with such methods as
- * {@code setMinimumFractionDigits}.
- * If you want even more control over the format or parsing,
- * or want to give your users more control,
- * you can try casting the {@code NumberFormat} you get from the factory methods
- * to a {@code DecimalFormat} or {@code CompactNumberFormat} depending on
- * the factory method used. This will work for the vast majority of locales;
- * just remember to put it in a {@code try} block in case you encounter
- * an unusual one.
- *
- * <p>
- * NumberFormat and DecimalFormat are designed such that some controls
- * work for formatting and others work for parsing.  The following is
- * the detailed description for each these control methods,
- * <p>
- * setParseIntegerOnly : only affects parsing, e.g.
- * if true,  "3456.78" &rarr; 3456 (and leaves the parse position just after index 6)
- * if false, "3456.78" &rarr; 3456.78 (and leaves the parse position just after index 8)
- * This is independent of formatting.  If you want to not show a decimal point
- * where there might be no digits after the decimal point, use
- * setDecimalSeparatorAlwaysShown.
- * <p>
- * setDecimalSeparatorAlwaysShown : only affects formatting, and only where
- * there might be no digits after the decimal point, such as with a pattern
- * like "#,##0.##", e.g.,
- * if true,  3456.00 &rarr; "3,456."
- * if false, 3456.00 &rarr; "3456"
- * This is independent of parsing.  If you want parsing to stop at the decimal
- * point, use setParseIntegerOnly.
+ * To provide more control over the format or parsing, cast the {@code
+ * NumberFormat} you get from the factory methods to a {@code DecimalFormat} or
+ * {@code CompactNumberFormat} depending on the factory method used. For example,
+ * cast to {@code DecimalFormat} to call {@link DecimalFormat#setGroupingSize(int)}
+ * to change the desired digits between grouping separators.
+ * While this will work for the vast majority of locales; a {@code
+ * try} block should be used in case a non-supported locale is encountered.
  *
  * <p>
  * You can also use forms of the {@code parse} and {@code format}
  * methods with {@code ParsePosition} and {@code FieldPosition} to
  * allow you to:
  * <ul>
- * <li> progressively parse through pieces of a string
- * <li> align the decimal point and other areas
+ * <li> Progressively parse through pieces of a string
+ * <li> Align the decimal point and other areas
  * </ul>
  * For example, you can align numbers in two ways:
  * <ol>
@@ -183,14 +164,16 @@ import sun.util.locale.provider.LocaleServiceProviderPool;
  * If multiple threads access a format concurrently, it must be synchronized
  * externally.
  *
- * @implSpec The {@link #format(double, StringBuffer, FieldPosition)},
+ * @implSpec
+ * <h3>Null Parameter Handling</h3>
+ * The {@link #format(double, StringBuffer, FieldPosition)},
  * {@link #format(long, StringBuffer, FieldPosition)} and
  * {@link #parse(String, ParsePosition)} methods may throw
  * {@code NullPointerException}, if any of their parameter is {@code null}.
  * The subclass may provide its own implementation and specification about
  * {@code NullPointerException}.
  *
- * <p>
+ * <h3>Default RoundingMode</h3>
  * The default implementation provides rounding modes defined
  * in {@link java.math.RoundingMode} for formatting numbers. It
  * uses the {@linkplain java.math.RoundingMode#HALF_EVEN
