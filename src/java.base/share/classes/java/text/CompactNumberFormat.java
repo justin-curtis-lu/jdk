@@ -63,9 +63,9 @@ import java.util.stream.Collectors;
  * to obtain a {@code CompactNumberFormat} for a different locale
  * and to control the {@linkplain ##compact_number_style Style}.
  * <li> Use one of the {@code CompactNumberFormat} constructors, for example, {@link
- *  CompactNumberFormat#CompactNumberFormat(String, DecimalFormatSymbols, String[])
- *  CompactNumberFormat(decimalPattern, symbols, compactPatterns)}, to obtain a
- *  {@code CompactNumberFormat} with further customization.
+ * CompactNumberFormat#CompactNumberFormat(String, DecimalFormatSymbols, String[])
+ * CompactNumberFormat(decimalPattern, symbols, compactPatterns)}, to obtain a
+ * {@code CompactNumberFormat} with further customization.
  * </ul>
  * <small>Note: It is recommended to use one of the NumberFormat factory methods
  * which is tailored to the conventions of the given locale to retrieve a
@@ -101,8 +101,7 @@ import java.util.stream.Collectors;
  * not be relevant. If this is the case, continue reading at the {@link ##formatting
  * Formatting} section.</b>
  *
- * <p>
- * An example of the {@link NumberFormat.Style#SHORT SHORT} styled compact number patterns
+ * <p> An example of the {@link NumberFormat.Style#SHORT SHORT} styled compact number patterns
  * for the {@link java.util.Locale#US US locale} is {@code {"", "", "", "0K",
  * "00K", "000K", "0M", "00M", "000M", "0B", "00B", "000B", "0T", "00T", "000T"}},
  * ranging from {@code 10}<sup>{@code 0}</sup> to {@code 10}<sup>{@code 14}</sup>.
@@ -138,7 +137,7 @@ import java.util.stream.Collectors;
  * during parsing and output unchanged during formatting.
  * {@linkplain DecimalFormat##special_pattern_character Special characters},
  * on the other hand, stand for other characters, strings, or classes of
- * characters. They must be bracketed by single quotes ({@code '})
+ * characters. These characters must be quoted using single quotes ({@code '})
  * unless noted otherwise, if they are to appear in the prefix or suffix
  * as literals. For example, 0\u0915'.'.
  *
