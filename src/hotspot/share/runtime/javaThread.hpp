@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2024, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2021, Azul Systems, Inc. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -120,7 +120,7 @@ class JavaThread: public Thread {
   // Deopt support
   DeoptResourceMark*  _deopt_mark;               // Holds special ResourceMark for deoptimization
 
-  CompiledMethod*       _deopt_nmethod;         // CompiledMethod that is currently being deoptimized
+  nmethod*      _deopt_nmethod;                  // nmethod that is currently being deoptimized
   vframeArray*  _vframe_array_head;              // Holds the heap of the active vframeArrays
   vframeArray*  _vframe_array_last;              // Holds last vFrameArray we popped
   // Holds updates by JVMTI agents for compiled frames that cannot be performed immediately. They
@@ -158,8 +158,6 @@ class JavaThread: public Thread {
   JNIHandleBlock* _free_handle_block;
 
  public:
-  volatile intptr_t _Stalled;
-
   // For tracking the heavyweight monitor the thread is pending on.
   ObjectMonitor* current_pending_monitor() {
     // Use Atomic::load() to prevent data race between concurrent modification and
@@ -225,9 +223,9 @@ class JavaThread: public Thread {
   friend class AsyncExceptionHandshake;
   friend class HandshakeState;
 
-  void install_async_exception(AsyncExceptionHandshake* aec = nullptr);
   void handle_async_exception(oop java_throwable);
  public:
+  void install_async_exception(AsyncExceptionHandshake* aec = nullptr);
   bool has_async_exception_condition();
   inline void set_pending_unsafe_access_error();
   static void send_async_exception(JavaThread* jt, oop java_throwable);
@@ -258,6 +256,7 @@ class JavaThread: public Thread {
  public:
   void inc_no_safepoint_count() { _no_safepoint_count++; }
   void dec_no_safepoint_count() { _no_safepoint_count--; }
+  bool is_in_no_safepoint_scope() { return _no_safepoint_count > 0; }
 #endif // ASSERT
  public:
   // These functions check conditions before possibly going to a safepoint.
@@ -317,6 +316,7 @@ class JavaThread: public Thread {
   volatile bool         _carrier_thread_suspended;       // Carrier thread is externally suspended
   bool                  _is_in_VTMS_transition;          // thread is in virtual thread mount state transition
   bool                  _is_in_tmp_VTMS_transition;      // thread is in temporary virtual thread mount state transition
+  bool                  _is_disable_suspend;             // JVMTI suspend is temporarily disabled; used on current thread only
 #ifdef ASSERT
   bool                  _is_VTMS_transition_disabler;    // thread currently disabled VTMS transitions
 #endif
@@ -522,6 +522,7 @@ private:
   void clear_scopedValueBindings();
   oop jvmti_vthread() const;
   void set_jvmti_vthread(oop p);
+  oop vthread_or_thread() const;
 
   // Prepare thread and add to priority queue.  If a priority is
   // not specified, use the priority of the thread object. Threads_lock
@@ -647,6 +648,9 @@ private:
   void set_is_in_VTMS_transition(bool val);
   void toggle_is_in_tmp_VTMS_transition()        { _is_in_tmp_VTMS_transition = !_is_in_tmp_VTMS_transition; };
 
+  bool is_disable_suspend() const                { return _is_disable_suspend; }
+  void toggle_is_disable_suspend()               { _is_disable_suspend = !_is_disable_suspend; };
+
 #ifdef ASSERT
   bool is_VTMS_transition_disabler() const       { return _is_VTMS_transition_disabler; }
   void set_is_VTMS_transition_disabler(bool val);
@@ -682,8 +686,8 @@ private:
   void set_deopt_mark(DeoptResourceMark* value)  { _deopt_mark = value; }
   DeoptResourceMark* deopt_mark(void)            { return _deopt_mark; }
 
-  void set_deopt_compiled_method(CompiledMethod* nm)  { _deopt_nmethod = nm; }
-  CompiledMethod* deopt_compiled_method()        { return _deopt_nmethod; }
+  void set_deopt_compiled_method(nmethod* nm)    { _deopt_nmethod = nm; }
+  nmethod* deopt_compiled_method()               { return _deopt_nmethod; }
 
   Method*    callee_target() const               { return _callee_target; }
   void set_callee_target  (Method* x)            { _callee_target   = x; }
@@ -811,6 +815,7 @@ private:
 #if INCLUDE_JVMTI
   static ByteSize is_in_VTMS_transition_offset()     { return byte_offset_of(JavaThread, _is_in_VTMS_transition); }
   static ByteSize is_in_tmp_VTMS_transition_offset() { return byte_offset_of(JavaThread, _is_in_tmp_VTMS_transition); }
+  static ByteSize is_disable_suspend_offset()        { return byte_offset_of(JavaThread, _is_disable_suspend); }
 #endif
 
   // Returns the jni environment for this thread
@@ -886,11 +891,11 @@ private:
   void frames_do(void f(frame*, const RegisterMap*));
 
   // Memory operations
-  void oops_do_frames(OopClosure* f, CodeBlobClosure* cf);
-  void oops_do_no_frames(OopClosure* f, CodeBlobClosure* cf);
+  void oops_do_frames(OopClosure* f, NMethodClosure* cf);
+  void oops_do_no_frames(OopClosure* f, NMethodClosure* cf);
 
   // GC operations
-  virtual void nmethods_do(CodeBlobClosure* cf);
+  virtual void nmethods_do(NMethodClosure* cf);
 
   // RedefineClasses Support
   void metadata_do(MetadataClosure* f);
@@ -900,6 +905,7 @@ private:
 
   // Misc. operations
   const char* name() const;
+  const char* name_raw() const;
   const char* type_name() const { return "JavaThread"; }
   static const char* name_for(oop thread_obj);
 
@@ -1142,6 +1148,10 @@ public:
   // java.lang.Thread interruption support
   void interrupt();
   bool is_interrupted(bool clear_interrupted);
+
+  // This is only for use by JVMTI RawMonitorWait. It emulates the actions of
+  // the Java code in Object::wait which are not present in RawMonitorWait.
+  bool get_and_clear_interrupted();
 
 private:
   LockStack _lock_stack;
