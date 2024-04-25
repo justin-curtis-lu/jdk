@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -362,22 +362,15 @@ final class DigitList implements Cloneable {
         }
 
         if (fixedPoint) {
-            // The negative of the exponent represents the number of leading
-            // zeros between the decimal and the first non-zero digit, for
-            // a value < 0.1 (e.g., for 0.00123, -decimalAt == 2).  If this
-            // is more than the maximum fraction digits, then we have an underflow
-            // for the printed representation.
-            if (-decimalAt > maximumDigits) {
-                // Handle an underflow to zero when we round something like
-                // 0.0009 to 2 fractional digits.
-                count = 0;
-                return;
-            } else if (-decimalAt == maximumDigits) {
-                // If we round 0.0009 to 3 fractional digits, then we have to
-                // create a new one digit in the least significant location.
-                if (shouldRoundUp(0, roundedUp, valueExactAsDecimal)) {
+            // First non-zero digit occurs after the precision of maximum
+            // fractional digits. The LSD may require rounding to 1, otherwise
+            // the formatted value is zero. (e.g., for 0.00123, -decimalAt == 2).
+            if (-decimalAt >= maximumDigits) {
+                if (shouldRoundUp(0, roundedUp, valueExactAsDecimal,
+                        -decimalAt > maximumDigits)) {
                     count = 1;
-                    ++decimalAt;
+                    // Make LSD 1
+                    decimalAt = -maximumDigits + 1;
                     digits[0] = '1';
                 } else {
                     count = 0;
@@ -396,7 +389,6 @@ final class DigitList implements Cloneable {
         // Round up if appropriate.
         round(fixedPoint ? (maximumDigits + decimalAt) : maximumDigits,
               roundedUp, valueExactAsDecimal);
-
      }
 
     /**
@@ -425,7 +417,7 @@ final class DigitList implements Cloneable {
         // Eliminate digits beyond maximum digits to be displayed.
         // Round up if appropriate.
         if (maximumDigits >= 0 && maximumDigits < count) {
-            if (shouldRoundUp(maximumDigits, alreadyRounded, valueExactAsDecimal)) {
+            if (shouldRoundUp(maximumDigits, alreadyRounded, valueExactAsDecimal, false)) {
                 // Rounding can adjust the max digits
                 maximumDigits = roundUp(maximumDigits);
             }
@@ -459,7 +451,8 @@ final class DigitList implements Cloneable {
      */
     private boolean shouldRoundUp(int maximumDigits,
                                   boolean alreadyRounded,
-                                  boolean valueExactAsDecimal) {
+                                  boolean valueExactAsDecimal,
+                                  boolean underflow) {
         if (maximumDigits < count) {
             /*
              * To avoid erroneous double-rounding or truncation when converting
@@ -519,8 +512,14 @@ final class DigitList implements Cloneable {
             case HALF_UP:
             case HALF_DOWN:
             case HALF_EVEN:
+                if (underflow) {
+                    // When the index of first non-zero digit occurs
+                    // after the maximum fraction digits. In this case,
+                    // HALF_* rounding should not apply.
+                   return false;
+                }
                 // Above tie, round up for all cases
-                if (digits[maximumDigits] > '5') {
+                else if (digits[maximumDigits] > '5') {
                     return true;
                     // At tie, consider UP, DOWN, and EVEN logic
                 } else if (digits[maximumDigits] == '5' ) {
