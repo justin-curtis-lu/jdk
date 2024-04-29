@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -27,7 +27,7 @@ import java.util.Base64;
 
 /**
  * @test
- * @bug 8210583 8217969 8218265
+ * @bug 8210583 8217969 8218265 8295153
  * @summary Tests Base64.Encoder.encode and Base64.Decoder.decode
  *          with the large size of input array/buffer
  * @requires (sun.arch.data.model == "64" & os.maxMemory >= 10g)
@@ -35,12 +35,28 @@ import java.util.Base64;
  *
  */
 
+/*
+ * Need enough memory to allocate arrays. Run on machine with 10g, as 8g
+ * is not enough if we run with -Xmx8g. Run on 64bit only, as
+ * -Xmx6g is above the max representable memory for 32-bit VM.
+ */
 public class TestEncodingDecodingLength {
 
     public static void main(String[] args) {
         int size = Integer.MAX_VALUE - 8;
-        byte[] inputBytes = new byte[size];
-        byte[] outputBytes = new byte[size];
+        byte[] inputBytes;
+        byte[] outputBytes;
+
+        try {
+            inputBytes = new byte[size];
+            outputBytes = new byte[size];
+        } catch (OutOfMemoryError er) {
+            // While we should have enough memory to execute the test, the underlying
+            // machine may be running other tests simultaneously and there is potential
+            // for not enough memory to be available.
+            System.out.println("Skipping test, not enough memory to allocate test arrays");
+            return;
+        }
 
         // Check encoder with large array length
         Base64.Encoder encoder = Base64.getEncoder();
@@ -53,9 +69,21 @@ public class TestEncodingDecodingLength {
         // should not throw any exception
         Arrays.fill(inputBytes, (byte) 86);
         Base64.Decoder decoder = Base64.getDecoder();
-        decoder.decode(inputBytes);
-        decoder.decode(inputBytes, outputBytes);
-        decoder.decode(ByteBuffer.wrap(inputBytes));
+        try {
+            decoder.decode(inputBytes);
+            decoder.decode(inputBytes, outputBytes);
+            decoder.decode(ByteBuffer.wrap(inputBytes));
+        } catch (NegativeArraySizeException nase) {
+            // 8210583 - removed NASE being thrown from decode
+            throw new RuntimeException("decode should not throw NASE");
+        } catch (OutOfMemoryError er) {
+            if (er.getMessage().equals("Decoded size is too large")) {
+                // 8217969 - removed OOME being thrown from decode
+                throw new RuntimeException("decode should not throw OOME");
+            } else {
+                System.out.println("Skipping test, not enough memory for target array allocated in decode");
+            }
+        }
     }
 
     private static final void checkOOM(String methodName, Runnable r) {
@@ -72,4 +100,3 @@ public class TestEncodingDecodingLength {
         } catch (IllegalArgumentException iae) {}
     }
 }
-
