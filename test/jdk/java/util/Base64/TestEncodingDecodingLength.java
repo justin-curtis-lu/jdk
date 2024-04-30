@@ -67,9 +67,9 @@ public class TestEncodingDecodingLength {
         try {
             m.invoke(encoder, size, true);
         } catch (InvocationTargetException ex) {
-            Throwable err = ex.getCause();
-            assertEquals(OutOfMemoryError.class, err.getClass(), "00ME should be thrown");
-            assertEquals("Encoded size is too large", err.getMessage());
+            Throwable rootEx = ex.getCause();
+            assertEquals(OutOfMemoryError.class, rootEx.getClass(), "00ME should be thrown");
+            assertEquals("Encoded size is too large", rootEx.getMessage());
         }
     }
 
