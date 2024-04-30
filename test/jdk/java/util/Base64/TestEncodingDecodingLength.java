@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,55 +21,69 @@
  * questions.
  */
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
+import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Base64;
 
-/**
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+/*
  * @test
- * @bug 8210583 8217969 8218265
- * @summary Tests Base64.Encoder.encode and Base64.Decoder.decode
- *          with the large size of input array/buffer
- * @requires (sun.arch.data.model == "64" & os.maxMemory >= 10g)
- * @run main/othervm -Xms6g -Xmx8g TestEncodingDecodingLength
- *
+ * @bug 8210583 8217969 8218265 8295153
+ * @summary White-box test that effectively checks Base64.Encoder.encode and
+ *          Base64.Decoder.decode behavior with large, (Integer.MAX_VALUE) sized
+ *          input array/buffer. Tests the private methods "encodedOutLength" and
+ *          "decodedOutLength".
+ * @run junit/othervm --add-opens java.base/java.util=ALL-UNNAMED TestEncodingDecodingLength
  */
 
+// We perform a white-box test due to the heavy memory usage that testing
+// the public API would require which has shown to cause intermittent issues
 public class TestEncodingDecodingLength {
 
-    public static void main(String[] args) {
-        int size = Integer.MAX_VALUE - 8;
-        byte[] inputBytes = new byte[size];
-        byte[] outputBytes = new byte[size];
+    private static final int largeSize = Integer.MAX_VALUE - 8;
 
-        // Check encoder with large array length
+    // Effectively tests the overloaded Base64.Encoder.encode() methods and
+    // encodeToString() throw OOME instead of NASE with large array values.
+    // All the encode methods call encodedOutLength() which is where the OOME
+    // is expected to be thrown from
+    @Test
+    public void largeEncodeTest() throws NoSuchMethodException, IllegalAccessException {
         Base64.Encoder encoder = Base64.getEncoder();
-        checkOOM("encode(byte[])", () -> encoder.encode(inputBytes));
-        checkIAE("encode(byte[] byte[])", () -> encoder.encode(inputBytes, outputBytes));
-        checkOOM("encodeToString(byte[])", () -> encoder.encodeToString(inputBytes));
-        checkOOM("encode(ByteBuffer)", () -> encoder.encode(ByteBuffer.wrap(inputBytes)));
+        Method encode = encoder.getClass().getDeclaredMethod(
+                "encodedOutLength", int.class, boolean.class);
+        encode.setAccessible(true);
+        try {
+            encode.invoke(encoder, largeSize, true);
+        } catch (InvocationTargetException ex) {
+            Throwable err = ex.getCause();
+            assertEquals(OutOfMemoryError.class, err.getClass(), "00ME should be thrown");
+            assertEquals("Encoded size is too large", err.getMessage());
+        }
+    }
 
-        // Check decoder with large array length,
-        // should not throw any exception
-        Arrays.fill(inputBytes, (byte) 86);
+    // Effectively tests the overloaded Base64.Decoder.decode() methods do not
+    // throw OOME nor NASE with large array values. All the decode methods call
+    // bitToByteLength()
+    @Test
+    public void largeDecodeTest() throws NoSuchMethodException, IllegalAccessException {
         Base64.Decoder decoder = Base64.getDecoder();
-        decoder.decode(inputBytes);
-        decoder.decode(inputBytes, outputBytes);
-        decoder.decode(ByteBuffer.wrap(inputBytes));
-    }
-
-    private static final void checkOOM(String methodName, Runnable r) {
+        Method m = decoder.getClass().getDeclaredMethod(
+                "decodedOutLength", byte[].class, int.class, int.class);
+        m.setAccessible(true);
+        byte[] src = {1};
         try {
-            r.run();
-            throw new RuntimeException("OutOfMemoryError should have been thrown by: " + methodName);
-        } catch (OutOfMemoryError er) {}
-    }
-
-    private static final void checkIAE(String methodName, Runnable r) {
-        try {
-            r.run();
-            throw new RuntimeException("IllegalArgumentException should have been thrown by: " + methodName);
-        } catch (IllegalArgumentException iae) {}
+            // decodedOutLength() takes the src array, position, and limit as params.
+            // We pass -largeSize as position, since the initial length
+            // is calculated as limit - position. This mocks the "overflow"
+            // situation we want to simulate without needing to allocate
+            // an array with Integer.MAX_VALUE memory
+            m.invoke(decoder, src, -largeSize + 1, 1);
+        } catch (InvocationTargetException ex) {
+            fail("Decode should neither throw NASE or OOME: " + ex.getCause());
+        }
     }
 }
-
