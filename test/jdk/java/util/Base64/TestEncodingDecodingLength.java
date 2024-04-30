@@ -44,20 +44,28 @@ import static org.junit.jupiter.api.Assertions.fail;
 // the public API would require which has shown to cause intermittent issues
 public class TestEncodingDecodingLength {
 
-    private static final int largeSize = Integer.MAX_VALUE - 8;
+    private static final int size = Integer.MAX_VALUE - 8;
 
     // Effectively tests the overloaded Base64.Encoder.encode() methods and
     // encodeToString() throw OOME instead of NASE with large array values.
     // All the encode methods call encodedOutLength() which is where the OOME
     // is expected to be thrown from
     @Test
-    public void largeEncodeTest() throws NoSuchMethodException, IllegalAccessException {
+    public void largeEncodeTest() throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException {
         Base64.Encoder encoder = Base64.getEncoder();
-        Method encode = encoder.getClass().getDeclaredMethod(
+        Method m = encoder.getClass().getDeclaredMethod(
                 "encodedOutLength", int.class, boolean.class);
-        encode.setAccessible(true);
+        m.setAccessible(true);
+
+        // IAE case
+        // When throwOOME param is false, encodedOutLength should return -1 in
+        // this situation, which encode() uses to throw IAE
+        assertEquals(-1, m.invoke(encoder, size, false));
+
+        // OOME case
         try {
-            encode.invoke(encoder, largeSize, true);
+            m.invoke(encoder, size, true);
         } catch (InvocationTargetException ex) {
             Throwable err = ex.getCause();
             assertEquals(OutOfMemoryError.class, err.getClass(), "00ME should be thrown");
@@ -67,7 +75,7 @@ public class TestEncodingDecodingLength {
 
     // Effectively tests the overloaded Base64.Decoder.decode() methods do not
     // throw OOME nor NASE with large array values. All the decode methods call
-    // bitToByteLength()
+    // decodedOutLength(), which is where the "potential overflow" situation occurs.
     @Test
     public void largeDecodeTest() throws NoSuchMethodException, IllegalAccessException {
         Base64.Decoder decoder = Base64.getDecoder();
@@ -77,11 +85,11 @@ public class TestEncodingDecodingLength {
         byte[] src = {1};
         try {
             // decodedOutLength() takes the src array, position, and limit as params.
-            // We pass -largeSize as position, since the initial length
-            // is calculated as limit - position. This mocks the "overflow"
+            // We pass -size as position, since the initial length
+            // is calculated as limit - position. This mocks the "potential overflow"
             // situation we want to simulate without needing to allocate
             // an array with Integer.MAX_VALUE memory
-            m.invoke(decoder, src, -largeSize + 1, 1);
+            m.invoke(decoder, src, -size + 1, 1);
         } catch (InvocationTargetException ex) {
             fail("Decode should neither throw NASE or OOME: " + ex.getCause());
         }
