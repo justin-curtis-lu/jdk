@@ -2589,7 +2589,12 @@ public class DecimalFormat extends NumberFormat {
                     if (subparse(text, pos, "", symbols.getMinusSignText(), exponentDigits, true, stat) &&
                             exponentDigits.fitsIntoLong(stat[STATUS_POSITIVE], true)) {
                         position = pos.index; // Advance past the exponent
-                        exponent = (int)exponentDigits.getLong();
+                        try {
+                            exponent = Math.toIntExact(exponentDigits.getLong());
+                        } catch (ArithmeticException ex) {
+                            // If overflow, Integer.MAX_VALUE is sufficient
+                            exponent = Integer.MAX_VALUE;
+                        }
                         if (!stat[STATUS_POSITIVE]) {
                             exponent = -exponent;
                         }
@@ -2628,7 +2633,12 @@ public class DecimalFormat extends NumberFormat {
             }
 
             // Adjust for exponent, if any
-            digits.decimalAt += exponent;
+            try {
+                digits.decimalAt = Math.addExact(digits.decimalAt, exponent);
+            } catch (ArithmeticException ex) {
+                // If overflow, Integer.MAX_VALUE is sufficient
+                digits.decimalAt = Integer.MAX_VALUE;
+            }
 
             // If none of the text string was recognized.  For example, parse
             // "x" with pattern "#0.00" (return index and error index both 0)
