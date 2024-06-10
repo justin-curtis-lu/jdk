@@ -2931,7 +2931,8 @@ public class DecimalFormat extends NumberFormat {
      * have '{@code U+2030}'.
      *
      * <P>Example: with multiplier 100, 1.23 is formatted as "123", and
-     * "123" is parsed into 1.23.
+     * "123" is parsed into 1.23. If {@code isParseIntegerOnly()} returns {@code true},
+     * "123" is parsed into 1.
      *
      * @param newValue the new multiplier
      * @see #getMultiplier
