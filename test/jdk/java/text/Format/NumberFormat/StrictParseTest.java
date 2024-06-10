@@ -23,7 +23,7 @@
 
 /*
  * @test
- * @bug 8327640 8331485
+ * @bug 8327640 8331485 8333755
  * @summary Test suite for NumberFormat parsing with strict leniency
  * @run junit/othervm -Duser.language=en -Duser.country=US StrictParseTest
  * @run junit/othervm -Duser.language=ja -Duser.country=JP StrictParseTest
