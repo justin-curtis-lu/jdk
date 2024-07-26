@@ -431,10 +431,10 @@ public class DecimalFormat extends NumberFormat {
      * This is a convenient way to obtain a
      * DecimalFormat when internationalization is not the main concern.
      *
-     * @apiNote To obtain standard formats for a given locale, use the {@code NumberFormat}
-     * factory methods such as {@link NumberFormat#getNumberInstance()}. These factories will
-     * return the most appropriate subclass of NumberFormat for a given
-     * locale.
+     * @apiNote To obtain standard formats for a given locale, use the
+     * {@code NumberFormat} factory methods such as {@link
+     * NumberFormat#getNumberInstance()}. These factories will return the most
+     * appropriate subclass of NumberFormat for a given locale.
      * @see NumberFormat#getInstance()
      * @see NumberFormat#getNumberInstance()
      * @see NumberFormat#getCurrencyInstance()
@@ -464,10 +464,10 @@ public class DecimalFormat extends NumberFormat {
      * The number of maximum integer digits is usually not derived from the pattern.
      * See the note in the {@link ##patterns Patterns} section for more detail.
      *
-     * @apiNote To obtain standard formats for a given locale, use the {@code NumberFormat}
-     * factory methods such as {@link NumberFormat#getNumberInstance()}. These factories will
-     * return the most appropriate subclass of NumberFormat for a given
-     * locale.
+     * @apiNote To obtain standard formats for a given locale, use the
+     * {@code NumberFormat} factory methods such as {@link
+     * NumberFormat#getNumberInstance()}. These factories will return the most
+     * appropriate subclass of NumberFormat for a given locale.
      * @param pattern a non-localized pattern string.
      * @throws    NullPointerException if {@code pattern} is null
      * @throws    IllegalArgumentException if the given pattern is invalid.
@@ -491,11 +491,11 @@ public class DecimalFormat extends NumberFormat {
      * The number of maximum integer digits is usually not derived from the pattern.
      * See the note in the {@link ##patterns Patterns} section for more detail.
      *
-     * @apiNote To obtain standard formats for a given locale, use the {@code NumberFormat}
-     * factory methods such as {@link NumberFormat#getInstance()} or
-     * {@link NumberFormat#getCurrencyInstance()}. If you need only minor adjustments
-     * to a standard format, you can modify the format returned by
-     * a NumberFormat factory method.
+     * @apiNote To obtain standard formats for a given locale, use the
+     * {@code NumberFormat} factory methods such as {@link
+     * NumberFormat#getInstance()} or {@link NumberFormat#getCurrencyInstance()}.
+     * If you need only minor adjustments to a standard format, you can modify
+     * the format returned by a NumberFormat factory method.
      * @param pattern a non-localized pattern string
      * @param symbols the set of symbols to be used
      * @throws    NullPointerException if any of the given arguments is null
