@@ -725,22 +725,6 @@ public abstract class NumberFormat extends Format  {
     }
 
     /**
-     * Returns a scientific format for the current default locale.
-     */
-    /*public*/ static final NumberFormat getScientificInstance() {
-        return getInstance(Locale.getDefault(Locale.Category.FORMAT), null, SCIENTIFICSTYLE);
-    }
-
-    /**
-     * Returns a scientific format for the specified locale.
-     *
-     * @param inLocale the desired locale
-     */
-    /*public*/ static NumberFormat getScientificInstance(Locale inLocale) {
-        return getInstance(inLocale, null, SCIENTIFICSTYLE);
-    }
-
-    /**
      * Returns a compact number format for the default
      * {@link java.util.Locale.Category#FORMAT FORMAT} locale with
      * {@link NumberFormat.Style#SHORT "SHORT"} format style.
@@ -1195,7 +1179,7 @@ public abstract class NumberFormat extends Format  {
     private static final int NUMBERSTYLE = 0;
     private static final int CURRENCYSTYLE = 1;
     private static final int PERCENTSTYLE = 2;
-    private static final int SCIENTIFICSTYLE = 3;
+    // 3 previously reserved for SCIENTIFICSTYLE
     private static final int INTEGERSTYLE = 4;
     private static final int COMPACTSTYLE = 5;
 
