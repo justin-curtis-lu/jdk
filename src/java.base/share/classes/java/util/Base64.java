@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -331,13 +331,11 @@ public class Base64 {
          * Encodes the specified byte array into a String using the {@link Base64}
          * encoding scheme.
          *
-         * <p> This method first encodes all input bytes into a base64 encoded
-         * byte array and then constructs a new String by using the encoded byte
-         * array and the {@link java.nio.charset.StandardCharsets#ISO_8859_1
-         * ISO-8859-1} charset.
-         *
-         * <p> In other words, an invocation of this method has exactly the same
-         * effect as invoking
+         * @implSpec This implementation first encodes all input bytes into a
+         * base64 encoded byte array and then constructs a new String by using
+         * the encoded byte array and the {@link java.nio.charset.StandardCharsets#ISO_8859_1
+         * ISO-8859-1} charset. In other words, an invocation of this method has
+         * exactly the same effect as invoking
          * {@code new String(encode(src), StandardCharsets.ISO_8859_1)}.
          *
          * @param   src
@@ -578,7 +576,7 @@ public class Base64 {
          * Decodes a Base64 encoded String into a newly-allocated byte array
          * using the {@link Base64} encoding scheme.
          *
-         * <p> An invocation of this method has exactly the same effect as invoking
+         * @implSpec An invocation of this method has exactly the same effect as invoking
          * {@code decode(src.getBytes(StandardCharsets.ISO_8859_1))}
          *
          * @param   src
