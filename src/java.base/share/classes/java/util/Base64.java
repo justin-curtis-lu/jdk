@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -305,11 +305,10 @@ public class Base64 {
          * {@link Base64} encoding scheme, writing the resulting bytes to the
          * given output byte array, starting at offset 0.
          *
-         * <p> It is the responsibility of the invoker of this method to make
+         * @apiNote It is the responsibility of the invoker of this method to make
          * sure the output byte array {@code dst} has enough space for encoding
          * all bytes from the input byte array. No bytes will be written to the
          * output byte array if the output byte array is not big enough.
-         *
          * @param   src
          *          the byte array to encode
          * @param   dst
@@ -331,15 +330,12 @@ public class Base64 {
          * Encodes the specified byte array into a String using the {@link Base64}
          * encoding scheme.
          *
-         * <p> This method first encodes all input bytes into a base64 encoded
-         * byte array and then constructs a new String by using the encoded byte
+         * @implSpec This implementation first encodes all input bytes into a base64
+         * encoded byte array and then constructs a new String by using the encoded byte
          * array and the {@link java.nio.charset.StandardCharsets#ISO_8859_1
-         * ISO-8859-1} charset.
-         *
-         * <p> In other words, an invocation of this method has exactly the same
-         * effect as invoking
-         * {@code new String(encode(src), StandardCharsets.ISO_8859_1)}.
-         *
+         * ISO-8859-1} charset. In other words, an invocation of this method has
+         * exactly the same effect as invoking {@code new String(encode(src),
+         * StandardCharsets.ISO_8859_1)}.
          * @param   src
          *          the byte array to encode
          * @return  A String containing the resulting Base64 encoded characters
@@ -388,11 +384,10 @@ public class Base64 {
          * Wraps an output stream for encoding byte data using the {@link Base64}
          * encoding scheme.
          *
-         * <p> It is recommended to promptly close the returned output stream after
+         * @apiNote It is recommended to promptly close the returned output stream after
          * use, during which it will flush all possible leftover bytes to the underlying
          * output stream. Closing the returned output stream will close the underlying
          * output stream.
-         *
          * @param   os
          *          the output stream.
          * @return  the output stream for encoding the byte data into the
@@ -409,10 +404,9 @@ public class Base64 {
          * but without adding any padding character at the end of the encoded
          * byte data.
          *
-         * <p> The encoding scheme of this encoder instance is unaffected by
+         * @apiNote The encoding scheme of this encoder instance is unaffected by
          * this invocation. The returned encoder instance should be used for
          * non-padding encoding operation.
-         *
          * @return an equivalent encoder that encodes without adding any
          *         padding character at the end
          */
@@ -578,12 +572,10 @@ public class Base64 {
          * Decodes a Base64 encoded String into a newly-allocated byte array
          * using the {@link Base64} encoding scheme.
          *
-         * <p> An invocation of this method has exactly the same effect as invoking
-         * {@code decode(src.getBytes(StandardCharsets.ISO_8859_1))}
-         *
-         * @param   src
-         *          the string to decode
-         *
+         * @implSpec For this implementation, an invocation of this method has
+         * exactly the same effect as invoking {@code
+         * decode(src.getBytes(StandardCharsets.ISO_8859_1))}
+         * @param   src the string to decode
          * @return  A newly-allocated byte array containing the decoded bytes.
          *
          * @throws  IllegalArgumentException
@@ -597,16 +589,14 @@ public class Base64 {
          * Decodes all bytes from the input byte array using the {@link Base64}
          * encoding scheme, writing the results into the given output byte array,
          * starting at offset 0.
+         * <p> If the input byte array is not in valid Base64 encoding scheme,
+         * some bytes may be written to the output byte array before
+         * {@code IllegalArgumentException} is thrown.
          *
-         * <p> It is the responsibility of the invoker of this method to make
+         * @apiNote It is the responsibility of the invoker of this method to make
          * sure the output byte array {@code dst} has enough space for decoding
          * all bytes from the input byte array. No bytes will be written to
          * the output byte array if the output byte array is not big enough.
-         *
-         * <p> If the input byte array is not in valid Base64 encoding scheme
-         * then some bytes may have been written to the output byte array before
-         * IllegalargumentException is thrown.
-         *
          * @param   src
          *          the byte array to decode
          * @param   dst
