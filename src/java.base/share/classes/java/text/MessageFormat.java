@@ -700,8 +700,8 @@ public class MessageFormat extends Format {
      * is semantically equivalent to this instance. If a subformat cannot be
      * converted to a String pattern, the {@code FormatType} and {@code FormatStyle}
      * will be omitted from the {@code FormatElement}.
-     * @implNote This implementation does not guarantee the order in which
-     * a {@code FormatStyle} is matched to. That is, the {@code FormatStyle} produced
+     * @implNote This implementation does not guarantee the order of
+     * a {@code FormatStyle} matching. That is, the {@code FormatStyle} produced
      * may not be equivalent to the style passed, in the instance that multiple
      * styles have equivalent patterns.
      */
