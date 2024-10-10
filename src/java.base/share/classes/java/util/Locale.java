@@ -237,7 +237,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * <h2><a id="ObtainingLocale">Obtaining a Locale</a></h2>
  *
  * <p>There are several ways to obtain a {@code Locale}
- * object.
+ * object. It is advised against using the deprecated {@code Locale} constructors.
  *
  * <ul>
  * <li> <h3>Locale Constants</h3>
@@ -246,11 +246,10 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * locales. For example, {@link Locale#US} is the {@code Locale} object
  * for the United States.</p></li>
  * <li> <h3>Factory Methods</h3>
- * <p>The method {@link #forLanguageTag} obtains a {@code Locale}
- * object for a well-formed BCP 47 language tag. The method
- * {@link #of(String, String, String)} and its overloads obtain a
+ * <p> The method {@link #of(String, String, String)} and its overloads obtain a
  * {@code Locale} object from the given {@code language}, {@code country},
- * and/or {@code variant} defined above.</p></li>
+ * and/or {@code variant} defined above. The method {@link #forLanguageTag} obtains a {@code Locale}
+ * object for a well-formed BCP 47 language tag. </p></li>
  * <li> <h3>Builder</h3>
  * <p>Using {@link Builder} you can construct a {@code Locale} object
  * that conforms to BCP 47 syntax. Use a builder to enforce syntactic restrictions
@@ -438,6 +437,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * <STRONG>just</STRONG> a mechanism for identifying objects,
  * <STRONG>not</STRONG> a container for the objects themselves.
  *
+ * @implSpec
  * <h2>Compatibility</h2>
  *
  * <p>In order to maintain compatibility, Locale's
@@ -445,7 +445,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * Environment version 1.7.  The same is largely true for the
  * {@code toString} method. Thus Locale objects can continue to
  * be used as they were. In particular, clients who parse the output
- * of toString into language, country, and variant fields can continue
+ * of {@code toString()} into language, country, and variant fields can continue
  * to do so (although this is strongly discouraged), although the
  * variant field will have additional information in it if script or
  * extensions are present.
