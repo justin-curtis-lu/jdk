@@ -524,18 +524,6 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * lookup mechanism also implements this mapping, so that resources
  * can be named using either convention, see {@link ResourceBundle.Control}.
  *
- * <h4>Three-letter language/country(region) codes</h4>
- *
- * <p>The Locale constructors have always specified that the language
- * and the country param be two characters in length, although in
- * practice they have accepted any length.  The specification has now
- * been relaxed to allow language codes of two to eight characters and
- * country (region) codes of two to three characters, and in
- * particular, three-letter language codes and three-digit region
- * codes as specified in the IANA Language Subtag Registry.  For
- * compatibility, the implementation still does not impose a length
- * constraint.
- *
  * @spec https://www.rfc-editor.org/info/rfc4647
  *      RFC 4647: Matching of Language Tags
  * @spec https://www.rfc-editor.org/info/rfc5646
