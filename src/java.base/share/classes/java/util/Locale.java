@@ -325,7 +325,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * category. In the absence of category specific system properties, the "category-less"
  * system properties are used, such as {@code user.language} in the previous example.
  *
- * <h3><a id="LocaleMatching">Locale Matching</a></h3>
+ * <h2><a id="LocaleMatching">Locale Matching</a></h2>
  *
  * <p>If an application or a system is internationalized and provides localized
  * resources for multiple locales, it sometimes needs to find one or more
@@ -346,7 +346,8 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * language ranges: basic and extended. See
  * {@link Locale.LanguageRange Locale.LanguageRange} for details.
  *
- * <h4>Filtering</h4>
+ * <ul>
+ * <li><h3>Filtering</h3>
  *
  * <p>The filtering operation returns all matching language tags. It is defined
  * in RFC 4647 as follows:
@@ -363,8 +364,8 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * kind of language ranges are included in the given Language Priority List.
  * {@link Locale.FilteringMode} is a parameter to specify how filtering should
  * be done.
- *
- * <h4>Lookup</h4>
+ *</li>
+ * <li><h3>Lookup</h3>
  *
  * <p>The lookup operation returns the best matching language tags. It is
  * defined in RFC 4647 as follows:
@@ -395,8 +396,10 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * included in a language range, the first matching language tag returned by
  * an {@link Iterator} over a {@link Collection} of language tags is treated as
  * the best matching one.
+ * </li>
+ * </ul>
  *
- * <h3>Use of Locale</h3>
+ * <h2>Using Locale</h2>
  *
  * <p>Once you've obtained a {@code Locale} you can query it for information
  * about itself. Use {@code getCountry} to get the country (or region)
@@ -435,7 +438,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * <STRONG>just</STRONG> a mechanism for identifying objects,
  * <STRONG>not</STRONG> a container for the objects themselves.
  *
- * <h3>Compatibility</h3>
+ * <h2>Compatibility</h2>
  *
  * <p>In order to maintain compatibility, Locale's
  * constructors retain their behavior prior to the Java Runtime
@@ -460,7 +463,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * Clients desiring a string representation of the complete locale can
  * then always rely on {@code toLanguageTag} for this purpose.
  *
- * <h4><a id="special_cases_constructor">Special cases</a></h4>
+ * <h3><a id="special_cases_constructor">Special cases</a></h3>
  *
  * <p>For compatibility reasons, two
  * non-conforming locales are treated as special cases.  These are
