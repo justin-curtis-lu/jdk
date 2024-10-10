@@ -234,30 +234,28 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * implementations in a Java Runtime Environment might not support any
  * particular Unicode locale attributes or key/type pairs.
  *
- * <h3><a id="ObtainingLocale">Obtaining a Locale</a></h3>
+ * <h2><a id="ObtainingLocale">Obtaining a Locale</a></h2>
  *
  * <p>There are several ways to obtain a {@code Locale}
  * object.
  *
- * <h4>Builder</h4>
- *
- * <p>Using {@link Builder} you can construct a {@code Locale} object
- * that conforms to BCP 47 syntax.
- *
- * <h4>Factory Methods</h4>
- *
+ * <ul>
+ * <li> <h3>Locale Constants</h3>
+ * <p>The {@code Locale} class provides a number of convenient constants
+ * that you can use to obtain {@code Locale} objects for commonly used
+ * locales. For example, {@link Locale#US} is the {@code Locale} object
+ * for the United States.</p></li>
+ * <li> <h3>Factory Methods</h3>
  * <p>The method {@link #forLanguageTag} obtains a {@code Locale}
  * object for a well-formed BCP 47 language tag. The method
  * {@link #of(String, String, String)} and its overloads obtain a
- * {@code Locale} object from given {@code language}, {@code country},
- * and/or {@code variant} defined above.
- *
- * <h4>Locale Constants</h4>
- *
- * <p>The {@code Locale} class provides a number of convenient constants
- * that you can use to obtain {@code Locale} objects for commonly used
- * locales. For example, {@code Locale.US} is the {@code Locale} object
- * for the United States.
+ * {@code Locale} object from the given {@code language}, {@code country},
+ * and/or {@code variant} defined above.</p></li>
+ * <li> <h3>Builder</h3>
+ * <p>Using {@link Builder} you can construct a {@code Locale} object
+ * that conforms to BCP 47 syntax. Use a builder to enforce syntactic restrictions
+ * on the input.</p></li>
+ * </ul>
  *
  * <h3><a id="default_locale">Default Locale</a></h3>
  *
