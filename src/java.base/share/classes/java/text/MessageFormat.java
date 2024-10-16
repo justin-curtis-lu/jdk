@@ -2038,13 +2038,22 @@ public class MessageFormat extends Format {
         // Check the correctness of arguments and offsets
         if (isValid) {
             int lastOffset = patt.length() + 1;
-            for (int i = maxOff; i >= 0; --i) {
-                if (argNums[i] < 0 || argNums[i] >= MAX_ARGUMENT_INDEX
-                        || offs[i] < 0 || offs[i] > lastOffset) {
-                    isValid = false;
-                    break;
-                } else {
-                    lastOffset = offs[i];
+            // Check that no offset value is greater than the pattern String
+            // Check the "largest" offset, since subsequent offsets are checked
+            // to be smaller
+            if (offs[maxOff] > patt.length()) {
+                isValid = false;
+            } else {
+                for (int i = maxOff; i >= 0; --i) {
+                    // Checks no negative args or offsets
+                    // Checks that args are under max, and offs are ascending
+                    if (argNums[i] < 0 || argNums[i] >= MAX_ARGUMENT_INDEX
+                            || offs[i] < 0 || offs[i] > lastOffset) {
+                        isValid = false;
+                        break;
+                    } else {
+                        lastOffset = offs[i];
+                    }
                 }
             }
         }
