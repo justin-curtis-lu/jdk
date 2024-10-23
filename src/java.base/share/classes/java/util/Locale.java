@@ -307,7 +307,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * category. In the absence of category specific system properties, the "category-less"
  * system properties are used, such as {@code user.language} in the previous example.
  *
- * <h2><a id="obtaining_a_locale">Obtaining a Locale</a></h2>
+ * <h2><a id="ObtainingLocale">Obtaining a Locale</a></h2>
  *
  * <p>There are several ways to obtain a {@code Locale}
  * object. It is advised against using the deprecated {@code Locale} constructors.
@@ -337,7 +337,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  *
  * <h2>Usage Examples</h2>
  *
- * <p>Once you've {@linkplain ##obtaining_a_locale obtained} a {@code Locale},
+ * <p>Once you've {@linkplain ##ObtainingLocale obtained} a {@code Locale},
  * you can query it for information about itself. Use {@link #getCountry} to get
  * the country (or region) code and {@link #getLanguage} to get the language.
  * You can use {@link #getDisplayCountry} to get the
