@@ -455,9 +455,10 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  *
  * <p>In order to maintain compatibility, Locale's
  * (deprecated) constructors retain their behavior prior to the Java Runtime
- * Environment version 1.7. The same is largely true for the
- * {@link #toString()} method. This is done to ensure behavioral compatibility,
- * and allows for apps to continue using {@code Locale} objects as they were.
+ * Environment version 1.7. That is, a length constraint was not imposed. The same
+ * is largely true for the {@link #toString()} method. This is done to ensure
+ * behavioral compatibility, and allows for apps to continue using {@code Locale}
+ * objects as they were.
  * Apps that previously parsed the output of {@link #toString()} into language,
  * country, and variant fields can continue to do so (although this is strongly
  * discouraged). A caveat is that the variant field will have additional
