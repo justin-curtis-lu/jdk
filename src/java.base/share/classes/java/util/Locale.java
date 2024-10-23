@@ -45,7 +45,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamField;
 import java.io.Serializable;
-import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.MessageFormat;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -70,21 +70,25 @@ import sun.util.locale.provider.LocaleServiceProviderPool;
 import sun.util.locale.provider.TimeZoneNameUtility;
 
 /**
- * A {@code Locale} object represents a specific geographical, political,
- * or cultural region. An operation that requires a {@code Locale} to perform
- * its task is called <em>locale-sensitive</em> and uses the {@code Locale}
- * to tailor information for the user. For example, displaying a number
- * is a locale-sensitive operation&mdash; the number should be formatted
- * according to the customs and conventions of the user's native country,
- * region, or culture.
+ * A {@code Locale} represents a specific geographical, political,
+ * or cultural region. An API that requires a {@code Locale} to perform
+ * its task is <em>locale-sensitive</em> and uses the {@code Locale}
+ * to tailor information for the user. These <em>locale-sensitive</em> APIs
+ * are principally in the <i>java.text</i> and <i>java.util</i> packages.
+ * For example, displaying a number is a <em>locale-sensitive</em> operation&mdash;
+ * the number should be formatted according to the customs and conventions of the
+ * user's native country, region, or culture.
  *
- * <p> The {@code Locale} class implements IETF BCP 47 which is composed of
+ * <p>The {@code Locale} class implements IETF BCP 47 which is composed of
  * <a href="https://tools.ietf.org/html/rfc4647">RFC 4647 "Matching of Language
  * Tags"</a> and <a href="https://tools.ietf.org/html/rfc5646">RFC 5646 "Tags
  * for Identifying Languages"</a> with support for the LDML (UTS#35, "Unicode
  * Locale Data Markup Language") BCP 47-compatible extensions for locale data
- * exchange.
+ * exchange. Each {@code Locale} is associated with locale data which is retrieved
+ * by the installed {@link java.util.spi.LocaleServiceProvider LocaleServiceProvider}
+ * implementations.
  *
+ * <h2 id="loc_comp">Locale Composition</h2>
  * <p> A {@code Locale} object logically consists of the fields
  * described below.
  *
@@ -194,7 +198,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * requirement (is well-formed), but does not validate the value
  * itself.  See {@link Builder} for details.
  *
- * <h2><a id="def_locale_extension">Unicode locale/language extension</a></h2>
+ * <h3><a id="def_locale_extension">Unicode locale/language extension</a></h3>
  *
  * <p>UTS#35, "Unicode Locale Data Markup Language" defines optional
  * attributes and keywords to override or refine the default behavior
@@ -234,33 +238,11 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * implementations in a Java Runtime Environment might not support any
  * particular Unicode locale attributes or key/type pairs.
  *
- * <h2><a id="ObtainingLocale">Obtaining a Locale</a></h2>
+ * <h2><a id="default_locale">Default Locale</a></h2>
  *
- * <p>There are several ways to obtain a {@code Locale}
- * object. It is advised against using the deprecated {@code Locale} constructors.
- *
- * <ul>
- * <li> <h3>Locale Constants</h3>
- * <p>The {@code Locale} class provides a number of convenient constants
- * that you can use to obtain {@code Locale} objects for commonly used
- * locales. For example, {@link Locale#US} is the {@code Locale} object
- * for the United States.</p></li>
- * <li> <h3>Factory Methods</h3>
- * <p> The method {@link #of(String, String, String)} and its overloads obtain a
- * {@code Locale} object from the given {@code language}, {@code country},
- * and/or {@code variant} defined above. The method {@link #forLanguageTag} obtains a {@code Locale}
- * object for a well-formed BCP 47 language tag. </p></li>
- * <li> <h3>Builder</h3>
- * <p>Using {@link Builder} you can construct a {@code Locale} object
- * that conforms to BCP 47 syntax. Use a builder to enforce syntactic restrictions
- * on the input.</p></li>
- * </ul>
- *
- * <h3><a id="default_locale">Default Locale</a></h3>
- *
- * <p>The default Locale is provided for any locale-sensitive methods if no
+ * <p>The default Locale is provided for any <em>locale-sensitive</em> methods if no
  * {@code Locale} is explicitly specified as an argument, such as
- * {@link DateFormat#getInstance()}. The default Locale is determined at startup
+ * {@link NumberFormat#getInstance()}. The default Locale is determined at startup
  * of the Java runtime and established in the following three phases:
  * <ol>
  * <li>The locale-related system properties listed below are established from the
@@ -313,6 +295,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * system properties are not altered. It is not recommended that applications read
  * these system properties and parse or interpret them as their values may be out of date.
  *
+ * <h3>Locale Category</h3>
  * <p>There are finer-grained default Locales specific for each {@link Locale.Category}.
  * These category specific default Locales can be queried by {@link #getDefault(Category)},
  * and set by {@link #setDefault(Category, Locale)}. Construction of these category
@@ -324,19 +307,91 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * category. In the absence of category specific system properties, the "category-less"
  * system properties are used, such as {@code user.language} in the previous example.
  *
+ * <h2><a id="obtaining_a_locale">Obtaining a Locale</a></h2>
+ *
+ * <p>There are several ways to obtain a {@code Locale}
+ * object. It is advised against using the deprecated {@code Locale} constructors.
+ *
+ * <dl>
+ *  <dt><b>Locale Constants</b></dt>
+ *  <dd>The {@code Locale} class provides a number of convenient constants
+ *  that you can use to obtain {@code Locale} objects for commonly used
+ *  locales. For example, {@link Locale#US} is the {@code Locale} object
+ *  for the United States.</dd>
+ *  <dt><b>Factory Methods</b></dt>
+ *  <dd>The method {@link #of(String, String, String)} and its overloads obtain a
+ *  {@code Locale} object from the given {@code language}, {@code country},
+ *  and/or {@code variant}. The method {@link #forLanguageTag} obtains a {@code Locale}
+ *  object for a well-formed BCP 47 language tag.</dd>
+ *  <dt><b>Builder</b></dt>
+ *  <dd>{@link Builder} is used to construct a {@code Locale} object that conforms
+ *  to BCP 47 syntax. Use a builder to enforce syntactic restrictions on the input.</dd>
+ * </dl>
+ *
+ * {@snippet lang=java :
+ *     // The following are all equivalent
+ *     Locale.US;
+ *     Locale.forLanguageTag("en-US");
+ *     new Locale.Builder().setLanguage("en").setRegion("US").build();
+ * }
+ *
+ * <h2>Usage Examples</h2>
+ *
+ * <p>Once you've {@linkplain ##obtaining_a_locale obtained} a {@code Locale},
+ * you can query it for information about itself. Use {@link #getCountry} to get
+ * the country (or region) code and {@link #getLanguage} to get the language.
+ * You can use {@link #getDisplayCountry} to get the
+ * name of the country suitable for displaying to the user. Similarly,
+ * you can use {@link #getDisplayLanguage()} to get the name of
+ * the language suitable for displaying to the user. The {@code getDisplayXXX}
+ * methods are themselves <em>locale-sensitive</em> and have two variants; one with an explicit
+ * locale parameter, and one without. The latter uses the default {@link
+ * Locale.Category#DISPLAY DISPLAY} locale :
+ * {@snippet lang=java :
+ *     // The following are equivalent
+ *     Locale.getDefault().getDisplayCountry();
+ *     Locale.getDefault().getDisplayCountry(Locale.getDefault(Locale.Category.DISPLAY));
+ * }
+ *
+ * <p>The Java Platform provides a number of classes that perform locale-sensitive
+ * operations. For example, the {@code NumberFormat} class formats
+ * numbers, currency, and percentages in a <em>locale-sensitive</em> manner. Classes such
+ * as {@code NumberFormat} have several factory methods for creating a default object
+ * of that type. These methods generally have two variants; one with an explicit
+ * locale parameter, and one without. The latter uses the default {@link
+ * Locale.Category#FORMAT FORMAT} locale :
+ * {@snippet lang=java :
+ *     // The following are equivalent
+ *     NumberFormat.getCurrencyInstance();
+ *     NumberFormat.getCurrencyInstance(Locale.getDefault(Locale.Category.FORMAT));
+ * }
+ *
+ * <p>
+ * The following example demonstrates <em>locale-sensitive</em> operations with different locales :
+ * {@snippet lang = java:
+ *     // Localized currency format
+ *     var number = 1000;
+ *     NumberFormat.getCurrencyInstance(Locale.US).format(1000); // returns "$1,000"
+ *     NumberFormat.getCurrencyInstance(Locale.JAPAN).format(1000); // returns "\u00A51,000""
+ *     // Localized date format
+ *     var date = LocalDate.of(2024, 1, 1);
+ *     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).localizedBy(Locale.JAPAN).format(date); // returns "2024\u5e7410\u670823\u65e5"
+ *     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).localizedBy(Locale.US).format(date); // returns "October 23, 2024"
+ *}
+ *
  * <h2><a id="LocaleMatching">Locale Matching</a></h2>
  *
- * <p>If an application or a system is internationalized and provides localized
+ * <p>If an application is internationalized and provides localized
  * resources for multiple locales, it sometimes needs to find one or more
  * locales (or language tags) which meet each user's specific preferences. Note
- * that a term "language tag" is used interchangeably with "locale" in this
+ * that the term "language tag" is used interchangeably with "locale" in the following
  * locale matching documentation.
  *
- * <p>In order to do matching a user's preferred locales to a set of language
+ * <p>In order to match a user's preferred locales to a set of language
  * tags, <a href="https://tools.ietf.org/html/rfc4647">RFC 4647 Matching of
  * Language Tags</a> defines two mechanisms: filtering and lookup.
  * <em>Filtering</em> is used to get all matching locales, whereas
- * <em>lookup</em> is to choose the best matching locale.
+ * <em>lookup</em> is to select the best matching locale.
  * Matching is done case-insensitively. These matching mechanisms are described
  * in the following sections.
  *
@@ -345,8 +400,8 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * language ranges: basic and extended. See
  * {@link Locale.LanguageRange Locale.LanguageRange} for details.
  *
- * <ul>
- * <li><h3>Filtering</h3>
+ *
+ * <h3>Filtering</h3>
  *
  * <p>The filtering operation returns all matching language tags. It is defined
  * in RFC 4647 as follows:
@@ -363,8 +418,8 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * kind of language ranges are included in the given Language Priority List.
  * {@link Locale.FilteringMode} is a parameter to specify how filtering should
  * be done.
- *</li>
- * <li><h3>Lookup</h3>
+ *
+ * <h3>Lookup</h3>
  *
  * <p>The lookup operation returns the best matching language tags. It is
  * defined in RFC 4647 as follows:
@@ -395,73 +450,31 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * included in a language range, the first matching language tag returned by
  * an {@link Iterator} over a {@link Collection} of language tags is treated as
  * the best matching one.
- * </li>
- * </ul>
  *
- * <h2>Using Locale</h2>
- *
- * <p>Once you've obtained a {@code Locale} you can query it for information
- * about itself. Use {@code getCountry} to get the country (or region)
- * code and {@code getLanguage} to get the language code.
- * You can use {@code getDisplayCountry} to get the
- * name of the country suitable for displaying to the user. Similarly,
- * you can use {@code getDisplayLanguage} to get the name of
- * the language suitable for displaying to the user. Interestingly,
- * the {@code getDisplayXXX} methods are themselves locale-sensitive
- * and have two versions: one that uses the default
- * {@link Locale.Category#DISPLAY DISPLAY} locale and one
- * that uses the locale specified as an argument.
- *
- * <p>The Java Platform provides a number of classes that perform locale-sensitive
- * operations. For example, the {@code NumberFormat} class formats
- * numbers, currency, and percentages in a locale-sensitive manner. Classes
- * such as {@code NumberFormat} have several convenience methods
- * for creating a default object of that type. For example, the
- * {@code NumberFormat} class provides these three convenience methods
- * for creating a default {@code NumberFormat} object:
- * {@snippet lang=java :
- *     NumberFormat.getInstance();
- *     NumberFormat.getCurrencyInstance();
- *     NumberFormat.getPercentInstance();
- * }
- * Each of these methods has two variants; one with an explicit locale
- * and one without; the latter uses the default
- * {@link Locale.Category#FORMAT FORMAT} locale:
- * {@snippet lang=java :
- *     NumberFormat.getInstance(myLocale);
- *     NumberFormat.getCurrencyInstance(myLocale);
- *     NumberFormat.getPercentInstance(myLocale);
- * }
- * A {@code Locale} is the mechanism for identifying the kind of object
- * ({@code NumberFormat}) that you would like to get. The locale is
- * <STRONG>just</STRONG> a mechanism for identifying objects,
- * <STRONG>not</STRONG> a container for the objects themselves.
- *
- * @implSpec
  * <h2>Compatibility</h2>
  *
  * <p>In order to maintain compatibility, Locale's
- * constructors retain their behavior prior to the Java Runtime
- * Environment version 1.7.  The same is largely true for the
- * {@code toString} method. Thus Locale objects can continue to
- * be used as they were. In particular, clients who parse the output
- * of {@code toString()} into language, country, and variant fields can continue
- * to do so (although this is strongly discouraged), although the
- * variant field will have additional information in it if script or
- * extensions are present.
+ * (deprecated) constructors retain their behavior prior to the Java Runtime
+ * Environment version 1.7. The same is largely true for the
+ * {@link #toString()} method. This is done to ensure behavioral compatibility,
+ * and allows for apps to continue using {@code Locale} objects as they were.
+ * Apps that previously parsed the output of {@link #toString()} into language,
+ * country, and variant fields can continue to do so (although this is strongly
+ * discouraged). A caveat is that the variant field will have additional
+ * information in it if script or extensions are present.
  *
  * <p>In addition, BCP 47 imposes syntax restrictions that are not
  * imposed by Locale's constructors. This means that conversions
  * between some Locales and BCP 47 language tags cannot be made without
- * losing information. Thus {@code toLanguageTag} cannot
+ * losing information. Thus {@link #toLanguageTag} cannot
  * represent the state of locales whose language, country, or variant
  * do not conform to BCP 47.
  *
- * <p>Because of these issues, it is recommended that clients migrate
+ * <p>Because of these issues, it is recommended that apps migrate
  * away from constructing non-conforming locales and use the
- * {@code forLanguageTag} and {@code Locale.Builder} APIs instead.
- * Clients desiring a string representation of the complete locale can
- * then always rely on {@code toLanguageTag} for this purpose.
+ * {@link #forLanguageTag} and {@link Locale.Builder} APIs instead.
+ * Apps desiring a string representation of the complete locale can
+ * then always rely on {@link #toLanguageTag} for this purpose.
  *
  * <h3><a id="special_cases_constructor">Special cases</a></h3>
  *
@@ -488,16 +501,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * constructor is called with the arguments "th", "TH", "TH", the
  * extension "u-nu-thai" is automatically added.
  *
- * <h4>Serialization</h4>
- *
- * <p>During serialization, writeObject writes all fields to the output
- * stream, including extensions.
- *
- * <p>During deserialization, readResolve adds extensions as described
- * in {@linkplain ##special_cases_constructor Special Cases}, only
- * for the two cases th_TH_TH and ja_JP_JP.
- *
- * <h4><a id="legacy_language_codes">Legacy language codes</a></h4>
+ * <h3><a id="legacy_language_codes">Legacy language codes</a></h3>
  *
  * <p>Locale's constructor has always converted three language codes to
  * their earlier, obsoleted forms: {@code he} maps to {@code iw},
@@ -506,7 +510,7 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * language maps to its new form; {@code iw} maps to {@code he}, {@code ji}
  * maps to {@code yi}, and {@code in} maps to {@code id}.
  *
- * <p>For the backward compatible behavior, the system property
+ * <p>For backwards compatible behavior, the system property
  * {@systemProperty java.locale.useOldISOCodes} reverts the behavior
  * back to that of before Java SE 17. If the system property is set to
  * {@code true}, those three current language codes are mapped to their
@@ -524,6 +528,15 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * API is used to construct them. Java's default resource bundle
  * lookup mechanism also implements this mapping, so that resources
  * can be named using either convention, see {@link ResourceBundle.Control}.
+ *
+ * <h4>Serialization</h4>
+ *
+ * <p>During serialization, writeObject writes all fields to the output
+ * stream, including extensions.
+ *
+ * <p>During deserialization, readResolve adds extensions as described
+ * in {@linkplain ##special_cases_constructor Special Cases}, only
+ * for the two cases th_TH_TH and ja_JP_JP.
  *
  * @spec https://www.rfc-editor.org/info/rfc4647
  *      RFC 4647: Matching of Language Tags
