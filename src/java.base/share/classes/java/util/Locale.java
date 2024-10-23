@@ -338,9 +338,9 @@ import sun.util.locale.provider.TimeZoneNameUtility;
  * <h2>Usage Examples</h2>
  *
  * <p>Once you've {@linkplain ##ObtainingLocale obtained} a {@code Locale},
- * you can query it for information about itself. Use {@link #getCountry} to get
- * the country (or region) code and {@link #getLanguage} to get the language.
- * You can use {@link #getDisplayCountry} to get the
+ * you can query it for information about itself. For example, use {@link
+ * #getCountry} to get the country (or region) code and {@link #getLanguage} to
+ * get the language. You can use {@link #getDisplayCountry} to get the
  * name of the country suitable for displaying to the user. Similarly,
  * you can use {@link #getDisplayLanguage()} to get the name of
  * the language suitable for displaying to the user. The {@code getDisplayXXX}
