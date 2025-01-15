@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -605,7 +605,7 @@ public class Base64 {
          *
          * <p> If the input byte array is not in valid Base64 encoding scheme
          * then some bytes may have been written to the output byte array before
-         * IllegalargumentException is thrown.
+         * {@code IllegalArgumentException} is thrown.
          *
          * @param   src
          *          the byte array to decode
