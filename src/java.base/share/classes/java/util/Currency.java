@@ -32,8 +32,9 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
@@ -1134,7 +1135,7 @@ public final class Currency implements Serializable {
                                 && !isPastCutoverDate(prop.date)) {
                             prop = null;
                         }
-                    } catch (ParseException ex) {
+                    } catch (DateTimeException ex) {
                         prop = null;
                     }
                 }
@@ -1174,15 +1175,18 @@ public final class Currency implements Serializable {
                     || prop.fraction != fractionDigit);
         }
 
-        private static boolean isPastCutoverDate(String s)
-                throws ParseException {
-            SimpleDateFormat format = new SimpleDateFormat(
-                    "yyyy-MM-dd'T'HH:mm:ss", Locale.ROOT);
-            format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            format.setLenient(false);
-            long time = format.parse(s.trim()).getTime();
+        private static boolean isPastCutoverDate(String s) throws DateTimeException {
+            // String is already confirmed to have format: yyyy-MM-ddTHH:mm:ss
+            String dt = s.trim();
+            var year = Integer.parseInt(dt.substring(0, 4));
+            var month = Integer.parseInt(dt.substring(5, 7));
+            var day = Integer.parseInt(dt.substring(8, 10));
+            var hour = Integer.parseInt(dt.substring(11, 13));
+            var min = Integer.parseInt(dt.substring(14, 16));
+            var sec = Integer.parseInt(dt.substring(17, 19));
+            long time = ZonedDateTime.of(year, month, day, hour, min, sec, 0,
+                    ZoneId.of("UTC")).toEpochSecond() * 1000L;
             return System.currentTimeMillis() > time;
-
         }
 
         private static void info(String message, Throwable t) {
