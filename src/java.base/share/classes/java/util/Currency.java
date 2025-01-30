@@ -32,10 +32,10 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
@@ -1136,7 +1136,7 @@ public final class Currency implements Serializable {
                                 && !isPastCutoverDate(prop.date)) {
                             prop = null;
                         }
-                    } catch (DateTimeException ex) {
+                    } catch (DateTimeParseException ex) {
                         prop = null;
                     }
                 }
@@ -1177,7 +1177,7 @@ public final class Currency implements Serializable {
         }
 
         // cutOver adheres to: "yyyy-MM-ddTHH:mm:ss"
-        private static boolean isPastCutoverDate(String cutOver) throws DateTimeException {
+        private static boolean isPastCutoverDate(String cutOver) throws DateTimeParseException {
             return System.currentTimeMillis() >
                     LocalDateTime.parse(cutOver.trim(), DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                             .toInstant(ZoneOffset.UTC)
