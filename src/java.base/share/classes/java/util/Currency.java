@@ -1176,9 +1176,10 @@ public final class Currency implements Serializable {
                     || prop.fraction != fractionDigit);
         }
 
-        private static boolean isPastCutoverDate(String s) throws DateTimeException {
+        // cutOver adheres to: "yyyy-MM-ddTHH:mm:ss"
+        private static boolean isPastCutoverDate(String cutOver) throws DateTimeException {
             return System.currentTimeMillis() >
-                    LocalDateTime.parse(s.trim(), DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    LocalDateTime.parse(cutOver.trim(), DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                             .toInstant(ZoneOffset.UTC)
                             .toEpochMilli();
         }
