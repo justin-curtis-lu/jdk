@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -1856,6 +1856,11 @@ class JapaneseImperialCalendar extends Calendar {
 
         if (isSet(ERA)) {
             era = internalGet(ERA);
+            // Don't check under, historically we have allowed values under
+            // BEFORE_MEIJI to be ignored during normalization
+            if (era > REIWA) {
+                throw new IllegalArgumentException("Invalid era");
+            }
             year = isSet(YEAR) ? internalGet(YEAR) : 1;
         } else {
             if (isSet(YEAR)) {
