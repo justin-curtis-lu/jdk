@@ -347,18 +347,18 @@ public final class InternalLocaleBuilder {
      */
     public InternalLocaleBuilder setLanguageTag(LanguageTag langtag) {
         clear();
-        if (!langtag.getExtlangs().isEmpty()) {
-            language = langtag.getExtlangs().get(0);
+        if (!langtag.extlangs().isEmpty()) {
+            language = langtag.extlangs().get(0);
         } else {
-            String lang = langtag.getLanguage();
+            String lang = langtag.language();
             if (!lang.equals(LanguageTag.UNDETERMINED)) {
                 language = lang;
             }
         }
-        script = langtag.getScript();
-        region = langtag.getRegion();
+        script = langtag.script();
+        region = langtag.region();
 
-        List<String> bcpVariants = langtag.getVariants();
+        List<String> bcpVariants = langtag.variants();
         if (!bcpVariants.isEmpty()) {
             StringBuilder var = new StringBuilder(bcpVariants.get(0));
             int size = bcpVariants.size();
@@ -368,7 +368,7 @@ public final class InternalLocaleBuilder {
             variant = var.toString();
         }
 
-        setExtensions(langtag.getExtensions(), langtag.getPrivateuse());
+        setExtensions(langtag.extensions(), langtag.privateuse());
 
         return this;
     }
