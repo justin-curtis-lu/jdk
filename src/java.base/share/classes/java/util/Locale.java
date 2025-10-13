@@ -1874,7 +1874,7 @@ public final class Locale implements Cloneable, Serializable {
         LanguageTag tag = LanguageTag.parse(
                 languageTag, new ParsePosition(0), true);
         InternalLocaleBuilder bldr = new InternalLocaleBuilder();
-        bldr.setLanguageTag(tag);
+        bldr.setLanguageTag(tag, true);
         BaseLocale base = bldr.getBaseLocale();
         LocaleExtensions exts = bldr.getLocaleExtensions();
         if (exts == null && !base.getVariant().isEmpty()) {
@@ -2726,9 +2726,13 @@ public final class Locale implements Cloneable, Serializable {
          * @see Locale#forLanguageTag(String)
          */
         public Builder setLanguageTag(String languageTag) {
-            LanguageTag tag = LanguageTag.parse(
-                    languageTag, new ParsePosition(0), false);
-            localeBuilder.setLanguageTag(tag);
+            if (LocaleUtils.isEmpty(languageTag)) {
+                localeBuilder.clear();
+            } else {
+                LanguageTag tag = LanguageTag.parse(
+                        languageTag, new ParsePosition(0), false);
+                localeBuilder.setLanguageTag(tag, false);
+            }
             return this;
         }
 
