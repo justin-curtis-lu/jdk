@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @test
  * @bug 6875847 6992272 7002320 7015500 7023613 7032820 7033504 7004603
  *      7044019 8008577 8176853 8255086 8263202 8287868 8174269 8369452
- *      8369590
+ *      8369590 8387185
  * @summary test API changes to Locale
  * @modules jdk.localedata
  * @run junit/othervm -esa LocaleEnhanceTest
@@ -351,6 +351,11 @@ public class LocaleEnhanceTest {
         // regular extension
         locale = new Builder().setExtension('a', "some-ex-tension").build();
         assertEquals("some-ex-tension", locale.getExtension('a'), "builder");
+
+        // regular numeric singleton extension
+        locale = Locale.forLanguageTag("en-0-foo");
+        assertEquals("foo", locale.getExtension('0'),
+                "numeric singleton extension key should be supported");
 
         // returns null if extension is not present
         assertNull(locale.getExtension('b'), "empty b");
@@ -1057,6 +1062,16 @@ public class LocaleEnhanceTest {
                 .build()
                 .toLanguageTag();
         assertEquals("und-u-posix", result, "duplicate attributes");
+
+        // regular numeric singleton extension
+        result = builder
+                .clear()
+                .setLanguage("en")
+                .setExtension('0', "foo")
+                .build()
+                .toLanguageTag();
+        assertEquals("en-0-foo", result,
+                "numeric singleton extension key should be supported");
     }
 
     @Test
