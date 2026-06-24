@@ -1397,8 +1397,8 @@ public class LocaleEnhanceTest {
         assertEquals(tag, locale.toLanguageTag());
     }
 
-    // Ensure that extlang is only accepted after a 2*3ALPHA lang
-    // That is, 4 ALPHA (future use) and 5*8 ALPHA langs should not accept extlangs
+    // Ensure that extlang is only accepted after a 2*3ALPHA language subtag
+    // That is, the 4 ALPHA and 5*8 ALPHA language subtags should not accept extlangs
     @ParameterizedTest
     @ValueSource(strings = {"quux", "foobar"})
     public void testExtlangAfterReservedLanguage(String lang) {
