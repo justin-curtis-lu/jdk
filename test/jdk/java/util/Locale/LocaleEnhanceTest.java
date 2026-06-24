@@ -352,11 +352,6 @@ public class LocaleEnhanceTest {
         locale = new Builder().setExtension('a', "some-ex-tension").build();
         assertEquals("some-ex-tension", locale.getExtension('a'), "builder");
 
-        // regular numeric singleton extension
-        locale = Locale.forLanguageTag("en-0-foo");
-        assertEquals("foo", locale.getExtension('0'),
-                "numeric singleton extension key should be supported");
-
         // returns null if extension is not present
         assertNull(locale.getExtension('b'), "empty b");
 
@@ -1062,16 +1057,6 @@ public class LocaleEnhanceTest {
                 .build()
                 .toLanguageTag();
         assertEquals("und-u-posix", result, "duplicate attributes");
-
-        // regular numeric singleton extension
-        result = builder
-                .clear()
-                .setLanguage("en")
-                .setExtension('0', "foo")
-                .build()
-                .toLanguageTag();
-        assertEquals("en-0-foo", result,
-                "numeric singleton extension key should be supported");
     }
 
     @Test
@@ -1390,6 +1375,25 @@ public class LocaleEnhanceTest {
         checkDigit(Locale.of("th", "TH", "TH"), '\u0e50');
         checkDigit(Locale.of("th", "TH", "TH"), '\u0e50');
         checkDigit(Locale.forLanguageTag("en-u-nu-thai"), '\u0e50');
+    }
+
+    // Test that numeric singletons are supported
+    @Test
+    public void numericSingletonRoundTripTest() {
+        var tag = "en-0-foo";
+        var value = "foo";
+        var singleton = '0';
+        // test `forLanguageTag`
+        var locale = Locale.forLanguageTag(tag);
+        assertEquals(value, locale.getExtension(singleton));
+        assertEquals(tag, locale.toLanguageTag());
+        // test `Locale.Builder`
+        locale = new Builder()
+                .setLanguage("en")
+                .setExtension(singleton, value)
+                .build();
+        assertEquals(value, locale.getExtension(singleton));
+        assertEquals(tag, locale.toLanguageTag());
     }
 
     private void checkCalendar(Locale loc, String expected) {
