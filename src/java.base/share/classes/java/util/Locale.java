@@ -3214,7 +3214,7 @@ public final class Locale implements Cloneable, Serializable {
          */
         public LanguageRange(String range, double weight) {
             Objects.requireNonNull(range);
-            if (weight < MIN_WEIGHT || weight > MAX_WEIGHT) {
+            if (weight < MIN_WEIGHT || weight > MAX_WEIGHT || Double.isNaN(weight)) {
                 throw new IllegalArgumentException("weight=" + weight);
             }
 
