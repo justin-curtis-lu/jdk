@@ -3209,7 +3209,7 @@ public final class Locale implements Cloneable, Serializable {
          *     {@code null}
          * @throws IllegalArgumentException if the given {@code range} does not
          * comply with the syntax of the language range mentioned in RFC 4647
-         * or if the given {@code weight} is less than {@code MIN_WEIGHT}
+         * or if the given {@code weight} is {@code Double.NaN}, less than {@code MIN_WEIGHT}
          * or greater than {@code MAX_WEIGHT}
          */
         public LanguageRange(String range, double weight) {
