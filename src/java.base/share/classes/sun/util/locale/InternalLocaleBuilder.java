@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -382,17 +382,21 @@ public final class InternalLocaleBuilder {
         // Special backward compatibility support
 
         // Exception 1 - ja_JP_JP
-        if (language.equals("ja") && region.equals("JP") && variant.equals("JP")) {
-            // When locale ja_JP_JP is created, ca-japanese is always there.
-            // The builder ignores the variant "JP"
-            assert("japanese".equals(localeExtensions.getUnicodeLocaleType("ca")));
+        if (language.equals("ja") && region.equals("JP") && variant.equals("JP")
+                && localeExtensions != null
+                && "japanese".equals(localeExtensions.getUnicodeLocaleType("ca"))) {
+            // When locale ja_JP_JP is created, ca-japanese is always added.
+            // If the extension exists, the builder ignores the variant "JP"
+            // otherwise "JP" is merely an ill-formed variant
             variant = "";
         }
         // Exception 2 - th_TH_TH
-        else if (language.equals("th") && region.equals("TH") && variant.equals("TH")) {
-            // When locale th_TH_TH is created, nu-thai is always there.
-            // The builder ignores the variant "TH"
-            assert("thai".equals(localeExtensions.getUnicodeLocaleType("nu")));
+        else if (language.equals("th") && region.equals("TH") && variant.equals("TH") &&
+                localeExtensions != null
+                && "thai".equals(localeExtensions.getUnicodeLocaleType("nu"))) {
+            // When locale th_TH_TH is created, nu-thai is always added.
+            // If the extension exists, the builder ignores the variant "TH"
+            // otherwise "TH" is merely an ill-formed variant
             variant = "";
         }
         // Exception 3 - no_NO_NY

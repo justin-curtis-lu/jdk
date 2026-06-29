@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @test
  * @bug 6875847 6992272 7002320 7015500 7023613 7032820 7033504 7004603
  *      7044019 8008577 8176853 8255086 8263202 8287868 8174269 8369452
- *      8369590 8387185 8387253
+ *      8369590 8387185 8387253 8387455
  * @summary test API changes to Locale
  * @modules jdk.localedata
  * @run junit/othervm -esa LocaleEnhanceTest
@@ -728,6 +728,12 @@ public class LocaleEnhanceTest {
         assertEquals("nn-NO", locale.toLanguageTag(), "no_NO_NY languagetag");
         assertEquals("nn", locale.getLanguage(), "no_NO_NY language");
         assertEquals("", locale.getVariant(), "no_NO_NY variant");
+
+        // Legacy locales that stripped their compatibility extensions are invalid
+        assertThrows(IllformedLocaleException.class,
+                () -> new Builder().setLocale(Locale.of("ja", "JP", "JP").stripExtensions()));
+        assertThrows(IllformedLocaleException.class,
+                () -> new Builder().setLocale(Locale.of("th", "TH", "TH").stripExtensions()));
 
         // non-canonical, non-legacy locales are invalid
         assertThrows(IllformedLocaleException.class,
