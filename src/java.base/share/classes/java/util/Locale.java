@@ -3208,7 +3208,7 @@ public final class Locale implements Cloneable, Serializable {
          * @throws NullPointerException if the given {@code range} is
          *     {@code null}
          * @throws IllegalArgumentException if the given {@code range} does not
-         * comply with the syntax of the language range mentioned in RFC 4647
+         * comply with the syntax of the language range mentioned in RFC 4647,
          * or if the given {@code weight} is {@code Double.NaN}, less than {@code MIN_WEIGHT}
          * or greater than {@code MAX_WEIGHT}
          */
@@ -3338,6 +3338,10 @@ public final class Locale implements Cloneable, Serializable {
          * matching locale (or language tag) even if the application or system
          * offers only {@code "he"} as a supported locale (or language tag).
          *
+         * @implNote This implementation interprets weights within the {@code ranges}
+         * string using {@link Double#parseDouble(String)}. As a result, some
+         * non-RFC 2616 forms of otherwise in range values, such as one with a leading
+         * sign, may be accepted.
          * @param ranges a list of comma-separated language ranges or a list of
          *     language ranges in the form of the "Accept-Language" header
          *     defined in <a href="https://tools.ietf.org/html/rfc2616">RFC
@@ -3360,6 +3364,10 @@ public final class Locale implements Cloneable, Serializable {
          * This method is equivalent to
          * {@code mapEquivalents(parse(ranges), map)}.
          *
+         * @implNote This implementation interprets weights within the {@code ranges}
+         * string using {@link Double#parseDouble(String)}. As a result, some
+         * non-RFC 2616 forms of otherwise in range values, such as one with a leading
+         * sign, may be accepted.
          * @param ranges a list of comma-separated language ranges or a list
          *     of language ranges in the form of the "Accept-Language" header
          *     defined in <a href="https://tools.ietf.org/html/rfc2616">RFC
