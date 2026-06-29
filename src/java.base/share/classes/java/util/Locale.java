@@ -3209,13 +3209,15 @@ public final class Locale implements Cloneable, Serializable {
          *     {@code null}
          * @throws IllegalArgumentException if the given {@code range} does not
          * comply with the syntax of the language range mentioned in RFC 4647,
-         * or if the given {@code weight} is {@code Double.NaN}, less than {@code MIN_WEIGHT}
-         * or greater than {@code MAX_WEIGHT}
+         * or if the given {@code weight} is {@code Double.NaN}, less than {@code
+         * MIN_WEIGHT} or greater than {@code MAX_WEIGHT}
          */
         public LanguageRange(String range, double weight) {
             Objects.requireNonNull(range);
             if (weight < MIN_WEIGHT || weight > MAX_WEIGHT || Double.isNaN(weight)) {
-                throw new IllegalArgumentException("weight=" + weight);
+                throw new IllegalArgumentException(
+                        "The weight " + weight + " must be between "
+                        + MIN_WEIGHT + " and " + MAX_WEIGHT + ", inclusive.");
             }
 
             range = range.toLowerCase(Locale.ROOT);
@@ -3340,8 +3342,9 @@ public final class Locale implements Cloneable, Serializable {
          *
          * @implNote This implementation interprets weights within the {@code ranges}
          * string using {@link Double#parseDouble(String)}. As a result, some
-         * non-RFC 2616 forms of otherwise in range values, such as one with a leading
-         * sign, may be accepted.
+         * non-RFC 2616 forms of otherwise in-range values, such as leading
+         * signs, scientific notation, or more than three fractional digits, may be
+         * accepted.
          * @param ranges a list of comma-separated language ranges or a list of
          *     language ranges in the form of the "Accept-Language" header
          *     defined in <a href="https://tools.ietf.org/html/rfc2616">RFC
@@ -3366,8 +3369,9 @@ public final class Locale implements Cloneable, Serializable {
          *
          * @implNote This implementation interprets weights within the {@code ranges}
          * string using {@link Double#parseDouble(String)}. As a result, some
-         * non-RFC 2616 forms of otherwise in range values, such as one with a leading
-         * sign, may be accepted.
+         * non-RFC 2616 forms of otherwise in-range values, such as leading
+         * signs, scientific notation, or more than three fractional digits, may be
+         * accepted.
          * @param ranges a list of comma-separated language ranges or a list
          *     of language ranges in the form of the "Accept-Language" header
          *     defined in <a href="https://tools.ietf.org/html/rfc2616">RFC
