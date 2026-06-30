@@ -741,6 +741,12 @@ public class LocaleEnhanceTest {
         assertThrows(IllformedLocaleException.class,
                 () -> new Builder().setLocale(Locale.forLanguageTag("th-TH-u-nu-foobar-x-lvariant-TH")));
 
+        // Legacy locales with correct compatibility extensions but non-empty script are invalid
+        assertThrows(IllformedLocaleException.class,
+                () -> new Builder().setLocale(Locale.forLanguageTag("ja-Jpan-JP-u-ca-japanese-x-lvariant-JP")));
+        assertThrows(IllformedLocaleException.class,
+                () -> new Builder().setLocale(Locale.forLanguageTag("th-Thai-TH-u-nu-thai-x-lvariant-TH")));
+
         // non-canonical, non-legacy locales are invalid
         assertThrows(IllformedLocaleException.class,
                 () -> new Builder().setLocale(Locale.of("123", "4567", "89")), "123_4567_89");

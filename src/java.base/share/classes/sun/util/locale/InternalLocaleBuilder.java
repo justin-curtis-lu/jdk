@@ -383,6 +383,7 @@ public final class InternalLocaleBuilder {
 
         // Exception 1 - ja_JP_JP
         if (language.equals("ja") && region.equals("JP") && variant.equals("JP")
+                && script.isEmpty()
                 && localeExtensions != null
                 && "japanese".equals(localeExtensions.getUnicodeLocaleType("ca"))) {
             // When locale ja_JP_JP is created, ca-japanese is always added.
@@ -391,8 +392,9 @@ public final class InternalLocaleBuilder {
             variant = "";
         }
         // Exception 2 - th_TH_TH
-        else if (language.equals("th") && region.equals("TH") && variant.equals("TH") &&
-                localeExtensions != null
+        else if (language.equals("th") && region.equals("TH") && variant.equals("TH")
+                && script.isEmpty()
+                && localeExtensions != null
                 && "thai".equals(localeExtensions.getUnicodeLocaleType("nu"))) {
             // When locale th_TH_TH is created, nu-thai is always added.
             // If the extension exists, the builder ignores the variant "TH"
