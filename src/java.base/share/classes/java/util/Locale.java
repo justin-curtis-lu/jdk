@@ -2689,6 +2689,12 @@ public final class Locale implements Cloneable, Serializable {
          * <li>Locale("th", "TH", "TH") is treated as "th-TH-u-nu-thai"
          * <li>Locale("no", "NO", "NY") is treated as "nn-NO"</ul>
          *
+         * <p>For the Japanese and Thai cases, compatibility handling only applies
+         * when the script is non-empty and the Unicode locale keyword {@code
+         * ca=japanese} or {@code nu=thai}, respectively, is present. Otherwise,
+         * the two-letter variant is treated as ill-formed, and an
+         * {@code IllformedLocaleException} is thrown.
+         *
          * @param locale the locale
          * @return This builder.
          * @throws IllformedLocaleException if {@code locale} has
