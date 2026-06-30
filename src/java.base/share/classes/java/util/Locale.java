@@ -3204,7 +3204,7 @@ public final class Locale implements Cloneable, Serializable {
          *
          * @param range  a language range
          * @param weight a weight value between {@code MIN_WEIGHT} and
-         *     {@code MAX_WEIGHT}
+         *     {@code MAX_WEIGHT}, inclusive
          * @throws NullPointerException if the given {@code range} is
          *     {@code null}
          * @throws IllegalArgumentException if the given {@code range} does not
