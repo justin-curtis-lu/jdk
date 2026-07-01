@@ -3340,11 +3340,9 @@ public final class Locale implements Cloneable, Serializable {
          * matching locale (or language tag) even if the application or system
          * offers only {@code "he"} as a supported locale (or language tag).
          *
-         * @implNote This implementation interprets weights within the {@code ranges}
-         * string using {@link Double#parseDouble(String)}. As a result, some
-         * non-RFC 2616 forms of otherwise in-range values, such as leading
-         * signs, scientific notation, or more than three fractional digits, may be
-         * accepted.
+         * @implNote Since this implementation uses {@link Double#parseDouble(String)}
+         * for string to double conversion, a proper superset of the RFC 2616
+         * syntax is accepted for weights.
          * @param ranges a list of comma-separated language ranges or a list of
          *     language ranges in the form of the "Accept-Language" header
          *     defined in <a href="https://tools.ietf.org/html/rfc2616">RFC
@@ -3353,8 +3351,9 @@ public final class Locale implements Cloneable, Serializable {
          *     included in the given {@code ranges} and their equivalent
          *     language ranges if available. The list is modifiable.
          * @throws NullPointerException if {@code ranges} is null
-         * @throws IllegalArgumentException if a language range or a weight
-         *     found in the given {@code ranges} is ill-formed
+         * @throws IllegalArgumentException if, in the given {@code ranges}, a
+         *     language range is ill-formed, or a weight is ill-formed after
+         *     string to double conversion by {@link Double#parseDouble(String)}
          * @spec https://www.rfc-editor.org/info/rfc2616 RFC 2616: Hypertext Transfer Protocol -- HTTP/1.1
          */
         public static List<LanguageRange> parse(String ranges) {
@@ -3367,11 +3366,9 @@ public final class Locale implements Cloneable, Serializable {
          * This method is equivalent to
          * {@code mapEquivalents(parse(ranges), map)}.
          *
-         * @implNote This implementation interprets weights within the {@code ranges}
-         * string using {@link Double#parseDouble(String)}. As a result, some
-         * non-RFC 2616 forms of otherwise in-range values, such as leading
-         * signs, scientific notation, or more than three fractional digits, may be
-         * accepted.
+         * @implNote Since this implementation uses {@link Double#parseDouble(String)}
+         * for string to double conversion, a proper superset of the RFC 2616
+         * syntax is accepted for weights.
          * @param ranges a list of comma-separated language ranges or a list
          *     of language ranges in the form of the "Accept-Language" header
          *     defined in <a href="https://tools.ietf.org/html/rfc2616">RFC
@@ -3380,8 +3377,9 @@ public final class Locale implements Cloneable, Serializable {
          * @return a Language Priority List with customization. The list is
          *     modifiable.
          * @throws NullPointerException if {@code ranges} is null
-         * @throws IllegalArgumentException if a language range or a weight
-         *     found in the given {@code ranges} is ill-formed
+         * @throws IllegalArgumentException if, in the given {@code ranges}, a
+         *     language range is ill-formed, or a weight is ill-formed after
+         *     string to double conversion by {@link Double#parseDouble(String)}
          * @spec https://www.rfc-editor.org/info/rfc2616 RFC 2616: Hypertext Transfer Protocol -- HTTP/1.1
          * @see #parse(String)
          * @see #mapEquivalents(List, Map)
