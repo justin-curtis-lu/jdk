@@ -402,7 +402,7 @@ public final class InternalLocaleBuilder {
             // Exception 3 - no_NO_NY
             else if (language.equals("no") && region.equals("NO") && variant.equals("NY")) {
                 // no_NO_NY is a valid locale and used by Java 6 or older versions.
-                // The build ignores the variant "NY" and change the language to "nn".
+                // The builder ignores the variant "NY" and changes the language to "nn".
                 language = "nn";
                 variant = "";
             }
